@@ -3,51 +3,57 @@ import {
   redirect,
   useNavigate,
   useNavigation,
-  Link,
+  useLoaderData,
 } from "react-router-dom";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import customFetch from "../utils/customFetch";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
 
-import { Header, BigSidebar, SmallSidebar, Loading } from "../components";
-import LogoutContainer from "../components/logoutContainer";
+import customFetch from "../utils/customFetch";
+import { Header, Loading, Footer } from "../components";
 
-const userQuery = {
-  queryKey: ["user"],
-  queryFn: async () => {
-    const { data } = await customFetch.get("/users/current-user");
-    return data;
-  },
-};
-
-export const loader = (queryClient) => async () => {
+export const loader = async () => {
   try {
-    return await queryClient.ensureQueryData(userQuery);
+    const { data } = await customFetch("/admin/current-user");
+    return data;
   } catch (error) {
-    return redirect("/");
+    // return redirect("/");
   }
 };
 
 const AdminDashboardLayoutContext = createContext();
 
-const AdminDashboardLayout = ({ queryClient }) => {
-  const { user } = useQuery(userQuery).data;
+// const AdminDashboardLayout = ({ queryClient }) => {
+const AdminDashboardLayout = () => {
+  const { user } = useLoaderData();
+  // const { user } = useQuery(userQuery).data;
+  // console.log(user);
+  // const { user } = { username: "username" };
+
   const navigate = useNavigate();
   const navigation = useNavigation();
   const isPageLoading = navigation.state === "loading";
   const [showSidebar, setShowSidebar] = useState(false);
+  const [isMobileActive, setMobileActive] = useState(false);
   const [isAuthError, setIsAuthError] = useState(false);
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
   };
 
+  const toggleMobileNavbar = () => {
+    if (!isMobileActive) {
+      setMobileActive(true);
+    } else {
+      setMobileActive(false);
+    }
+  };
+
   const logoutUser = async () => {
     navigate("/");
     await customFetch.get("/auth/logout");
-    queryClient.invalidateQueries();
+    // queryClient.invalidateQueries();
     toast.success("Logging out...");
   };
 
@@ -75,19 +81,20 @@ const AdminDashboardLayout = ({ queryClient }) => {
         user,
         showSidebar,
         toggleSidebar,
+        toggleMobileNavbar,
+        isMobileActive,
         logoutUser,
       }}
     >
       <Header />
       <main className="dashboard">
-        {/* <SmallSidebar /> */}
-        {/* <BigSidebar /> */}
         <div>
           <div className="dashboard-page">
             {isPageLoading ? <Loading /> : <Outlet context={{ user }} />}
           </div>
         </div>
       </main>
+      <Footer />
     </AdminDashboardLayoutContext.Provider>
   );
 };

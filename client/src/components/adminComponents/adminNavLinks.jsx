@@ -1,8 +1,11 @@
 import AdminLink from "../../utils/adminLinks";
 import { NavLink } from "react-router-dom";
 import LogoutContainer from "../logoutContainer";
+import { useAdminDashboardLayoutContext } from "../../pages/AdminDashboardLayout";
 
 const adminNavLinks = () => {
+  const { toggleMobileNavbar } = useAdminDashboardLayoutContext();
+
   return (
     <ul className="nav-links">
       {AdminLink.map((link) => {
@@ -12,7 +15,7 @@ const adminNavLinks = () => {
             to={path}
             key={text}
             className="nav-link"
-            // onClick={toggleMobileNavbar}
+            onClick={toggleMobileNavbar}
             end
           >
             <span className="icon">{icon}</span>

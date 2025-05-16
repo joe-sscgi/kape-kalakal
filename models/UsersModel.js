@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { USER_TYPE } from "../utils/contants.js";
+// import { USER_TYPE } from "../utils/contants.js";
 
 const UsersSchema = new mongoose.Schema(
   {
@@ -18,8 +18,13 @@ const UsersSchema = new mongoose.Schema(
     userUserType: {
       type: String,
       alias: "userType",
-      enum: Object.values(USER_TYPE),
+      enum: ["Super Admin", "Admin", "Customer"],
       default: "Customer",
+    },
+    userIsDel: {
+      type: Boolean,
+      alias: "isDel",
+      default: 0,
     },
   },
   { timestamps: true }

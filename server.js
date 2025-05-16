@@ -6,6 +6,7 @@ import morgan from "morgan";
 import mongoose from "mongoose";
 import { body, validationResult } from "express-validator";
 import cookieParser from "cookie-parser";
+import cloudinary from "cloudinary";
 
 // ROUTER
 import userRouter from "./routes/userRouter.js";
@@ -18,6 +19,10 @@ import {
   authenticateUser,
   levelOfAccess,
 } from "./middleware/authMiddleware.js";
+
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import path from "path";
 
 const app = express();
 
@@ -40,7 +45,21 @@ app.use("/api/v1/admin/", authenticateUser, adminRouter);
 
 app.use(errorHandlerMiddleware);
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+app.use(express.static(path.resolve(__dirname, "./public")));
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
+
 const port = process.env.PORT || 5100;
+
+// process.on("uncaughtException", function (err) {
+//   console.log(err);
+// });
 
 try {
   await mongoose.connect(process.env.MONGO_URL);
@@ -48,6 +67,6 @@ try {
     console.log(`server running on PORT ${port}....`);
   });
 } catch (error) {
-  console.log(error);
+  console.log(1, error);
   process.exit(1);
 }

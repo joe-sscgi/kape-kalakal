@@ -1,7 +1,7 @@
 export const PROD_CAT = {
   DEFAULT: "Select Category",
   COFFEE: "Coffee",
-  BREWING_GEAR: "Brewingg Gear",
+  BREWING_GEAR: "Brewing Gear",
   ACCESSORIES: "Accessories",
   TEA: "Tea",
 };
@@ -26,7 +26,14 @@ export const BRAND_CAT = {
 export const USER_TYPE = {
   DEFAULT: "Select User Type",
   CUSTOMER: "Customer",
+  // SUPER_ADMIN: "Super Admin",
   ADMIN: "Admin",
+};
+export const RECIPE_CAT = {
+  DEFAULT: "Select Category",
+  COFFEE: "Coffee",
+  NON_COFFEE: "Non-Coffee",
+  PASTRY: "Kashi Pastry",
 };
 
 export const JOB_SORT_BY = {

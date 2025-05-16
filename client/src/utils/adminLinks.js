@@ -2,16 +2,16 @@ import React from "react";
 
 const links = [
   {
-    text: "Products",
-    path: "main-products",
+    text: "Content Management",
+    path: "set-content",
   },
   {
-    text: "Brands",
-    path: "main-brands",
+    text: "Maintenance",
+    path: "maintenance",
   },
   {
-    text: "Users",
-    path: "main-users",
+    text: "Utilities",
+    path: "utilities",
   },
   {
     text: "Profile",

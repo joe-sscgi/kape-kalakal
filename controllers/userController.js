@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 
 import Users from "../models/UsersModel.js";
+import UserInfo from "../models/UserInfoModel.js";
 import { hashPassword } from "../utils/passwordUtils.js";
 
 // USERS
@@ -17,8 +18,18 @@ export const getUser = async (req, res) => {
 };
 
 export const getCurrentUser = async (req, res) => {
-  const user = await Users.findOne({ _id: req.user.userId });
+  const user = await Users.findOne({ _id: req.user.userId }).aggregate([
+    {
+      $lookup: {
+        from: UserInfo,
+        localField: userUserID,
+        foreignField: _id,
+        as: "userInfoData",
+      },
+    },
+  ]);
   const userWithoutPassword = user.toJSON();
+  console.log(user);
   res.status(StatusCodes.OK).json({ user: userWithoutPassword });
 };
 
@@ -30,6 +41,11 @@ export const createUser = async (req, res) => {
   req.body.password = hashedPassword;
 
   const user = await Users.create(req.body);
+
+  const obj = Object();
+  obj.userUserID = user._id;
+  // console.log(obj);
+  const userInfo = await UserInfo.create(obj);
   res.status(StatusCodes.CREATED).json({ user });
 };
 
@@ -69,3 +85,25 @@ export const changePassword = async (req, res) => {
     .json({ msg: "user password changed", job: updatedPassUser });
 };
 // END USERS
+
+export const updateUserProfile = async (req, res) => {
+  const userInfo = { ...req.body };
+  // const userInfo = user;
+  // delete userInfo.userEmail;
+  // delete userInfo.userUsername;
+  // delete userInfo.userPassword;
+
+  const updatedUser = await Users.findByIdAndUpdate(req.params.id, userInfo);
+
+  const userInfoData = await UserInfo.find(req.params.id);
+  if (userInfoData) {
+    const updatedUserProfile = await UserInfo.findByIdAndUpdate(
+      userInfoData._id,
+      obj
+    );
+  }
+
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "user profile updated", Users: updatedUser });
+};

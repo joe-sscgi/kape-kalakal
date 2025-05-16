@@ -20,6 +20,7 @@ import Isotope from "isotope-layout";
 import "font-awesome/css/font-awesome.min.css";
 
 import Wrapper from "../assets/wrappers/Landing";
+import { Footer } from "../components";
 import logo from "../assets/images/logo/kape-kalakal-logo.jpg";
 import hero1 from "../assets/images/hero-banner/hero-banner-1.jpg";
 import hero2 from "../assets/images/hero-banner/hero-banner-3.jpg";
@@ -54,9 +55,11 @@ import author5 from "../assets/img/testimonials/testimonials-5.jpg";
 // import "../assets/vendor/isotope-layout/isotope.pkgd.min.js";
 // import "../assets/vendor/isotope-layout/isotope.pkgd.js";
 // import "../assets/js/main.js";
+// import Isotope from "isotope-layout";
 
 const Landing = () => {
   const [isMobileActive, setMobileActive] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const toggleMobileNavbar = () => {
     if (!isMobileActive) {
@@ -75,87 +78,147 @@ const Landing = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      // Adjust the scroll position threshold as needed
+      if (scrollPosition > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // init one ref to store the future isotope object
+  const isotope = React.useRef();
+  // store the filter keyword in a state
+  const [filterKey, setFilterKey] = React.useState("*");
+
+  // initialize an Isotope object with configs
+  React.useEffect(() => {
+    isotope.current = new Isotope(".filter-container", {
+      itemSelector: ".filter-item",
+      layoutMode: "fitRows",
+    });
+    // cleanup
+    return () => isotope.current.destroy();
+  }, []);
+
+  // handling filter key change
+  React.useEffect(() => {
+    filterKey === "*"
+      ? isotope.current.arrange({ filter: `*` })
+      : isotope.current.arrange({ filter: `.${filterKey}` });
+  }, [filterKey]);
+
+  const handleFilterKeyChange = (key) => () => setFilterKey(key);
+
   return (
     <Wrapper>
-      <header id="header" className="header fixed-top">
-        <div className="branding d-flex align-items-center">
-          <div className="container position-relative d-flex align-items-center justify-content-between">
-            <Link
-              to="/"
-              className="logo d-flex align-items-center logo-link"
-              id="logo-link"
-            >
-              <img src={logo} alt="KAPE KALAKAL LOGO" className="header-logo" />
-              <h1 className="sitename" id="sitename">
-                Kape Kalakal
-              </h1>
-            </Link>
-            <div
-              className={isMobileActive ? "mobile-nav-active" : ""}
-              onClick={toggleMobileNavbar}
-            >
-              <nav id="navmenu" className="navmenu">
-                <ul>
-                  <li>
-                    <a
-                      href="#menu"
-                      className="nav-link"
-                      onClick={toggleMobileNavbar}
-                    >
-                      Products
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#brands"
-                      className="nav-link"
-                      onClick={toggleMobileNavbar}
-                    >
-                      Brands
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#testimonials"
-                      className="nav-link"
-                      onClick={toggleMobileNavbar}
-                    >
-                      Testimonials
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#recipes"
-                      className="nav-link"
-                      onClick={toggleMobileNavbar}
-                    >
-                      Recipes
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#contact"
-                      className="nav-link"
-                      onClick={toggleMobileNavbar}
-                    >
-                      Contact
-                    </a>
-                  </li>
-                  <li>
-                    <Link to="/login" className="nav-link">
-                      Login
-                    </Link>
-                  </li>
-                </ul>
-                <i
-                  className="mobile-nav-toggle d-xl-none bi bi-list"
-                  onClick={toggleMobileNavbar}
-                ></i>
-              </nav>
+      <div
+        className={
+          isScrolled ? "scrolled header fixed-top" : "header fixed-top"
+        }
+      >
+        <header id="header" className="header fixed-top">
+          <div className="branding d-flex align-items-center">
+            <div className="container position-relative d-flex align-items-center justify-content-between">
+              <Link
+                to="/"
+                className="logo d-flex align-items-center logo-link"
+                id="logo-link"
+              >
+                <img
+                  src={logo}
+                  alt="KAPE KALAKAL LOGO"
+                  className="header-logo"
+                />
+                <h1 className="sitename" id="sitename">
+                  Kape Kalakal
+                </h1>
+              </Link>
+              <div
+                className={isMobileActive ? "mobile-nav-active" : ""}
+                onClick={toggleMobileNavbar}
+              >
+                <nav id="navmenu" className="navmenu">
+                  <ul>
+                    <li>
+                      <a
+                        href="#menu"
+                        className="nav-link"
+                        onClick={toggleMobileNavbar}
+                      >
+                        Products
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#brands"
+                        className="nav-link"
+                        onClick={toggleMobileNavbar}
+                      >
+                        Brands
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#testimonials"
+                        className="nav-link"
+                        onClick={toggleMobileNavbar}
+                      >
+                        Testimonials
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#recipes"
+                        className="nav-link"
+                        onClick={toggleMobileNavbar}
+                      >
+                        Recipes
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#contact"
+                        className="nav-link"
+                        onClick={toggleMobileNavbar}
+                      >
+                        Contact
+                      </a>
+                    </li>
+                    <li class="dropdown">
+                      <a href="#">
+                        <Link to="/login" className="nav-link">
+                          Login
+                        </Link>
+                      </a>
+                      <ul>
+                        <li>
+                          <Link to="/register" className="nav-link">
+                            Register
+                          </Link>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                  <i
+                    className="mobile-nav-toggle d-xl-none bi bi-list"
+                    onClick={toggleMobileNavbar}
+                  ></i>
+                </nav>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
+      </div>
 
       <main className="main">
         {/* HERO SECTION */}
@@ -295,24 +358,52 @@ const Landing = () => {
             <div className="row" data-aos="fade-up" data-aos-delay="100">
               <div className="col-lg-12 d-flex justify-content-center">
                 <ul className="menu-filters isotope-filters">
-                  <li data-filter="*" className="filter-active">
+                  <li
+                    onClick={handleFilterKeyChange("*")}
+                    data-filter="*"
+                    className="filter-link"
+                  >
                     All
                   </li>
-                  <li data-filter="filter-coffee">Coffee</li>
-                  <li data-filter="filter-brewing">Brewing Gear</li>
-                  <li data-filter="filter-accessories">Accessories</li>
-                  <li data-filter="filter-tea">Tea</li>
+                  <li
+                    onClick={handleFilterKeyChange("filter-coffee")}
+                    data-filter="filter-coffee"
+                    className="filter-link"
+                  >
+                    Coffee
+                  </li>
+                  <li
+                    onClick={handleFilterKeyChange("filter-brewing")}
+                    data-filter="filter-brewing"
+                    className="filter-link"
+                  >
+                    Brewing Gear
+                  </li>
+                  <li
+                    onClick={handleFilterKeyChange("filter-accessories")}
+                    data-filter="filter-accessories"
+                    className="filter-link"
+                  >
+                    Accessories
+                  </li>
+                  <li
+                    onClick={handleFilterKeyChange("filter-tea")}
+                    data-filter="filter-tea"
+                    className="filter-link"
+                  >
+                    Tea
+                  </li>
                 </ul>
               </div>
             </div>
             {/* <!-- Menu Filters --> */}
 
             <div
-              className="row isotope-container"
+              className="row isotope-container filter-container"
               data-aos="fade-up"
               data-aos-delay="200"
             >
-              <div className="col-lg-6 menu-item isotope-item filter-coffee">
+              <div className="col-lg-6 menu-item isotope-item filter-item filter-coffee">
                 <img
                   src={el_salvador_light_roast}
                   className="menu-img"
@@ -333,7 +424,7 @@ const Landing = () => {
               </div>
               {/* <!-- Menu Item --> */}
 
-              <div className="col-lg-6 menu-item isotope-item filter-coffee">
+              <div className="col-lg-6 menu-item isotope-item filter-item filter-coffee">
                 <img
                   src={el_salvador_medium_roast}
                   className="menu-img"
@@ -352,7 +443,7 @@ const Landing = () => {
               </div>
               {/* <!-- Menu Item --> */}
 
-              <div className="col-lg-6 menu-item isotope-item filter-coffee">
+              <div className="col-lg-6 menu-item isotope-item filter-item filter-coffee">
                 <img src={haru_kochi_dark_roast} className="menu-img" alt="" />
                 <div className="menu-content">
                   <a href="#">Kurasu House Blend Dark [Dark roast]</a>
@@ -367,7 +458,7 @@ const Landing = () => {
               </div>
               {/* <!-- Menu Item --> */}
 
-              <div className="col-lg-6 menu-item isotope-item filter-brewing">
+              <div className="col-lg-6 menu-item isotope-item filter-item filter-brewing">
                 <img
                   src={Kalita_Mino_yaki_Dripper}
                   className="menu-img"
@@ -386,7 +477,7 @@ const Landing = () => {
               </div>
               {/* <!-- Menu Item --> */}
 
-              <div className="col-lg-6 menu-item isotope-item filter-brewing">
+              <div className="col-lg-6 menu-item isotope-item filter-item filter-brewing">
                 <img
                   src={kinto_mini_pour_over_kettle_430ml}
                   className="menu-img"
@@ -405,7 +496,7 @@ const Landing = () => {
               </div>
               {/* <!-- Menu Item --> */}
 
-              <div className="col-lg-6 menu-item isotope-item filter-brewing">
+              <div className="col-lg-6 menu-item isotope-item filter-item filter-brewing">
                 <img src={ORIGAMI_ReWork_Dripper} className="menu-img" alt="" />
                 <div className="menu-content">
                   <a href="#">ORIGAMI ReWork Dripper</a>
@@ -421,7 +512,7 @@ const Landing = () => {
               </div>
               {/* <!-- Menu Item --> */}
 
-              <div className="col-lg-6 menu-item isotope-item filter-accessories">
+              <div className="col-lg-6 menu-item isotope-item filter-item filter-accessories">
                 <img
                   src={Kurasu_original_postcard}
                   className="menu-img"
@@ -442,7 +533,7 @@ const Landing = () => {
               </div>
               {/* <!-- Menu Item --> */}
 
-              <div className="col-lg-6 menu-item isotope-item filter-accessories">
+              <div className="col-lg-6 menu-item isotope-item filter-item filter-accessories">
                 <img src={two_Tone_Logo_Sticker} className="menu-img" alt="" />
                 <div className="menu-content">
                   <a href="#">2 Tone Logo Sticker</a>
@@ -458,7 +549,7 @@ const Landing = () => {
               </div>
               {/* <!-- Menu Item --> */}
 
-              <div className="col-lg-6 menu-item isotope-item filter-accessories">
+              <div className="col-lg-6 menu-item isotope-item filter-item filter-accessories">
                 <img
                   src={Kurasu_Logo_T_shirts_Black}
                   className="menu-img"
@@ -478,7 +569,7 @@ const Landing = () => {
               </div>
               {/* <!-- Menu Item --> */}
 
-              <div className="col-lg-6 menu-item isotope-item filter-tea">
+              <div className="col-lg-6 menu-item isotope-item filter-item filter-tea">
                 <img
                   src={Matcha_Kurasu_Blend_No_Sugar}
                   className="menu-img"
@@ -499,7 +590,7 @@ const Landing = () => {
               </div>
               {/* <!-- Menu Item --> */}
 
-              <div className="col-lg-6 menu-item isotope-item filter-tea">
+              <div className="col-lg-6 menu-item isotope-item filter-item filter-tea">
                 <img
                   src={Matcha_Kurasu_Blend_With_Sugar}
                   className="menu-img"
@@ -520,7 +611,7 @@ const Landing = () => {
               </div>
               {/* <!-- Menu Item --> */}
 
-              <div className="col-lg-6 menu-item isotope-item filter-tea">
+              <div className="col-lg-6 menu-item isotope-item filter-item filter-tea">
                 <img src={Matcha_SUI_Blend} className="menu-img" alt="" />
                 <div className="menu-content">
                   <a href="#">Matcha SUI Blend</a>
@@ -983,6 +1074,8 @@ const Landing = () => {
         </section>
         {/* <!-- /Contact Section --> */}
       </main>
+
+      <Footer />
     </Wrapper>
   );
 };

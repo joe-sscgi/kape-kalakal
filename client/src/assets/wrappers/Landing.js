@@ -8,6 +8,22 @@ const Wrapper = styled.section`
   /*--------------------------------------------------------------
 # Additional CSS
 --------------------------------------------------------------*/
+  /* NAVBAR */
+  .navmenu .dropdown:hover > ul {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .navmenu .dropdown ul li a {
+    color: var(--nav-color);
+    font-size: 18px;
+  }
+
+  .navmenu .dropdown ul li a:hover {
+    font-size: 32px;
+  }
+
   /* HERO SECTION */
   .hidden {
     display: none;
@@ -40,6 +56,11 @@ const Wrapper = styled.section`
   .hero .carousel-control-prev,
   .hero .carousel-control-next {
     opacity: 5;
+    z-index: 2;
+  }
+
+  .carousel-indicators {
+    z-index: 5;
   }
 
   /* ABOUT SECTION */
@@ -78,6 +99,19 @@ const Wrapper = styled.section`
 
   .menu .menu-filters li {
     color: color-mix(in srgb, var(--primary), transparent 25%);
+    font-family: var(--secondary-font);
+  }
+
+  .menu .menu-filters li.filter-link:active {
+    color: var(--secondary);
+    /* color: red; */
+    font-family: var(--secondary-font);
+  }
+
+  .menu-filters li.filter-link:hover {
+    /* color: var(--primary); */
+    color: var(--accent-color);
+    font-size: 20px;
     font-family: var(--secondary-font);
   }
 
@@ -289,7 +323,7 @@ const Wrapper = styled.section`
   @media (max-width: 1199px) {
     .mobile-nav-active .navmenu {
       width: 50vw;
-      height: 50vh;
+      height: 60vh;
       justify-self: flex-end;
     }
   }

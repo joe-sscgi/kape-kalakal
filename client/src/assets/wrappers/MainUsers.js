@@ -1,14 +1,28 @@
 import styled from "styled-components";
 
 const Wrapper = styled.section`
-  background-color: var(--bg-secondary);
+  /* background-color: var(--bg-secondary); */
   font-family: var(--main-font);
   font-size: 18px;
   color: var(--primary);
 
+  background-image: linear-gradient(
+      to top,
+      rgba(245, 246, 252, 0.19),
+      rgb(116 35 35 / 75%)
+    ),
+    url("../src/assets/images/background/background-users.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
+  .main-user {
+    background-color: unset;
+  }
+
   .section-title h1 {
     font-family: var(--secondary-font);
-    color: var(--bg-primary);
+    color: var(--primary);
   }
 
   .main-btn {
@@ -30,6 +44,9 @@ const Wrapper = styled.section`
 
   td {
     align-content: center;
+  }
+
+  .btn-back {
   }
 
   /* RESPONSIVE */

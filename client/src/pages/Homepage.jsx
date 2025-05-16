@@ -28,14 +28,13 @@ export const loader = async () => {
 
 const HomepageContext = createContext();
 
-const Homepage = ({ queryClient }) => {
+const Homepage = () => {
   const { user } = useLoaderData();
-  console.log(user);
+  // console.log(user);
 
   const logoutUser = async () => {
     navigate("/");
     await customFetch.get("/auth/logout");
-    queryClient.invalidateQueries();
     toast.success("Logging out...");
   };
 

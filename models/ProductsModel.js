@@ -20,10 +20,12 @@ const ProductsSchema = new mongoose.Schema(
     prodPrice: {
       type: Number,
       alias: "price",
+      default: 0,
     },
-    prodImg: {
-      type: String,
-      alias: "image",
+    prodQty: {
+      type: Number,
+      alias: "quantity",
+      default: 0,
     },
     prodIsFotm: {
       type: Boolean,
@@ -36,6 +38,10 @@ const ProductsSchema = new mongoose.Schema(
     prodBrandID: {
       type: String,
       alias: "brandID",
+    },
+    prodIsDel: {
+      type: Boolean,
+      alias: "isDel",
     },
   },
   { timestamps: true }

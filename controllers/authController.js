@@ -1,18 +1,25 @@
 import { StatusCodes } from "http-status-codes";
 
 import Users from "../models/UsersModel.js";
+import UserInfo from "../models/UserInfoModel.js";
 import { comparePassword, hashPassword } from "../utils/passwordUtils.js";
 import { UnauthenticatedError } from "../error/errorCodes.js";
 import { createJWT } from "../utils/tokenUtils.js";
 
 export const register = async (req, res) => {
   const isFirstAccount = (await Users.countDocuments()) === 0;
-  req.body.userType = isFirstAccount ? "super admin" : "customer";
+  req.body.userUserType = isFirstAccount ? "Super Admin" : "Customer";
 
-  const hashedPassword = await hashPassword(req.body.password);
-  req.body.password = hashedPassword;
+  const hashedPassword = await hashPassword(req.body.userPassword);
+  req.body.userPassword = hashedPassword;
+  // req.body.userIsDel = 0;
+  // console.log(req.body);
 
   const user = await Users.create(req.body);
+  const obj = Object();
+  obj.userUserID = user._id;
+  // console.log(obj);
+  const userInfo = await UserInfo.create(obj);
   // res.status(StatusCodes.CREATED).json({ user });
   // res.status(StatusCodes.CREATED).json(req.body.userType + "Created");
   res.status(StatusCodes.CREATED).json("User Registration Success!");

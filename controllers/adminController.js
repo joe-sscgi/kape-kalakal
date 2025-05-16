@@ -1,9 +1,44 @@
 import { StatusCodes } from "http-status-codes";
+import cloudinary from "cloudinary";
+import { promises as fs } from "fs";
 
 import Brands from "../models/BrandsModel.js";
 import Products from "../models/ProductsModel.js";
 import Users from "../models/UsersModel.js";
+import UserInfo from "../models/UserInfoModel.js";
+import Recipes from "../models/RecipesModel.js";
+import Products_Images from "../models/ProductImgsModel.js";
 import { hashPassword } from "../utils/passwordUtils.js";
+import { response } from "express";
+
+function createUploadPath(type, data) {
+  var uploadType = "";
+  var uploadCat = "";
+  var uploadTypeCat = "";
+  var uploadFolderName = "";
+  var uploadPath = "client/src/assets/images/Uploads/";
+
+  if (type == "product") {
+    uploadType = "PRODUCTS";
+    uploadCat = data.prodCat.toUpperCase().replace(/\s/g, "_");
+    uploadTypeCat = uploadType + "/" + uploadCat;
+    uploadFolderName = uploadFolderName = data._id;
+  } else if (type == "brand") {
+    uploadType = "BRANDS";
+    uploadTypeCat = uploadType;
+    uploadFolderName = data._id;
+  }
+
+  if (uploadTypeCat && uploadFolderName != "") {
+    uploadPath += uploadTypeCat + "/" + uploadFolderName;
+
+    fs.mkdir(uploadPath, { recursive: true })
+      .then(() => console.log("Directory created successfully"))
+      .catch((err) => console.error("Error creating directory:", err));
+  }
+
+  return;
+}
 
 // BRANDS
 export const getAllBrands = async (req, res) => {
@@ -14,6 +49,23 @@ export const getAllBrands = async (req, res) => {
 export const createBrand = async (req, res) => {
   const brand = await Brands.create(req.body);
   res.status(StatusCodes.CREATED).json({ brand });
+};
+
+export const getBrand = async (req, res) => {
+  const brandData = await Brands.findById(req.params.id);
+  res.status(StatusCodes.OK).json({ brandData });
+};
+
+export const updateBrand = async (req, res) => {
+  const updatedBrand = await Brands.findByIdAndUpdate(req.params.id, req.body);
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "brand updated", Brands: updatedBrand });
+};
+
+export const deleteBrand = async (req, res) => {
+  const deleteBrand = await Brands.findByIdAndDelete(req.params.id);
+  res.status(StatusCodes.OK).json({ msg: "brand deleted", prod: deleteBrand });
 };
 // END BRANDS
 
@@ -37,6 +89,8 @@ export const createProduct = async (req, res) => {
   }
 
   const product = await Products.create(req.body);
+  createUploadPath("product", product);
+
   res.status(StatusCodes.CREATED).json({ product });
 };
 
@@ -68,6 +122,32 @@ export const deleteProduct = async (req, res) => {
   const deleteProd = await Products.findByIdAndDelete(req.params.id);
   res.status(StatusCodes.OK).json({ msg: "product deleted", prod: deleteProd });
 };
+
+export const createProductImgs = async (req, res) => {
+  // console.log(1, req.body);
+  var prodImgs = { ...req.body };
+  const prodType = "Products";
+  const prodCat = prodImgs.category.replace(/\s/, "_");
+  var ctr = 0;
+  if (req.files) {
+    for (const file of req.files) {
+      const response = await cloudinary.v2.uploader.upload(file.path, {
+        folder: prodType + "/" + prodCat,
+      });
+      await fs.unlink(file.path);
+      file.prodImgProdID = prodImgs.imgID;
+      file.prodImgUrl = response.secure_url;
+      file.prodImgPublicID = response.public_id;
+    }
+    prodImgs = await Products_Images.insertMany(req.files);
+    res.status(StatusCodes.CREATED).json({ prodImgs });
+  }
+};
+
+export const getProductImgs = async (req, res) => {
+  const prodImgs = await Products_Images.find({ prodImgProdID: req.params.id });
+  res.status(StatusCodes.OK).json({ prodImgs });
+};
 // END PRODUCTS
 
 // USERS
@@ -91,10 +171,15 @@ export const createUser = async (req, res) => {
   const isFirstAccount = (await Users.countDocuments()) === 0;
   req.body.userType = isFirstAccount ? "Super Admin" : req.body.useUserType;
 
-  const hashedPassword = await hashPassword(req.body.userPassword);
-  req.body.userPassword = hashedPassword;
+  // const hashedPassword = await hashPassword(req.body.userPassword);
+  // req.body.userPassword = hashedPassword;
 
   const user = await Users.create(req.body);
+
+  const obj = Object();
+  obj.userUserID = user._id;
+  // console.log(obj);
+  const userInfo = await UserInfo.create(obj);
   res.status(StatusCodes.CREATED).json({ user });
 };
 
@@ -129,3 +214,37 @@ export const changePassword = async (req, res) => {
     .json({ msg: "user password changed", job: updatedPassUser });
 };
 // END USERS
+
+// RECIPES
+export const getAllRecipes = async (req, res) => {
+  const recipesData = await Recipes.find({});
+  res.status(StatusCodes.OK).json({ recipesData });
+};
+
+export const createRecipe = async (req, res) => {
+  const recipe = await Recipes.create(req.body);
+  res.status(StatusCodes.CREATED).json({ recipe });
+};
+
+export const getRecipe = async (req, res) => {
+  const recipeData = await Recipes.findById(req.params.id);
+  res.status(StatusCodes.OK).json({ recipeData });
+};
+
+export const updateRecipe = async (req, res) => {
+  const updatedRecipe = await Recipes.findByIdAndUpdate(
+    req.params.id,
+    req.body
+  );
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "recipe updated", Recipe: updatedRecipe });
+};
+
+export const deleteRecipe = async (req, res) => {
+  const deleteRecipe = await Recipes.findByIdAndDelete(req.params.id);
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "recipe deleted", Recipe: deleteRecipe });
+};
+// END RECIPES

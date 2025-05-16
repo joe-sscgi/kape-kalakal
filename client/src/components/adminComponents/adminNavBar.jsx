@@ -1,18 +1,12 @@
 import { Outlet } from "react-router";
 import Wrapper from "../../assets/wrappers/AdminNavBar";
 import AdminNavLinks from "../adminComponents/adminNavLinks";
+import { useAdminDashboardLayoutContext } from "../../pages/AdminDashboardLayout";
 import React, { useState } from "react";
 
 const adminNavBar = () => {
-  const [isMobileActive, setMobileActive] = useState(false);
-
-  const toggleMobileNavbar = () => {
-    if (!isMobileActive) {
-      setMobileActive(true);
-    } else {
-      setMobileActive(false);
-    }
-  };
+  const { isMobileActive, toggleMobileNavbar } =
+    useAdminDashboardLayoutContext();
 
   return (
     <Wrapper>

@@ -5,30 +5,26 @@ import Wrapper from "../assets/wrappers/Login";
 import customFetch from "../utils/customFetch";
 import { Logo, FormRow, SubmitBtn } from "../components/";
 
-export const action =
-  (queryClient) =>
-  async ({ request }) => {
-    const formData = await request.formData();
-    const data = Object.fromEntries(formData);
-    try {
-      const userLoginData = await customFetch.post("/auth/login", data);
-      queryClient.invalidateQueries();
+export const action = async ({ request }) => {
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+  try {
+    const userLoginData = await customFetch.post("/auth/login", data);
+    const userType = userLoginData.data.userData.userUserType;
 
-      const userType = userLoginData.data.userData.userUserType;
-
-      toast.success("Login successful");
-      if (userType == "Super Admin" || userType == "Admin") {
-        return redirect("/admin");
-        // console.log("admin");
-      } else {
-        return redirect("/homepage");
-        // console.log("customer");
-      }
-    } catch (error) {
-      toast.error(error?.response?.data?.msg);
-      return error;
+    toast.success("Login successful");
+    if (userType == "Super Admin" || userType == "Admin") {
+      return redirect("/admin");
+      // console.log("admin");
+    } else {
+      return redirect("/homepage");
+      // console.log("customer");
     }
-  };
+  } catch (error) {
+    toast.error(error?.response?.data?.msg);
+    return error;
+  }
+};
 
 const Login = () => {
   return (

@@ -5,7 +5,7 @@ const Wrapper = styled.div`
   @media (max-width: 1199px) {
     .mobile-nav-active .navmenu {
       width: 50vw;
-      height: 50vh;
+      height: 60vh;
       justify-self: flex-end;
     }
   }

@@ -26,7 +26,10 @@ export const levelOfAccess = (req, res, next) => {
     const { userId, userType } = verifyJWT(token);
     req.user = { userId, userType };
 
-    if (req.user.userType != "super admin" || req.user.userType != "admin") {
+    if (
+      req.user.userUserType != "Super Admin" ||
+      req.user.userUserType != "Admin"
+    ) {
       throw new UnauthorizedError("Unauthorized access");
     }
     // console.log(req.user.userType);

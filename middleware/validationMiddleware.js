@@ -118,8 +118,7 @@ export const validateIdParam = withValidationErrors([
     if (!isValidMongoId) throw new BadRequestError("invalid MongoDB id");
     const user = await Users.findById(value);
     if (!user) throw new NotFoundError(`no user with id ${value}`);
-    // console.log(user.userType);
-    const isSuperAdmin = req.user.userType === "Super Admin";
+    const isSuperAdmin = user.userUserType === "Super Admin";
 
     if (!isSuperAdmin) throw new UnauthorizedError("Unathorized Access!");
   }),

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const Wrapper = styled.section`
-  background-color: blue;
+  background-color: var(--primary);
   font-family: var(--main-font);
   font-size: 18px;
   color: var(--primary);
@@ -25,9 +25,46 @@ const Wrapper = styled.section`
     color: var(--primary);
   }
 
+  div#myTable_wrapper {
+    background-color: var(--primary);
+    padding: 24px;
+    margin-bottom: 14px;
+    border: 2px solid var(--bg-primary);
+  }
+
+  .main-table {
+    border-collapse: separate;
+    color: var(--bg-primary);
+    /* border-spacing: 0 5px; */
+  }
+
+  .main-table thead {
+    background-color: #f2f2f2;
+  }
+
+  .main-table thead {
+    background-color: #f2f2f2;
+  }
+
+  .main-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  .prod-col {
+    padding: 14px;
+  }
+
+  td.prod_fotm {
+    text-align: center;
+  }
+
+  td.prod_best {
+    text-align: center;
+  }
+
   .main-btn {
     font-family: var(--main-font);
-    font-size: 18px;
+    font-size: 14px;
     /* color: var(--bg-primary); */
     margin: 0;
     margin-right: 10px;
@@ -44,6 +81,14 @@ const Wrapper = styled.section`
 
   td {
     align-content: center;
+  }
+
+  .prod-notes {
+    color: var(--primary);
+  }
+
+  .prod-notes p {
+    margin-bottom: 10px;
   }
 
   /* RESPONSIVE */

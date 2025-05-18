@@ -22,6 +22,7 @@ import DT from "datatables.net-bs5";
 import "datatables.net-select-dt";
 import "datatables.net-responsive-dt";
 import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
+// import DataTable from "react-data-table-component";
 
 // import $ from "jquery";
 // import "datatables.net";
@@ -57,24 +58,24 @@ const MainProds = () => {
 
   // SEARCH FILTER
   const [filteredData, setFilteredData] = useState(prods);
-  const [filteredValue, setFilteredValue] = useState("");
+  // const [filteredValue, setFilteredValue] = useState("");
 
-  const handleSelectChange = (event) => {
-    const value = event.target.value;
-    setFilteredValue(value);
-  };
+  // const handleSelectChange = (event) => {
+  //   const value = event.target.value;
+  //   setFilteredValue(value);
+  // };
 
-  if (filteredValue) {
-    if (filteredValue != "Select Category") {
-      const newFilteredData = prods.filter(
-        (item) => item.prodCat === filteredValue
-      );
-      setFilteredValue("");
-      setFilteredData(newFilteredData);
-    } else {
-      setFilteredData(prods);
-    }
-  }
+  // if (filteredValue) {
+  //   if (filteredValue != "Select Category") {
+  //     const newFilteredData = prods.filter(
+  //       (item) => item.prodCat === filteredValue
+  //     );
+  //     setFilteredValue("");
+  //     setFilteredData(newFilteredData);
+  //   } else {
+  //     setFilteredData(prods);
+  //   }
+  // }
 
   return (
     <Wrapper>
@@ -86,7 +87,7 @@ const MainProds = () => {
         {/* <!-- End Section Title --> */}
 
         {/* <div className="container"> */}
-        <div className="searchFormContainer">
+        {/* <div className="searchFormContainer">
           <div className="container search-container row">
             <div className="col-sm-4">
               <label htmlFor="searchFilter" className="lblSearchFilter">
@@ -102,13 +103,13 @@ const MainProds = () => {
               />
             </div>
           </div>
-        </div>
+        </div> */}
 
-        <DataTable id="myTable" name="myTable" className="striped">
+        <DataTable id="myTable" name="myTable" className="main-table striped">
           <thead>
             <tr>
               <th>
-                <Link to={"/admin/search-product"}>
+                <Link to={"/admin/add-product"}>
                   <Button
                     type="button"
                     className="btn search-prod-btn main-btn"
@@ -119,20 +120,20 @@ const MainProds = () => {
                 </Link>
               </th>
               <th>Name</th>
-              <th>Description</th>
+              {/* <th>Description</th> */}
               <th>Category</th>
               <th>Price</th>
               <th>Qty</th>
-              <th>FotM</th>
-              <th>Best</th>
-              <th>Brand</th>
+              <th className="text-center">FotM</th>
+              <th className="text-center">Best</th>
+              {/* <th>Brand</th> */}
             </tr>
           </thead>
           <tbody>
             {filteredData.map((prod) => {
               return (
-                <tr key={prod._id}>
-                  <td>
+                <tr key={prod._id} className="prod-row">
+                  <td className="prod-col">
                     <Link to={`/admin/edit-product/${prod._id}`}>
                       <Button
                         type="button"
@@ -152,8 +153,8 @@ const MainProds = () => {
                       </Button>
                     </Link>
                   </td>
-                  <td>{prod.prodName}</td>
-                  <td>
+                  <td className="prod-col">{prod.prodName}</td>
+                  {/* <td>
                     <Button
                       type="button"
                       variant="primary"
@@ -163,36 +164,37 @@ const MainProds = () => {
                       <HiOutlineMagnifyingGlassCircle />
                       <span>View</span>
                     </Button>
-                  </td>
-                  <td>{prod.prodCat}</td>
-                  <td>{prod.prodPrice}</td>
-                  <td>{prod.prodQty}</td>
-                  <td>
+                  </td> */}
+                  <td className="prod-col">{prod.prodCat}</td>
+                  <td className="prod-col">{prod.prodPrice}</td>
+                  <td className="prod-col">{prod.prodQty}</td>
+                  <td className="prod-col prod_fotm">
                     {prod.prodIsFotm ? (
                       <FaRegCheckCircle />
                     ) : (
                       <MdCheckBoxOutlineBlank />
                     )}
                   </td>
-                  <td>
+                  <td className="prod-col prod_best">
                     {prod.prodIsBest ? (
                       <FaRegCheckCircle />
                     ) : (
                       <MdCheckBoxOutlineBlank />
                     )}
                   </td>
-                  <td>{prod.prodBrandID}</td>
+                  {/* <td>{prod.prodBrandID}</td> */}
                 </tr>
               );
             })}
           </tbody>
         </DataTable>
-        <p>Flavor of the Month</p>
-        <p>Best Seller</p>
-        <Link to={"/admin/maintenance"} className="btn-back">
-          <FiArrowLeftCircle /> Back
-        </Link>
-        {/* </div> */}
+        <div className="container prod-notes">
+          <p>Flavor of the Month</p>
+          <p>Best Seller</p>
+          <Link to={"/admin/maintenance"} className="btn-back">
+            <FiArrowLeftCircle /> Back
+          </Link>
+        </div>
       </section>
 
       <Modal

@@ -139,7 +139,7 @@ const EditProd = () => {
                     type="button"
                     className="btn edit-prod-btn edit-prod-back"
                   >
-                    <span>Canel</span>
+                    <span>Cancel</span>
                   </Button>
                 </Link>
                 {/* <a

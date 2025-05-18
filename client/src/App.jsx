@@ -55,6 +55,7 @@ import { action as actionEditRecipe } from "./pages/adminPages/Maintenance/MainR
 import { action as actionDelRecipe } from "./pages/adminPages/Maintenance/MainRecipes/DelRecipe";
 
 // LOADERS
+import { loader as landingLoader } from "./pages/Landing";
 import { loader as homepageLoader } from "./pages/Homepage";
 import { loader as profileLoader } from "./pages/Profile";
 import { loader as adminDashboardLoader } from "./pages/AdminDashboardLayout";
@@ -91,6 +92,7 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Landing />,
+        loader: landingLoader,
       },
       {
         path: "/login",

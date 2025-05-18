@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Link, Links } from "react-router-dom";
+import { Link, Links, useLoaderData } from "react-router-dom";
 import Carousel from "react-bootstrap/Carousel";
 import React, { useState, useEffect, useRef } from "react";
 import AOS from "aos";
@@ -21,6 +21,8 @@ import "font-awesome/css/font-awesome.min.css";
 
 import Wrapper from "../assets/wrappers/Landing";
 import { Footer } from "../components";
+import customFetch from "../utils/customFetch";
+
 import logo from "../assets/images/logo/kape-kalakal-logo.jpg";
 import hero1 from "../assets/images/hero-banner/hero-banner-1.jpg";
 import hero2 from "../assets/images/hero-banner/hero-banner-3.jpg";
@@ -52,12 +54,22 @@ import author3 from "../assets/img/testimonials/testimonials-3.jpg";
 import author4 from "../assets/img/testimonials/testimonials-4.jpg";
 import author5 from "../assets/img/testimonials/testimonials-5.jpg";
 
-// import "../assets/vendor/isotope-layout/isotope.pkgd.min.js";
-// import "../assets/vendor/isotope-layout/isotope.pkgd.js";
-// import "../assets/js/main.js";
-// import Isotope from "isotope-layout";
+export const loader = async () => {
+  try {
+    const { data } = await customFetch.get("/");
+
+    return data.allData;
+  } catch (error) {
+    // return redirect("/admin");
+  }
+};
 
 const Landing = () => {
+  const brands = useLoaderData().brands;
+  const prods = useLoaderData().prods;
+  const recipes = useLoaderData().recipes;
+  console.log(prods);
+
   const [isMobileActive, setMobileActive] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -194,12 +206,10 @@ const Landing = () => {
                         Contact
                       </a>
                     </li>
-                    <li class="dropdown">
-                      <a href="#">
-                        <Link to="/login" className="nav-link">
-                          Login
-                        </Link>
-                      </a>
+                    <li className="dropdown">
+                      <Link to="/login" className="nav-link">
+                        Login
+                      </Link>
                       <ul>
                         <li>
                           <Link to="/register" className="nav-link">
@@ -403,229 +413,28 @@ const Landing = () => {
               data-aos="fade-up"
               data-aos-delay="200"
             >
-              <div className="col-lg-6 menu-item isotope-item filter-item filter-coffee">
-                <img
-                  src={el_salvador_light_roast}
-                  className="menu-img"
-                  alt=""
-                />
-                <div className="menu-content">
-                  <a href="#">
-                    El Salvador Don Jaime Pacas Natural [Light roast]
-                  </a>
-                  <span>₱2,100.00</span>
-                </div>
-                <div className="menu-ingredients">
-                  <p>
-                    Floral aroma, taste of raspberry, prune and red wine,
-                    candy-like sweetness and accompanying aftertaste.
-                  </p>
-                </div>
-              </div>
-              {/* <!-- Menu Item --> */}
-
-              <div className="col-lg-6 menu-item isotope-item filter-item filter-coffee">
-                <img
-                  src={el_salvador_medium_roast}
-                  className="menu-img"
-                  alt=""
-                />
-                <div className="menu-content">
-                  <a href="#">Seasonal Blend Haru Kochi 2025 [Medium roast]</a>
-                  <span>₱1,600.00</span>
-                </div>
-                <div className="menu-ingredients">
-                  <p>
-                    Floral aroma, taste of fermented grape, blood orange and
-                    mint, caramel-like sweetness and accompanying aftertaste.
-                  </p>
-                </div>
-              </div>
-              {/* <!-- Menu Item --> */}
-
-              <div className="col-lg-6 menu-item isotope-item filter-item filter-coffee">
-                <img src={haru_kochi_dark_roast} className="menu-img" alt="" />
-                <div className="menu-content">
-                  <a href="#">Kurasu House Blend Dark [Dark roast]</a>
-                  <span>₱1,200.00</span>
-                </div>
-                <div className="menu-ingredients">
-                  <p>
-                    Rich, dark chocolate and subtle orange peel. For your
-                    everyday coffee.
-                  </p>
-                </div>
-              </div>
-              {/* <!-- Menu Item --> */}
-
-              <div className="col-lg-6 menu-item isotope-item filter-item filter-brewing">
-                <img
-                  src={Kalita_Mino_yaki_Dripper}
-                  className="menu-img"
-                  alt=""
-                />
-                <div className="menu-content">
-                  <a href="#">Kalita Mino-yaki Dripper</a>
-                  <span>₱1,300.00</span>
-                </div>
-                <div className="menu-ingredients">
-                  <p>
-                    Mino Ware has 1300 years of history, produced in Japan’s
-                    biggest pottery production area, Tono region in Gifu.
-                  </p>
-                </div>
-              </div>
-              {/* <!-- Menu Item --> */}
-
-              <div className="col-lg-6 menu-item isotope-item filter-item filter-brewing">
-                <img
-                  src={kinto_mini_pour_over_kettle_430ml}
-                  className="menu-img"
-                  alt=""
-                />
-                <div className="menu-content">
-                  <a href="#">KINTO MINI POUR OVER KETTLE 430mL</a>
-                  <span>₱1,800.00</span>
-                </div>
-                <div className="menu-ingredients">
-                  <p>
-                    A sleek and minimalistic mini kettle that is perfect for
-                    your daily coffee needs.
-                  </p>
-                </div>
-              </div>
-              {/* <!-- Menu Item --> */}
-
-              <div className="col-lg-6 menu-item isotope-item filter-item filter-brewing">
-                <img src={ORIGAMI_ReWork_Dripper} className="menu-img" alt="" />
-                <div className="menu-content">
-                  <a href="#">ORIGAMI ReWork Dripper</a>
-                  <span>₱1,400.00</span>
-                </div>
-                <div className="menu-ingredients">
-                  <p>
-                    Through the ORIGAMI ReWork Dripper line, they introduce a
-                    new feel and concept, using recycled material and showcasing
-                    the raw beauty of it.
-                  </p>
-                </div>
-              </div>
-              {/* <!-- Menu Item --> */}
-
-              <div className="col-lg-6 menu-item isotope-item filter-item filter-accessories">
-                <img
-                  src={Kurasu_original_postcard}
-                  className="menu-img"
-                  alt=""
-                />
-                <div className="menu-content">
-                  <a href="#">Kurasu original postcard</a>
-                  <span>₱300.00</span>
-                </div>
-                <div className="menu-ingredients">
-                  <p>
-                    That warm feeling of nostalgia and the yearn for the place
-                    you visited in the past, or long to visit - postcard is a
-                    small piece of joy you send to your loved one to say "wish
-                    you were here".
-                  </p>
-                </div>
-              </div>
-              {/* <!-- Menu Item --> */}
-
-              <div className="col-lg-6 menu-item isotope-item filter-item filter-accessories">
-                <img src={two_Tone_Logo_Sticker} className="menu-img" alt="" />
-                <div className="menu-content">
-                  <a href="#">2 Tone Logo Sticker</a>
-                  <span>₱100.00</span>
-                </div>
-                <div className="menu-ingredients">
-                  <p>
-                    A simple design with Kurasu's brand logo and name. You don't
-                    have to decide if you want the white or black version, you
-                    can get them both.
-                  </p>
-                </div>
-              </div>
-              {/* <!-- Menu Item --> */}
-
-              <div className="col-lg-6 menu-item isotope-item filter-item filter-accessories">
-                <img
-                  src={Kurasu_Logo_T_shirts_Black}
-                  className="menu-img"
-                  alt=""
-                />
-                <div className="menu-content">
-                  <a href="#">Kurasu Logo T-shirts (Black)</a>
-                  <span>₱2,600.00</span>
-                </div>
-                <div className="menu-ingredients">
-                  <p>
-                    A simple and minimalistic t-shirt in black is perfect for
-                    every day. Beautifully made in Japan with comfortable and
-                    sturdy material that feels great when worn.
-                  </p>
-                </div>
-              </div>
-              {/* <!-- Menu Item --> */}
-
-              <div className="col-lg-6 menu-item isotope-item filter-item filter-tea">
-                <img
-                  src={Matcha_Kurasu_Blend_No_Sugar}
-                  className="menu-img"
-                  alt=""
-                />
-                <div className="menu-content">
-                  <a href="#">Matcha Kurasu Blend (No Sugar)</a>
-                  <span>₱3,700.00</span>
-                </div>
-                <div className="menu-ingredients">
-                  <p>
-                    Our original blend of ceremonial grade matcha are all farmed
-                    in Kansai area and processed in Kyoto, designed to ensure
-                    the perfect, authentic matcha experience throughout the
-                    year.
-                  </p>
-                </div>
-              </div>
-              {/* <!-- Menu Item --> */}
-
-              <div className="col-lg-6 menu-item isotope-item filter-item filter-tea">
-                <img
-                  src={Matcha_Kurasu_Blend_With_Sugar}
-                  className="menu-img"
-                  alt=""
-                />
-                <div className="menu-content">
-                  <a href="#">Matcha Kurasu Blend (With Sugar)</a>
-                  <span>₱3,900.00</span>
-                </div>
-                <div className="menu-ingredients">
-                  <p>
-                    This Matcha Kurasu Blend (With Sugar) has sugar readily
-                    mixed in, making it quick easy to make your daily matcha
-                    drink- simply add water or milk of your choice to enjoy the
-                    taste of Kyoto.
-                  </p>
-                </div>
-              </div>
-              {/* <!-- Menu Item --> */}
-
-              <div className="col-lg-6 menu-item isotope-item filter-item filter-tea">
-                <img src={Matcha_SUI_Blend} className="menu-img" alt="" />
-                <div className="menu-content">
-                  <a href="#">Matcha SUI Blend</a>
-                  <span>₱1,900.00</span>
-                </div>
-                <div className="menu-ingredients">
-                  <p>
-                    SUI blend is a blend of matcha powder designed to be a
-                    perfect pick for tea ceremony's use for its well balanced
-                    Umami and bitterness.
-                  </p>
-                </div>
-              </div>
-              {/* <!-- Menu Item --> */}
+              {prods.map((prod) => {
+                return (
+                  <div
+                    className="col-lg-6 menu-item isotope-item filter-item filter-{`prod.prodCat`}"
+                    key={prod._id}
+                  >
+                    <img
+                      src={el_salvador_light_roast}
+                      className="menu-img"
+                      alt=""
+                    />
+                    <div className="menu-content">
+                      <a href="#">{prod.prodName}</a>
+                      <span>₱{prod.prodPrice}</span>
+                    </div>
+                    <div className="menu-ingredients">
+                      <p>{prod.prodDesc}</p>
+                    </div>
+                  </div>
+                  /* <!-- Menu Item --> */
+                );
+              })}
             </div>
             {/* <!-- Menu Container --> */}
           </div>

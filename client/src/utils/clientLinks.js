@@ -3,7 +3,7 @@ import React from "react";
 const links = [
   {
     text: "Products",
-    path: "products",
+    path: "shop",
   },
   {
     text: "Brands",
@@ -15,8 +15,8 @@ const links = [
   },
   {
     text: "Cart",
-    path: ".",
-  }
+    path: "cart",
+  },
   {
     text: "Profile",
     path: "profile",

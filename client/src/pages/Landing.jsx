@@ -28,6 +28,7 @@ import hero1 from "../assets/images/hero-banner/hero-banner-1.jpg";
 import hero2 from "../assets/images/hero-banner/hero-banner-3.jpg";
 import hero3 from "../assets/images/hero-banner/hero-banner-5.jpg";
 
+import defaultImg from "../assets/images/default-img.jpg";
 import el_salvador_light_roast from "../assets/images/products/coffee/El-Salvador-Don-Jaime-Pacas-Natural-Light-Roast.jpg";
 import el_salvador_medium_roast from "../assets/images/products/coffee/Seasonal-Blend-Haru-Kochi-Medium-Roast.jpg";
 import haru_kochi_dark_roast from "../assets/images/products/coffee/Seasonal-Blend-Haru-Kochi-Medium-Roast.jpg";
@@ -67,8 +68,8 @@ export const loader = async () => {
 const Landing = () => {
   const brands = useLoaderData().brands;
   const prods = useLoaderData().prods;
-  const recipes = useLoaderData().recipes;
-  console.log(prods);
+  const prodImgs = useLoaderData().prodImgs;
+  // console.log(prodImgs);
 
   const [isMobileActive, setMobileActive] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -177,15 +178,6 @@ const Landing = () => {
                         onClick={toggleMobileNavbar}
                       >
                         Brands
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#testimonials"
-                        className="nav-link"
-                        onClick={toggleMobileNavbar}
-                      >
-                        Testimonials
                       </a>
                     </li>
                     <li>
@@ -356,6 +348,9 @@ const Landing = () => {
               <span>Check Our </span>
               <span className="description-title">Products</span>
             </div>
+            <h3 className="sub-sub-header">
+              These are our <span>BEST SELLERS</span>
+            </h3>
           </div>
           {/* <!-- End Section Title --> */}
 
@@ -414,16 +409,25 @@ const Landing = () => {
               data-aos-delay="200"
             >
               {prods.map((prod) => {
+                var catVal = "*";
+                if (prod.prodCat != "Select Category") {
+                  catVal = prod.prodCat.toLowerCase();
+                } else if (prod.prodCat == "Brewing Grear") {
+                  catVal = "brewing";
+                }
+                var imgVal = defaultImg;
+                prodImgs.map((prodImg) => {
+                  if (prodImg.prodImgProdID == prod._id) {
+                    imgVal = prodImg.prodImgUrl;
+                    return imgVal;
+                  }
+                });
                 return (
                   <div
-                    className="col-lg-6 menu-item isotope-item filter-item filter-{`prod.prodCat`}"
+                    className={`col-lg-6 menu-item isotope-item filter-item filter-${catVal}`}
                     key={prod._id}
                   >
-                    <img
-                      src={el_salvador_light_roast}
-                      className="menu-img"
-                      alt=""
-                    />
+                    <img src={imgVal} className="menu-img" alt="" />
                     <div className="menu-content">
                       <a href="#">{prod.prodName}</a>
                       <span>₱{prod.prodPrice}</span>
@@ -455,205 +459,33 @@ const Landing = () => {
 
           <div className="container">
             <div className="row gy-5">
-              <div
-                className="col-lg-4 col-md-6"
-                data-aos="fade-up"
-                data-aos-delay="100"
-              >
-                <div className="brand">
-                  <div className="pic">
-                    <img src={daibo} className="img-fluid" alt="" />
+              {brands.map((brand) => {
+                var imgVal = defaultImg;
+                if (brand.brandImg) {
+                  imgVal = brand.brandImg;
+                }
+                return (
+                  <div
+                    className="col-lg-4 col-md-6"
+                    data-aos="fade-up"
+                    data-aos-delay="100"
+                  >
+                    <div className="brand">
+                      <div className="pic">
+                        <img src={imgVal} className="img-fluid" alt="" />
+                      </div>
+                      <div className="brand-info">
+                        <h4>{brand.brandName}</h4>
+                      </div>
+                    </div>
                   </div>
-                  <div className="brand-info">
-                    <h4>Daibo</h4>
-                  </div>
-                </div>
-              </div>
-              {/* <!-- End Brand --> */}
-
-              <div
-                className="col-lg-4 col-md-6"
-                data-aos="fade-up"
-                data-aos-delay="200"
-              >
-                <div className="brand">
-                  <div className="pic">
-                    <img src={simplify} className="img-fluid" alt="" />
-                  </div>
-                  <div className="brand-info">
-                    <h4>Simplify</h4>
-                  </div>
-                </div>
-              </div>
-              {/* <!-- End Brand --> */}
-
-              <div
-                className="col-lg-4 col-md-6"
-                data-aos="fade-up"
-                data-aos-delay="300"
-              >
-                <div className="brand">
-                  <div className="pic">
-                    <img src={claska} className="img-fluid" alt="" />
-                  </div>
-                  <div className="brand-info">
-                    <h4>Claska</h4>
-                  </div>
-                </div>
-              </div>
-              {/* <!-- End Brand --> */}
+                  /* <!-- End Brand --> */
+                );
+              })}
             </div>
           </div>
         </section>
         {/* <!-- /Brands Section --> */}
-
-        {/* <!-- Testimonials Section --> */}
-        <section
-          id="testimonials"
-          className="testimonials section dark-background"
-        >
-          <img
-            src="src/assets/img/testimonials-bg.jpg"
-            className="testimonials-bg"
-            alt=""
-          />
-
-          <div className="container" data-aos="fade-up" data-aos-delay="100">
-            <Swiper
-              modules={[Navigation, Pagination, Autoplay]}
-              spaceBetween={50}
-              slidesPerView={1}
-              navigation
-              pagination={{ clickable: true }}
-              autoplay={{ delay: 3000 }}
-            >
-              <SwiperSlide>
-                <div className="testimonial-item">
-                  <img src={author1} className="testimonial-img" alt="" />
-                  <h3>Saul Goodman</h3>
-                  <h4>Ceo &amp; Founder</h4>
-                  <div className="stars">
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                  </div>
-                  <p>
-                    <i className="bi bi-quote quote-icon-left"></i>
-                    <span>
-                      Proin iaculis purus consequat sem cure digni ssim donec
-                      porttitora entum suscipit rhoncus. Accusantium quam,
-                      ultricies eget id, aliquam eget nibh et. Maecen aliquam,
-                      risus at semper.
-                    </span>
-                    <i className="bi bi-quote quote-icon-right"></i>
-                  </p>
-                </div>
-                {/* <!-- End testimonial item --> */}
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="testimonial-item">
-                  <img src={author2} className="testimonial-img" alt="" />
-                  <h3>Sara Wilsson</h3>
-                  <h4>Designer</h4>
-                  <div className="stars">
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                  </div>
-                  <p>
-                    <i className="bi bi-quote quote-icon-left"></i>
-                    <span>
-                      Export tempor illum tamen malis malis eram quae irure esse
-                      labore quem cillum quid cillum eram malis quorum velit
-                      fore eram velit sunt aliqua noster fugiat irure amet legam
-                      anim culpa.
-                    </span>
-                    <i className="bi bi-quote quote-icon-right"></i>
-                  </p>
-                </div>
-                {/* <!-- End testimonial item --> */}
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="testimonial-item">
-                  <img src={author3} className="testimonial-img" alt="" />
-                  <h3>Jena Karlis</h3>
-                  <h4>Store Owner</h4>
-                  <div className="stars">
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                  </div>
-                  <p>
-                    <i className="bi bi-quote quote-icon-left"></i>
-                    <span>
-                      Enim nisi quem export duis labore cillum quae magna enim
-                      sint quorum nulla quem veniam duis minim tempor labore
-                      quem eram duis noster aute amet eram fore quis sint minim.
-                    </span>
-                    <i className="bi bi-quote quote-icon-right"></i>
-                  </p>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="testimonial-item">
-                  <img src={author4} className="testimonial-img" alt="" />
-                  <h3>Matt Brandon</h3>
-                  <h4>Freelancer</h4>
-                  <div className="stars">
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                  </div>
-                  <p>
-                    <i className="bi bi-quote quote-icon-left"></i>
-                    <span>
-                      Fugiat enim eram quae cillum dolore dolor amet nulla culpa
-                      multos export minim fugiat minim velit minim dolor enim
-                      duis veniam ipsum anim magna sunt elit fore quem dolore
-                      labore illum veniam.
-                    </span>
-                    <i className="bi bi-quote quote-icon-right"></i>
-                  </p>
-                </div>
-                {/* <!-- End testimonial item --> */}
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="testimonial-item">
-                  <img src={author5} className="testimonial-img" alt="" />
-                  <h3>John Larson</h3>
-                  <h4>Entrepreneur</h4>
-                  <div className="stars">
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                    <i className="bi bi-star-fill"></i>
-                  </div>
-                  <p>
-                    <i className="bi bi-quote quote-icon-left"></i>
-                    <span>
-                      Quis quorum aliqua sint quem legam fore sunt eram irure
-                      aliqua veniam tempor noster veniam enim culpa labore duis
-                      sunt culpa nulla illum cillum fugiat legam esse veniam
-                      culpa fore nisi cillum quid.
-                    </span>
-                    <i className="bi bi-quote quote-icon-right"></i>
-                  </p>
-                </div>
-                {/* <!-- End testimonial item --> */}
-              </SwiperSlide>
-            </Swiper>
-          </div>
-        </section>
-        {/* <!-- /Testimonials Section --> */}
 
         {/* <!-- Recipes Section --> */}
         <section id="recipes" className="recipes section">
@@ -700,13 +532,7 @@ const Landing = () => {
                             recreate your Kurasu cafe experience at home.
                           </p>
                         </div>
-                        <div className="col-lg-4 text-center order-1 order-lg-2">
-                          {/* <!-- <img
-                        src="assets/img/recipes-1.jpg"
-                        alt=""
-                        className="img-fluid"
-                      /> --> */}
-                        </div>
+                        <div className="col-lg-4 text-center order-1 order-lg-2"></div>
                       </div>
                     </Tab.Pane>
                     <Tab.Pane eventKey="non-coffee">
@@ -719,13 +545,7 @@ const Landing = () => {
                             so you can recreate them at home.
                           </p>
                         </div>
-                        <div className="col-lg-4 text-center order-1 order-lg-2">
-                          {/* <!-- <img
-                        src="assets/img/recipes-2.jpg"
-                        alt=""
-                        className="img-fluid"
-                      /> --> */}
-                        </div>
+                        <div className="col-lg-4 text-center order-1 order-lg-2"></div>
                       </div>
                     </Tab.Pane>
                     <Tab.Pane eventKey="kashi-pastry">
@@ -738,13 +558,7 @@ const Landing = () => {
                             these recipes.
                           </p>
                         </div>
-                        <div className="col-lg-4 text-center order-1 order-lg-2">
-                          {/* <!-- <img
-                        src="assets/img/recipes-3.jpg"
-                        alt=""
-                        className="img-fluid"
-                      /> --> */}
-                        </div>
+                        <div className="col-lg-4 text-center order-1 order-lg-2"></div>
                       </div>
                     </Tab.Pane>
                   </Tab.Content>
@@ -766,16 +580,6 @@ const Landing = () => {
             </div>
           </div>
           {/* <!-- End Section Title --> */}
-
-          {/* <!-- <div className="mb-5">
-          <iframe
-            style="width: 100%; height: 400px"
-            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12097.433213460943!2d-74.0062269!3d40.7101282!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xb89d1fe6bc499443!2sDowntown+Conference+Center!5e0!3m2!1smk!2sbg!4v1539943755621"
-            frameborder="0"
-            allowfullscreen=""
-          ></iframe>
-        </div> --> */}
-          {/* <!-- End Google Maps --> */}
 
           <div className="container" data-aos="fade">
             <div className="row gy-5 gx-lg-5">

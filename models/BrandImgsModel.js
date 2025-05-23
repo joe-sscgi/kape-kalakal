@@ -12,6 +12,7 @@ const BrandsImgsSchema = new mongoose.Schema(
     brandImgIsDel: {
       type: Boolean,
       alias: "isDel",
+      default: 0,
     },
   },
   { timestamps: true }

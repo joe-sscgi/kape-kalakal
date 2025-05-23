@@ -27,11 +27,7 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   const userData = await Users.findOne({ userUsername: req.body.userUsername });
-
-  // const userData = await Users.findOne(
-  //   Users.translateAliases({ username: req.body.username })
-  // );
-
+  console.log(userData);
   if (!userData) {
     throw new UnauthenticatedError("User Not Found");
   } else {
@@ -47,6 +43,8 @@ export const login = async (req, res) => {
     userId: userData._id,
     userType: userData.userUserType,
   });
+
+  console.log(1, token);
 
   const oneDay = 1000 * 60 * 60 * 24;
 

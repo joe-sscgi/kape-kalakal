@@ -9,10 +9,13 @@ import {
   Register,
   Landing,
   Error,
+  HomepageLayout,
   Homepage,
+  Shop,
   Profile,
   AdminDashboardLayout,
   AdminDashboard,
+  ManageContent,
   MaintenanceDashboard,
   MainUsers,
   AddUser,
@@ -53,10 +56,13 @@ import { action as actionDelBrand } from "./pages/adminPages/Maintenance/MainBra
 import { action as actionAddRecipe } from "./pages/adminPages/Maintenance/MainRecipes/AddRecipe";
 import { action as actionEditRecipe } from "./pages/adminPages/Maintenance/MainRecipes/EditRecipe";
 import { action as actionDelRecipe } from "./pages/adminPages/Maintenance/MainRecipes/DelRecipe";
+import { action as actionSetContent } from "./pages/adminPages/ManageContent/ManageContent";
 
 // LOADERS
 import { loader as landingLoader } from "./pages/Landing";
-import { loader as homepageLoader } from "./pages/Homepage";
+import { loader as homepageLoader } from "./pages/HomepageLayout";
+import { loader as shopLoader } from "./pages/Shop";
+import { loader as contentLoader } from "./pages/adminPages/ManageContent/ManageContent";
 import { loader as profileLoader } from "./pages/Profile";
 import { loader as adminDashboardLoader } from "./pages/AdminDashboardLayout";
 import { loader as getUsersLoader } from "./pages/adminPages/Maintenance/MainUsers/MainUsers";
@@ -122,10 +128,23 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "homepage",
-    element: <Homepage />,
+    path: "dashboard",
+    element: <HomepageLayout />,
     errorElement: <Error />,
     loader: homepageLoader,
+    children: [
+      {
+        index: true,
+        element: <Homepage />,
+      },
+      {
+        path: "shop",
+        element: <Shop />,
+        errorElement: <Error />,
+        loader: shopLoader,
+        // action: actionSetContent,
+      },
+    ],
   },
   {
     path: "admin",
@@ -136,6 +155,13 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <AdminDashboard />,
+      },
+      {
+        path: "set-content",
+        element: <ManageContent />,
+        errorElement: <Error />,
+        loader: contentLoader,
+        action: actionSetContent,
       },
       {
         path: "profile",

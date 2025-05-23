@@ -40,6 +40,72 @@ function createUploadPath(type, data) {
   return;
 }
 
+// CONTENT
+export const getContentData = async (req, res) => {
+  const countFotm = await Products.countDocuments({ prodIsFotm: 1 });
+  const countBest = await Products.countDocuments({ prodIsBest: 1 });
+  const countFeature = await Brands.countDocuments({ brandIsFeatured: 1 });
+  // console.log(`Total Best Seller: ${count}`);
+
+  const brandsData = await Brands.find({}, null, {
+    sort: { brandName: 1 },
+  });
+
+  const productsData = await Products.find({}, null, {
+    sort: { prodName: 1 },
+  });
+
+  const allData = {};
+  allData.brands = brandsData;
+  allData.countFeature = countFeature;
+  allData.prods = productsData;
+  allData.countFotm = countFotm;
+  allData.countBest = countBest;
+
+  res.status(StatusCodes.OK).json({ allData });
+};
+
+export const setContentData = async (req, res) => {
+  const contentData = req.body;
+
+  if (contentData.manageAction == "Remove") {
+    if (contentData.manageFeat == "fotm") {
+      contentData.prodIsFotm = 0;
+    } else if (contentData.manageFeat == "best") {
+      contentData.prodIsBest = 0;
+    } else if (contentData.manageFeat == "feat") {
+      contentData.brandIsFeatured = 0;
+    }
+  } else if (contentData.manageAction == "Set") {
+    if (contentData.manageFeat == "fotm") {
+      contentData.prodIsFotm = 1;
+    } else if (contentData.manageFeat == "best") {
+      contentData.prodIsBest = 1;
+    } else if (contentData.manageFeat == "feat") {
+      contentData.brandIsFeatured = 1;
+    }
+  }
+
+  if (contentData.manageType == "Product") {
+    const updatedProd = await Products.findByIdAndUpdate(
+      contentData.manageID,
+      contentData
+    );
+
+    res
+      .status(StatusCodes.OK)
+      .json({ msg: "product updated", Products: updatedProd });
+  } else if (contentData.manageType == "Brand") {
+    const updatedBrand = await Brands.findByIdAndUpdate(
+      contentData.manageID,
+      contentData
+    );
+    res
+      .status(StatusCodes.OK)
+      .json({ msg: "brand updated", Brands: updatedBrand });
+  }
+};
+
 // BRANDS
 export const getAllBrands = async (req, res) => {
   const brandsData = await Brands.find({});
@@ -71,8 +137,117 @@ export const deleteBrand = async (req, res) => {
 
 // PRODUCTS
 export const getAllProducts = async (req, res) => {
-  const productsData = await Products.find({});
-  res.status(StatusCodes.OK).json({ productsData });
+  // const productsData = await Products.find({});
+  // res.status(StatusCodes.OK).json({ productsData });
+
+  // MULTIPLE IMAGES
+  // try {
+  //   // 1. Get all products
+  //   const productsData = await Products.find({});
+
+  //   // 2. Extract all product IDs
+  //   const productIds = productsData.map((product) => product._id);
+
+  //   // 3. Find all images whose prodImgProdID matches any product ID
+  //   const imagesData = await Products_Images.find({
+  //     prodImgProdID: { $in: productIds },
+  //   });
+
+  //   // 4. Group images by product ID for easy lookup
+  //   const imagesByProductId = imagesData.reduce((acc, image) => {
+  //     const key = image.prodImgProdID.toString();
+  //     if (!acc[key]) acc[key] = [];
+  //     acc[key].push(image);
+  //     return acc;
+  //   }, {});
+
+  //   // 5. Attach images array to each product manually
+  //   const productsWithImages = productsData.map((product) => {
+  //     return {
+  //       ...product.toObject(),
+  //       images: imagesByProductId[product._id.toString()] || [],
+  //     };
+  //   });
+
+  //   res.status(StatusCodes.OK).json({ productsData: productsWithImages });
+  // } catch (error) {
+  //   res
+  //     .status(StatusCodes.INTERNAL_SERVER_ERROR)
+  //     .json({ error: error.message });
+  // }
+
+  // SINGLE IMAGE
+  try {
+    // 1. Extract query params
+    const {
+      page = 1,
+      limit = 6,
+      sortBy = "prodName",
+      sortOrder = "asc",
+      category,
+      search,
+    } = req.query;
+
+    const query = {};
+
+    // 2. Optional search filter
+    if (search) {
+      query.prodName = { $regex: search, $options: "i" }; // case-insensitive search
+    }
+
+    // 3. Optional category filter
+    if (category) {
+      query.prodCat = category;
+    }
+
+    // 4. Sorting
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    // 5. Pagination
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // 6. Get products with pagination and sorting
+    const productsData = await Products.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(Number(limit));
+
+    // 7. Get total count for pagination info
+    const totalProducts = await Products.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / Number(limit));
+
+    // 8. Attach first image to each product
+    const productIds = productsData.map((p) => p._id);
+    const imagesData = await Products_Images.find({
+      prodImgProdID: { $in: productIds },
+    }).sort({ _id: 1 });
+
+    const firstImageByProductId = {};
+    for (const img of imagesData) {
+      const key = img.prodImgProdID.toString();
+      if (!firstImageByProductId[key]) {
+        firstImageByProductId[key] = img;
+      }
+    }
+
+    const productsWithFirstImage = productsData.map((product) => ({
+      ...product.toObject(),
+      prodImg: firstImageByProductId[product._id.toString()] || null,
+    }));
+
+    // 9. Return the result
+    res.status(StatusCodes.OK).json({
+      products: productsWithFirstImage,
+      currentPage: Number(page),
+      totalPages,
+    });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Something went wrong." });
+  }
 };
 
 export const createProduct = async (req, res) => {

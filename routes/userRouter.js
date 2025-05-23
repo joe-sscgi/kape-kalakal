@@ -5,22 +5,31 @@ import {
 } from "../middleware/validationMiddleware.js";
 
 import {
+  getHomepageData,
+  addToTmpCart,
+  checkout,
+  delItemInCart,
   getCurrentUser,
-  updateUser,
   updateUserProfile,
   deleteUser,
 } from "../controllers/userController.js";
+import { getAllProducts } from "../controllers/adminController.js";
 
 const router = Router();
 
-router.get("/current-user", getCurrentUser);
+router.get("/get-data", getHomepageData);
+
 router
-  .route("/:id")
-  .patch(validateUpdateUserInput, validateIdParam, updateUser)
-  .delete(validateIdParam, deleteUser);
+  .route("/shop")
+  .get(getAllProducts)
+  .post(addToTmpCart)
+  .post(checkout)
+  .delete(delItemInCart);
+
 router
   .route("/profile/:id")
   .get(validateIdParam, getCurrentUser)
-  .patch(validateIdParam, updateUserProfile);
+  .patch(validateIdParam, updateUserProfile)
+  .delete(validateIdParam, deleteUser);
 
 export default router;

@@ -8,6 +8,8 @@ import upload from "../middleware/multerMiddleware.js";
 // import levelOfAccess from "../middleware/authMiddleware.js";
 
 import {
+  getContentData,
+  setContentData,
   getAllBrands,
   createBrand,
   getBrand,
@@ -35,7 +37,12 @@ import {
 
 const router = Router();
 
-router.route("/maintenance");
+router.get("/current-user", getCurrentUser);
+
+// MANAGE CONTENT ROUTES
+router.route("/set-content").get(getContentData);
+router.route("/set-content/:id").patch(setContentData);
+// END MANAGE CONTENT ROUTES
 
 // BRANDS ROUTES
 router.route("/main-brands").get(getAllBrands);
@@ -59,13 +66,11 @@ router
 router.route("/product-imgs/:id").get(getProductImgs);
 router.post("/product-imgs/:id", upload.array("prodImg", 5), createProductImgs);
 router.route("/product-gallery/:id").get(getProductImgs);
-
 // END PRODUCT ROUTES
 
 // USER ROUTES
 router.route("/main-users").get(getAllUsers);
 router.route("/add-user").post(createUser);
-router.get("/current-user", getCurrentUser);
 router
   .route("/edit-user/:id")
   .get(getUser)

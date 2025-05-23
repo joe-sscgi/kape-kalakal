@@ -5,13 +5,13 @@ export { default as Footer } from "./footer";
 export { default as FormRow } from "./formRow";
 export { default as BigSidebar } from "./BigSideBar";
 export { default as SmallSidebar } from "./smallSideBar";
-// export { default as Navbar } from "./Navbar";
-// export { default as JobsContainer } from "./JobsContainer";
-// export { default as SearchContainer } from "./SearchContainer";
-// export { default as StatItem } from "./StatItem";
 export { default as SubmitBtn } from "./submitBtn";
-// export { default as ChartsContainer } from "./ChartsContainer";
-// export { default as StatsContainer } from "./StatsContainer";
+
+// ADMIN
 export { default as AdminNavBar } from "./adminComponents/adminNavBar";
 export { default as AdminNavLinks } from "./adminComponents/adminNavLinks";
 export { default as FormRowSelect } from "./adminComponents/formRowSelect";
+
+// CLIENT
+export { default as ClientNavBar } from "./clientComponents/clientNavBar";
+export { default as ClientNavLinks } from "./clientComponents/clientNavLinks";

@@ -1,228 +1,181 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import {
-  Link,
-  redirect,
-  useNavigation,
-  useNavigate,
-  Outlet,
-  useLoaderData,
-} from "react-router-dom";
-import { toast } from "react-toastify";
+import Carousel from "react-bootstrap/Carousel";
+import React, { useState, useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import "font-awesome/css/font-awesome.min.css";
 
 import Wrapper from "../assets/wrappers/Homepage";
-import customFetch from "../utils/customFetch";
-import { Logo } from "../components/";
+import { useHomepageLayoutContext } from "../pages/HomepageLayout";
 
-import fotm from "../assets/images/fotm/2025/apr/El-Salvador-Don-Jaime-Pacas-Natural-Light-Roast.jpg";
+import logo from "../assets/images/logo/kape-kalakal-logo.jpg";
 
-import { useQuery } from "@tanstack/react-query";
-
-export const loader = async () => {
-  try {
-    const { data } = await customFetch.get("/users/current-user");
-    return data;
-  } catch (error) {
-    return error;
-  }
-};
-
-const HomepageContext = createContext();
+import defaultImg from "../assets/images/default-img.jpg";
 
 const Homepage = () => {
-  const { user } = useLoaderData();
-  // console.log(user);
+  const HomepageData = useHomepageLayoutContext().HomepageData;
+  const bestProductsData = HomepageData.bestProductsData;
+  const fotmProductData = HomepageData.fotmProductData;
+  // console.log(bestProductsData);
+  // const { featBrandsData } = useLoaderData().featBrandsData;
+  // const { prodImgs } = useLoaderData().prodImgs;
+  // const { recipes } = useLoaderData().recipes;
+  // const { userData } = useLoaderData().userData;
 
-  const logoutUser = async () => {
-    navigate("/");
-    await customFetch.get("/auth/logout");
-    toast.success("Logging out...");
-  };
-
-  //   useEffect(() => {
-  //     if (!isAuthError) return;
-  //     logoutUser();
-  //   }, [isAuthError]);
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // Animation duration in milliseconds
+      easing: "ease-out-quad", // Animation easing
+      once: true, // Whether animation should happen only once
+      // more settings available in the documentation
+    });
+  }, []);
 
   return (
-    <HomepageContext.Provider
-      value={{
-        user,
-      }}
-    >
-      <Wrapper>
-        <main className="main">
-          {/* Homepage */}
-          <header id="header" className="header fixed-top">
-            <div className="branding d-flex align-items-center">
-              <div className="container position-relative d-flex align-items-center justify-content-between">
-                <Link
-                  to="/"
-                  className="logo d-flex align-items-center logo-link"
-                  id="logo-link"
-                >
-                  <Logo />
-                  <h1 className="sitename" id="sitename">
-                    Kape Kalakal
-                  </h1>
-                </Link>
-
-                <nav id="navmenu" className="navmenu">
-                  <ul>
-                    <li>
-                      <a href="#menu" className="nav-link">
-                        Products
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#brands" className="nav-link">
-                        Brands
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#recipes" className="nav-link">
-                        Recipes
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#contact" className="nav-link">
-                        Contact
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#specials" className="nav-link">
-                        Cart
-                      </a>
-                    </li>
-                    <li>{user.username.toUpperCase()}</li>
-                    <li>
-                      <Link to="/" className="nav-link">
-                        Logout
-                      </Link>
-                    </li>
-                  </ul>
-                  <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
-                </nav>
+    <Wrapper>
+      <div className="homepage">
+        {/* FOTM SECTION */}
+        <section id="fotm" className="fotm section fotm-section">
+          <div className="container fotm-section-container">
+            {/* <!-- Section Title --> */}
+            <div className="section-title" data-aos="fade-up">
+              <div>
+                <h1>
+                  <span>Flavor of the </span>
+                  <span className="description-title">Month</span>
+                </h1>
               </div>
             </div>
-          </header>
+            {/* <!-- End Section Title --> */}
 
-          <section id="homepage" className="homepage">
-            <section
-              id="homepage-fotm-section"
-              className="homepage-section homepage-fotm-section"
-            >
-              <div className="homepage-section-container container">
-                {/* Section Title */}
-                <div className="section-title">
-                  <h1>
-                    Flavor of the <span>Month</span>
-                  </h1>
-                </div>
-                {/* End Section Title */}
+            <div className="fotm-container row">
+              <div className="fotm-img-container col-sm-6">
+                <img src={defaultImg} alt="" />
+              </div>
+              <div className="fotm-desc-container col-sm-6">
+                <h2>{fotmProductData.prodName}</h2>
+                <p>{fotmProductData.prodDesc}</p>
+                <button type="button" className="btn main-btn shop-btn">
+                  Shop Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* END FOTM SECTION */}
 
-                <div className="fotm-container">
-                  <div className="fotm-img-container">
-                    <img src={fotm} />
+        {/* BEST SELLERS SECTION */}
+        <section id="best" className="best section best-section">
+          <div className="container">
+            {/* <!-- Section Title --> */}
+            <div className="section-title" data-aos="fade-up">
+              <div>
+                <h1>
+                  <span>Best </span>
+                  <span className="description-title">Sellers</span>
+                </h1>
+              </div>
+            </div>
+            {/* <!-- End Section Title --> */}
+
+            <div className="best-container">
+              {bestProductsData.map((prod) => {
+                return (
+                  <div className="best-container-item" key={prod._id}>
+                    <div className="best-img-container">
+                      <img src={defaultImg} alt="" />
+                    </div>
+                    <div className="best-desc-container">
+                      <h2>{prod.prodName}</h2>
+                      <p>{prod.prodDesc}</p>
+                    </div>
                   </div>
-                  <div className="fotm-details-container">
-                    <h3 className="fotm-prod-name">
-                      El Salvador Don Jaime Pacas Natural Light Roast
-                    </h3>
+                );
+              })}
+            </div>
+            <div className="best-btn-container">
+              <button type="button" className="btn main-btn shop-btn">
+                Shop Now
+              </button>
+            </div>
+          </div>
+        </section>
+        {/* END BEST SELLERS SECTION */}
+
+        {/* RECIPE SECTION */}
+        <section id="recipes" className="recipes section recipes-section">
+          {/* <!-- Section Title --> */}
+          <div className="section-title" data-aos="fade-up">
+            <div>
+              <h1>
+                <span>Our </span>
+                <span className="description-title">Recipes</span>
+              </h1>
+            </div>
+          </div>
+          {/* <!-- End Section Title --> */}
+
+          <div className="container" data-aos="fade-up" data-aos-delay="100">
+            <div className="recipes-container">
+              <div className="recipe-box-container">
+                <div className="recipe-box">
+                  <div className="recipe-box-header">
+                    <h2>Coffee Based Recipe</h2>
+                  </div>
+                  <div className="recipe-box-detail">
                     <p>
-                      Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                      Distinctio, sunt laborum officiis veritatis autem
-                      reprehenderit nobis et sit. Aut numquam eaque ullam, animi
-                      blanditiis tempora porro architecto odit earum recusandae?
+                      Home brewed coffee can just be as delicious as the ones
+                      you buy at the cafe. With some simple brew gears and the
+                      right recipe, you can recipe, you can recreate your Kurasu
+                      cafe experience at home.
                     </p>
                   </div>
+                  <div className="recipe-box-btn">
+                    <button type="button" className="btn main-btn recipe-btn">
+                      View Recipe
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </section>
-
-            <section
-              id="homepage-best-sellers-section"
-              className="homepage-section homepage-best-sellers-section"
-            >
-              <div className="homepage-section-container container">
-                {/* Section Title */}
-                <div className="section-title">
-                  <h1>
-                    Best <span>Sellers</span>
-                  </h1>
+                <div className="recipe-box">
+                  <div className="recipe-box-header">
+                    <h2>Non-Coffee Based Recipe</h2>
+                  </div>
+                  <div className="recipe-box-detail">
+                    <p>
+                      At Kurasu we also serve delicious non-coffee beverages. We
+                      are happy to share some of the recipes so you can recreate
+                      them at home.
+                    </p>
+                  </div>
+                  <div className="recipe-box-btn">
+                    <button type="button" className="btn main-btn recipe-btn">
+                      View Recipe
+                    </button>
+                  </div>
                 </div>
-                {/* End Section Title */}
-
-                <div className="best-sellers-container">
-                  <img src={fotm} />
-                  <img src={fotm} />
-                  <img src={fotm} />
-                </div>
-              </div>
-            </section>
-
-            <section
-              id="homepage-collection-section"
-              className="homepage-section homepage-collection-section"
-            >
-              <div className="homepage-section-container container">
-                {/* Section Title */}
-                <div className="section-title">
-                  <h1>
-                    Our <span>Collections</span>
-                  </h1>
-                </div>
-                {/* End Section Title */}
-                <div className="collection-container">
-                  <div className="collection-cards-container">
-                    <div className="collection-card-container">
-                      <h3>Coffee</h3>
-                      <div className="collection-card-img">
-                        <img src={fotm} />
-                        <img src={fotm} />
-                        <img src={fotm} />
-                        <img src={fotm} />
-                      </div>
-                    </div>
-
-                    <div className="collection-card-container">
-                      <h3>Brewing Gear</h3>
-                      <div className="collection-card-img">
-                        <img src={fotm} />
-                        <img src={fotm} />
-                        <img src={fotm} />
-                        <img src={fotm} />
-                      </div>
-                    </div>
-
-                    <div className="collection-card-container">
-                      <h3>Accessories</h3>
-                      <div className="collection-card-img">
-                        <img src={fotm} />
-                        <img src={fotm} />
-                        <img src={fotm} />
-                        <img src={fotm} />
-                      </div>
-                    </div>
-
-                    <div className="collection-card-container">
-                      <h3>Tea</h3>
-                      <div className="collection-card-img">
-                        <img src={fotm} />
-                        <img src={fotm} />
-                        <img src={fotm} />
-                        <img src={fotm} />
-                      </div>
-                    </div>
+                <div className="recipe-box">
+                  <div className="recipe-box-header">
+                    <h2>Kashi Pastry Recipe</h2>
+                  </div>
+                  <div className="recipe-box-detail">
+                    <p>
+                      Missing some cafe treats that you enjoyed while you were
+                      in Kyoto? Recreate some of them at home with these
+                      recipes.
+                    </p>
+                  </div>
+                  <div className="recipe-box-btn">
+                    <button type="button" className="btn main-btn recipe-btn">
+                      View Recipe
+                    </button>
                   </div>
                 </div>
               </div>
-            </section>
-          </section>
-          {/* /Homepage */}
-        </main>
-      </Wrapper>
-    </HomepageContext.Provider>
+            </div>
+          </div>
+        </section>
+        {/* END RECIPE SECTION */}
+      </div>
+    </Wrapper>
   );
 };
-export const useHomepageContext = () => useContext(HomepageContext);
 export default Homepage;

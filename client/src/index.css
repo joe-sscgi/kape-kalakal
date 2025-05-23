@@ -2080,8 +2080,12 @@ nav .nav-link:hover {
 
 /* FOOTER SECTION */
 .footer {
-  background-color: var(--primary);
-  color: var(--bg-primary);
+  background-color: var(--secondary);
+  color: var(--bg-secondary);
+}
+
+.footer hr {
+  margin-bottom: 32px;
 }
 
 .footer .footer-item h4,
@@ -2102,4 +2106,14 @@ section.Toastify {
     position: absolute;
 }
 
+/* MODAL CSS */
 
+.modal-dialog .modal-title-header {
+  font-family: var(--secondary-font) !important;
+}
+
+.modal-dialog .modal-btn {
+  background-color: var(--bg-primary);
+  color: var(--primary);
+  width: unset;
+}

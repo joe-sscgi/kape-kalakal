@@ -21,9 +21,14 @@ const BrandsSchema = new mongoose.Schema(
       type: String,
       alias: "image",
     },
+    brandIsFeatured: {
+      type: Boolean,
+      alias: "isFeatured",
+    },
     brandIsDel: {
       type: Boolean,
       alias: "isDel",
+      default: 0,
     },
   },
   { timestamps: true }

@@ -42,9 +42,9 @@ const Wrapper = styled.div`
   .dropdown-btn {
     border-radius: var(--border-radius);
     padding: 0.5rem;
-    background: transparent;
+    /* background: transparent; */
     border-color: transparent;
-    color: var(--white);
+    color: var(--bg-primary);
     letter-spacing: var(--letter-spacing);
     text-transform: capitalize;
     cursor: pointer;
@@ -54,6 +54,7 @@ const Wrapper = styled.div`
 
   .dropdown-btn:hover {
     background-color: var(--bg-secondary);
+    color: var(--secondary);
   }
 
   @media (max-width: 1199px) {

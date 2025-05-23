@@ -1,43 +1,40 @@
+// IMPORTS REACT
+import { createContext, useContext, useEffect, useState } from "react";
 import {
   Outlet,
+  Link,
   redirect,
   useNavigate,
   useNavigation,
   useLoaderData,
 } from "react-router-dom";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { toast } from "react-toastify";
-
+// IMPORT PAGES
+import Wrapper from "../assets/wrappers/HomepageLayout";
 import customFetch from "../utils/customFetch";
 import { Header, Loading, Footer } from "../components";
 
 export const loader = async () => {
   try {
-    const { data } = await customFetch.get("/admin/current-user");
-    return data;
+    const { data } = await customFetch.get("/dashboard/get-data");
+    return data.homepageData;
   } catch (error) {
-    // return redirect("/");
+    // return redirect("/admin");
+    console.log(error);
   }
 };
 
-const AdminDashboardLayoutContext = createContext();
+const HomepageLayoutContext = createContext();
 
-const AdminDashboardLayout = () => {
-  const { user } = useLoaderData();
-  // console.log(user);
-  // const { user } = { username: "username" };
+const HomepageLayout = () => {
+  const userData = useLoaderData().userData;
+  const HomepageData = useLoaderData();
 
   const navigate = useNavigate();
   const navigation = useNavigation();
   const isPageLoading = navigation.state === "loading";
-  const [showSidebar, setShowSidebar] = useState(false);
   const [isMobileActive, setMobileActive] = useState(false);
   const [isAuthError, setIsAuthError] = useState(false);
-
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-  };
 
   const toggleMobileNavbar = () => {
     if (!isMobileActive) {
@@ -73,28 +70,38 @@ const AdminDashboardLayout = () => {
   }, [isAuthError]);
 
   return (
-    <AdminDashboardLayoutContext.Provider
+    <HomepageLayoutContext.Provider
       value={{
-        user,
-        showSidebar,
-        toggleSidebar,
+        userData,
+        HomepageData,
         toggleMobileNavbar,
         isMobileActive,
         logoutUser,
       }}
     >
-      <Header />
-      <main className="dashboard">
-        <div>
-          <div className="dashboard-page">
-            {isPageLoading ? <Loading /> : <Outlet context={{ user }} />}
-          </div>
+      <Wrapper>
+        <Header />
+        <div
+        // className="scrolled header fixed-top"{
+        //   isScrolled ? "scrolled header fixed-top" : "header fixed-top"
+        // }
+        >
+          <main className="client-dashboard">
+            <div>
+              <div className="client-dashboard-page">
+                {isPageLoading ? (
+                  <Loading />
+                ) : (
+                  <Outlet context={{ userData }} />
+                )}
+              </div>
+            </div>
+          </main>
+          <Footer />
         </div>
-      </main>
-      <Footer />
-    </AdminDashboardLayoutContext.Provider>
+      </Wrapper>
+    </HomepageLayoutContext.Provider>
   );
 };
-export const useAdminDashboardLayoutContext = () =>
-  useContext(AdminDashboardLayoutContext);
-export default AdminDashboardLayout;
+export const useHomepageLayoutContext = () => useContext(HomepageLayoutContext);
+export default HomepageLayout;

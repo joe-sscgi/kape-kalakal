@@ -34,16 +34,18 @@ if (process.env.NODE_ENV === "development") {
 app.use(cookieParser());
 app.use(express.json());
 
-app.use("/api/v1/", landingRouter);
-app.use("/api/v1/users/", authenticateUser, userRouter);
-app.use("/api/v1/auth/", authRouter);
+app.use("/api/", landingRouter);
+app.use("/api/dashboard/", authenticateUser, userRouter);
+// app.use("/api/users/", authenticateUser, userRouter);
+app.use("/api/auth/", authRouter);
 
 // ADMIN ROUTES
-app.use("/api/v1/admin/", authenticateUser, adminRouter);
+app.use("/api/admin/", authenticateUser, adminRouter);
 
 // ALTERNATIVE ROUTES
-// app.use("/api/v1/users/", authenticateUser, levelOfAccess, userRouter);
+// app.use("/api/users/", authenticateUser, levelOfAccess, userRouter);
 // app.use("/auth/", authRouter);
+// app.use("/admin/", authenticateUser, adminRouter);
 
 app.use(errorHandlerMiddleware);
 

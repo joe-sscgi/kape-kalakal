@@ -2,9 +2,20 @@ import { Link } from "react-router-dom";
 import Wrapper from "../assets/wrappers/Header";
 import Logo from "./logo";
 import AdminNavBar from "./adminComponents/adminNavBar";
+import ClientNavBar from "./clientComponents/clientNavBar";
 import React, { useState, useEffect } from "react";
+import { useAdminDashboardLayoutContext } from "../pages/AdminDashboardLayout";
+import { useHomepageLayoutContext } from "../pages/HomepageLayout";
 
 const header = () => {
+  let userData;
+  if (useHomepageLayoutContext()) {
+    userData = useHomepageLayoutContext().userData;
+  } else if (useAdminDashboardLayoutContext()) {
+    userData = useAdminDashboardLayoutContext().user;
+  }
+  // console.log(userData);
+
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -35,7 +46,9 @@ const header = () => {
           <div className="branding">
             <div className="container position-relative d-flex align-items-center justify-content-between">
               <Link
-                to="/admin"
+                to={
+                  userData.userUserType == "Customer" ? "/dashboard" : "/admin"
+                }
                 className="logo d-flex align-items-center logo-link"
                 id="logo-link"
               >
@@ -45,7 +58,11 @@ const header = () => {
                 </h1>
               </Link>
             </div>
-            <AdminNavBar />
+            {userData.userUserType == "Customer" ? (
+              <ClientNavBar />
+            ) : (
+              <AdminNavBar />
+            )}
           </div>
         </header>
       </div>

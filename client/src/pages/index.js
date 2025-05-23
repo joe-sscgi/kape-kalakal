@@ -7,12 +7,18 @@ export { default as Landing } from "./Landing";
 export { default as Login } from "./Login";
 export { default as Register } from "./Register";
 export { default as Error } from "./Error";
+
+// CLIENT PAGES
+export { default as HomepageLayout } from "./HomepageLayout";
 export { default as Homepage } from "./Homepage";
+export { default as Shop } from "./Shop";
 export { default as Profile } from "./Profile";
 
 // ADMIN PAGES
 export { default as AdminDashboard } from "./AdminDashboard";
 export { default as AdminDashboardLayout } from "./AdminDashboardLayout";
+
+// MAINTENANCE
 export { default as MaintenanceDashboard } from "./adminPages/Maintenance/MaintenanceDashboard";
 export { default as MainUsers } from "./adminPages/Maintenance/MainUsers/MainUsers";
 export { default as AddUser } from "./adminPages/Maintenance/MainUsers/AddUser";
@@ -32,6 +38,9 @@ export { default as MainRecipes } from "./adminPages/Maintenance/MainRecipes/Mai
 export { default as AddRecipe } from "./adminPages/Maintenance/MainRecipes/AddRecipe";
 export { default as EditRecipe } from "./adminPages/Maintenance/MainRecipes/EditRecipe";
 export { default as DelRecipe } from "./adminPages/Maintenance/MainRecipes/DelRecipe";
+
+// MANAGE CONTENT
+export { default as ManageContent } from "./adminPages/ManageContent/ManageContent";
 
 export { default as UsersArchive } from "./adminPages/Utils/Archive/UsersArchive";
 export { default as BrandsArchive } from "./adminPages/Utils/Archive/BrandsArchive";

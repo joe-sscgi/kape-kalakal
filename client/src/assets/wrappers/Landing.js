@@ -97,6 +97,16 @@ const Wrapper = styled.section`
     color: var(--accent-color);
   }
 
+  .section-title .sub-sub-header {
+    margin-top: 14px;
+    font-family: var(--secondary-font);
+    color: var(--primary);
+  }
+
+  .section-title .sub-sub-header span {
+    color: var(--accent-color);
+  }
+
   .menu .menu-filters li {
     color: color-mix(in srgb, var(--primary), transparent 25%);
     font-family: var(--secondary-font);
@@ -194,7 +204,7 @@ const Wrapper = styled.section`
   }
 
   /* TESTIMONIALS SECTION */
-  .testimonials .testimonial-item h3 {
+  /* .testimonials .testimonial-item h3 {
     color: var(--primary);
   }
 
@@ -205,17 +215,17 @@ const Wrapper = styled.section`
   .testimonials .testimonial-item p span {
     color: var(--secondary);
     font-family: var(--secondary-font);
-  }
+  } */
 
   /* RECIPES SECTION */
   .recipes {
     overflow: hidden;
-    background-color: var(--secondary);
+    background-color: var(--bg-primary);
     height: 100vh;
   }
 
   .recipes span {
-    color: var(--bg-secondary);
+    color: var(--primary);
   }
 
   .recipes div .section-title {
@@ -226,10 +236,10 @@ const Wrapper = styled.section`
     border: 0;
     padding: 12px 15px 12px 0;
     transition: 0.3s;
-    color: var(--bg-secondary);
+    color: var(--primary);
     border-radius: 0;
     border-right: 2px solid
-      color-mix(in srgb, var(--bg-secondary), transparent 90%);
+      color-mix(in srgb, var(--bg-primary), transparent 90%);
     font-weight: 600;
     font-size: 15px;
     padding-left: 14px;
@@ -253,10 +263,12 @@ const Wrapper = styled.section`
     font-size: 26px;
     font-weight: 600;
     margin-bottom: 20px;
+    font-family: var(--secondary-font);
+    color: var(--primary);
   }
 
   .recipes .details p {
-    color: color-mix(in srgb, var(--bg-secondary), transparent 20%);
+    color: color-mix(in srgb, var(--primary), transparent 20%);
   }
 
   .recipes .details p:last-child {
@@ -277,12 +289,12 @@ const Wrapper = styled.section`
 
   /* CONTACT SECTION */
   .contact {
-    background-color: var(--bg-primary);
-    color: var(--primary);
+    background-color: var(--primary);
+    color: var(--bg-primary);
   }
 
   .contact span {
-    color: var(--primary);
+    color: var(--bg-primary);
   }
 
   .section-title div .description-title {
@@ -291,7 +303,7 @@ const Wrapper = styled.section`
 
   .contact .info {
     background-color: var(--secondary);
-    box-shadow: var(--lgtShadow);
+    box-shadow: var(--drkShadow);
   }
 
   .contact .info h4,
@@ -308,14 +320,14 @@ const Wrapper = styled.section`
   }
 
   .contact .php-email-form button.contact-submit {
-    background: var(--primary);
-    color: var(--bg-primary);
-    box-shadow: var(--lgtShadow);
+    background: var(--bg-primary);
+    color: var(--primary);
+    box-shadow: var(--drkShadow);
   }
 
   .contact .php-email-form button.contact-submit:hover {
-    background: var(--secondary);
-    color: var(--bg-secondary);
+    background: var(--bg-secondary);
+    color: var(--secondary);
   }
 
   /* RESPONSIVE */

@@ -1,66 +1,60 @@
 import { StatusCodes } from "http-status-codes";
+import cloudinary from "cloudinary";
 
 import Users from "../models/UsersModel.js";
 import UserInfo from "../models/UserInfoModel.js";
-import { hashPassword } from "../utils/passwordUtils.js";
+import Brands from "../models/BrandsModel.js";
+import Products from "../models/ProductsModel.js";
+import Products_Images from "../models/ProductImgsModel.js";
+import Recipes from "../models/RecipesModel.js";
+import TempCart from "../models/TmpCartModel.js";
+import Cart from "../models/CartModel.js";
+import Invoice from "../models/InvoiceModel.js";
+import Orders from "../models/OrdersModel.js";
 
-// USERS
-export const getAllUsers = async (req, res) => {
-  // console.log(req);
+export const getHomepageData = async (req, res) => {
+  const userData = await Users.findOne({ _id: req.user.userId });
+  const featBrandsData = await Brands.find({ brandIsFeatured: 1 });
+  const fotmProductData = await Products.findOne({ prodIsFotm: "1" });
+  const bestProductsData = await Products.find({ prodIsBest: "1" });
+  const prodImgsData = await Products_Images.find({});
 
-  const usersData = await Users.find({});
-  res.status(StatusCodes.OK).json({ usersData });
+  const homepageData = {};
+  homepageData.userData = userData;
+  homepageData.featBrandsData = featBrandsData;
+  homepageData.bestProductsData = bestProductsData;
+  homepageData.fotmProductData = fotmProductData;
+  homepageData.prodImgs = prodImgsData;
+
+  // console.log(homepageData);
+
+  res.status(StatusCodes.OK).json({ homepageData });
 };
 
-export const getUser = async (req, res) => {
-  const userData = await Users.findById(req.params.id);
-  res.status(StatusCodes.OK).json({ userData });
+export const addToTmpCart = async (req, res) => {
+  const tmpCart = await TempCart.create(req.body);
+  res.status(StatusCodes.CREATED).json({ tmpCart });
 };
 
+export const delItemInCart = async (req, res) => {
+  const delTmpCartItem = await TempCart.findByIdAndDelete(req.params.id);
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "cart item deleted", cartItem: delTmpCartItem });
+};
+
+export const checkout = async (req, res) => {
+  const cart = await Cart.create(req.body);
+  res.status(StatusCodes.CREATED).json({ cart });
+};
+
+// USER
 export const getCurrentUser = async (req, res) => {
-  const user = await Users.findOne({ _id: req.user.userId }).aggregate([
-    {
-      $lookup: {
-        from: UserInfo,
-        localField: userUserID,
-        foreignField: _id,
-        as: "userInfoData",
-      },
-    },
-  ]);
+  const user = await Users.findOne({ _id: req.user.userId });
+  const userInfo = await UserInfo.findOne({ userUserID: req.user.userId });
   const userWithoutPassword = user.toJSON();
-  console.log(user);
+  userWithoutPassword.userInfo = userInfo;
   res.status(StatusCodes.OK).json({ user: userWithoutPassword });
-};
-
-export const createUser = async (req, res) => {
-  const isFirstAccount = (await Users.countDocuments()) === 0;
-  req.body.userType = isFirstAccount ? "super admin" : req.body.userType;
-
-  const hashedPassword = await hashPassword(req.body.password);
-  req.body.password = hashedPassword;
-
-  const user = await Users.create(req.body);
-
-  const obj = Object();
-  obj.userUserID = user._id;
-  // console.log(obj);
-  const userInfo = await UserInfo.create(obj);
-  res.status(StatusCodes.CREATED).json({ user });
-};
-
-export const updateUser = async (req, res) => {
-  //check if front-end/back-end
-
-  const obj = { ...req.body };
-  delete obj.password;
-
-  // this is for back-end
-  const updatedUser = await Users.findByIdAndUpdate(req.params.id, obj, {
-    new: true,
-  });
-
-  res.status(StatusCodes.OK).json({ msg: "user updated", job: updatedUser });
 };
 
 export const deleteUser = async (req, res) => {

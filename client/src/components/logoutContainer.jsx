@@ -2,10 +2,19 @@ import { FaUserCircle, FaCaretDown, FaRegUserCircle } from "react-icons/fa";
 import Wrapper from "../assets/wrappers/LogoutContainer";
 import { useState } from "react";
 import { useAdminDashboardLayoutContext } from "../pages/AdminDashboardLayout";
+import { useHomepageLayoutContext } from "../pages/HomepageLayout";
 
 const LogoutContainer = () => {
   const [showLogout, setShowLogout] = useState(false);
-  const { user, logoutUser } = useAdminDashboardLayoutContext();
+  let user;
+  let logoutUser;
+  if (useAdminDashboardLayoutContext()) {
+    user = useAdminDashboardLayoutContext().user;
+    logoutUser = useAdminDashboardLayoutContext().logoutUser;
+  } else {
+    user = useHomepageLayoutContext().userData;
+    logoutUser = useHomepageLayoutContext().logoutUser;
+  }
 
   return (
     <Wrapper>

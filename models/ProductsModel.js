@@ -42,6 +42,7 @@ const ProductsSchema = new mongoose.Schema(
     prodIsDel: {
       type: Boolean,
       alias: "isDel",
+      default: 0,
     },
   },
   { timestamps: true }

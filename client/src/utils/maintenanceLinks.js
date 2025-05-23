@@ -14,10 +14,6 @@ const links = [
     path: "/admin/main-recipes",
   },
   {
-    text: "Testimonials",
-    path: "/admin/main-testimonials",
-  },
-  {
     text: "Contact Us",
     path: "/admin/main-contact-us",
   },

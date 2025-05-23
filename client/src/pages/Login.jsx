@@ -17,7 +17,7 @@ export const action = async ({ request }) => {
       return redirect("/admin");
       // console.log("admin");
     } else {
-      return redirect("/homepage");
+      return redirect("/dashboard");
       // console.log("customer");
     }
   } catch (error) {

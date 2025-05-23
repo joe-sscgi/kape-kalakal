@@ -1,16 +1,15 @@
 import Wrapper from "../../assets/wrappers/AdminNavBar";
-import AdminNavLinks from "../adminComponents/adminNavLinks";
-import { useAdminDashboardLayoutContext } from "../../pages/AdminDashboardLayout";
+import ClientNavLinks from "../clientComponents/clientNavLinks";
+import { useHomepageLayoutContext } from "../../pages/HomepageLayout";
 
-const adminNavBar = () => {
-  const { isMobileActive, toggleMobileNavbar } =
-    useAdminDashboardLayoutContext();
+const clientNavBar = () => {
+  const { isMobileActive, toggleMobileNavbar } = useHomepageLayoutContext();
 
   return (
     <Wrapper>
       <div className={isMobileActive ? "mobile-nav-active" : ""}>
         <nav id="navmenu" className="navmenu">
-          <AdminNavLinks />
+          <ClientNavLinks />
           <i
             className="mobile-nav-toggle d-xl-none bi bi-list"
             onClick={toggleMobileNavbar}
@@ -20,4 +19,4 @@ const adminNavBar = () => {
     </Wrapper>
   );
 };
-export default adminNavBar;
+export default clientNavBar;

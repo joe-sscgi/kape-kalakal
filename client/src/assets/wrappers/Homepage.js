@@ -4,140 +4,166 @@ const Wrapper = styled.section`
   margin: 0 !important;
   padding: 0 !important;
   font-size: 18px;
-  background-color: var(--bg-primary);
+  background-color: var(--primary);
   font-family: var(--main-font);
 
   /*--------------------------------------------------------------
 # Additional CSS
 --------------------------------------------------------------*/
-  .header .logo img {
-    border-radius: 50%;
-  }
-
-  .homepage {
-    background-color: var(--bg-primary);
-  }
-
-  .homepage-section-container {
-    height: 85vh;
-    border-radius: 25px;
-    padding: 42px;
-  }
-
-  .section-title {
+  .section-title h1 {
     color: var(--bg-primary);
   }
 
-  /* FOTM */
-  .homepage-fotm-section {
-    background-color: var(--bg-primary);
-  }
-
-  .homepage-fotm-section .homepage-section-container {
-    background-color: var(--primary);
-    /* padding: 42px; */
-    box-shadow: var(--lgtShadow);
-  }
-
-  .homepage-fotm-section .homepage-section-container span {
-    color: var(--bg-primary);
-  }
-
-  .fotm-container {
-    display: flex;
-    /* align-items: center; */
-    gap: 24px;
-    padding: 24px;
-    box-shadow: var(--lgtShadow);
-  }
-
-  .fotm-container .fotm-img-container img {
-    width: 100%;
-    border-radius: 25px;
-  }
-
-  .fotm-details-container {
-    padding: 24px;
-  }
-
-  h3.fotm-prod-name {
+  h2 {
     font-size: 32px;
     margin-bottom: 24px;
     font-family: var(--secondary-font);
     color: var(--bg-primary);
   }
 
-  .fotm-details-container p {
-    font-size: 24px;
+  /* FOTM */
+  .fotm-section {
+    background-color: var(--bg-secondary);
   }
 
-  /* BEST SELLERS */
-  .homepage-best-sellers-section {
+  .fotm-section .section-title h1 {
+    color: var(--secondary);
+  }
+
+  .fotm-section .fotm-container {
     background-color: var(--primary);
-  }
-
-  .homepage-best-sellers-section .homepage-section-container {
-    background-color: var(--bg-primary);
-    /* padding: 42px; */
     box-shadow: var(--drkShadow);
+    padding: 14px;
+    border-radius: 400px 0 400px 0;
   }
 
-  .homepage-best-sellers-section .homepage-section-container h1 {
-    color: var(--primary);
-  }
-
-  .homepage-best-sellers-section .homepage-section-container span {
-    color: var(--accent-color);
-  }
-
-  .best-sellers-container {
-    display: grid;
-    grid-template-columns: 300px 300px 300px;
-    grid-template-rows: 300px 300px;
-    gap: 24px;
-    justify-content: center;
-  }
-
-  .best-sellers-container img {
-    width: 300px;
-    border-radius: 25px;
-  }
-
-  /* COLLECTIONS */
-  .homepage-collection-section {
-    background-color: var(--bg-primary);
-  }
-
-  .homepage-collection-section .homepage-section-container {
-    background-color: var(--primary);
-    box-shadow: var(--lgtShadow);
-  }
-
-  .homepage-collection-section .homepage-section-container span {
+  .fotm-section .fotm-container span {
     color: var(--bg-primary);
   }
 
-  .collection-cards-container {
-    display: flex;
-    gap: 10px;
+  .fotm-container {
+    box-shadow: var(--lgtShadow);
   }
 
-  .collection-card-container {
-    border-radius: 10px;
+  .fotm-container .fotm-img-container img {
+    border-radius: 25px;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .fotm-desc-container {
+    padding: 24px;
+  }
+
+  .fotm-desc-container p {
+    font-size: 32px;
+  }
+
+  .shop-btn {
+    margin-top: 14px;
+    background-color: var(--bg-primary);
+    font-size: 32px;
+  }
+
+  .shop-btn:hover {
     background-color: var(--secondary);
-    padding: 10px;
-    text-align: center;
+    color: var(--bg-secondary);
+    font-size: 42px;
   }
 
-  .collection-card-img {
+  /* BEST SELLERS */
+  .best-section {
+    background-color: var(--primary);
+  }
+
+  .best-container {
     display: flex;
+    gap: 24px;
     flex-wrap: wrap;
-    gap: 14px;
-    padding: 14px;
+    justify-content: center;
   }
 
-  .collection-card-img img {
-    width: 90px;
+  .best-container-item {
+    margin-bottom: 14px;
+    max-width: 300px;
+  }
+
+  .best-container-item:hover {
+    box-shadow: var(--drkShadow);
+    border-radius: 14px;
+  }
+
+  .best-desc-container {
+    padding: 0 24px;
+  }
+
+  .best-container-item:hover .best-desc-container {
+    padding: 10px;
+    place-self: center;
+  }
+
+  .best-img-container img {
+    width: 250px;
+    border-radius: 25px;
+  }
+
+  .best-container-item:hover img {
+    width: 300px;
+    border-radius: 14px 14px 0 0;
+  }
+
+  .best-desc-container {
+    margin-top: 14px;
+  }
+
+  .best-section .best-btn-container {
+    justify-self: center;
+  }
+
+  /* RECIPES SECTION */
+  .recipes-section {
+    background-color: var(--secondary);
+  }
+
+  .recipe-box {
+    height: 250px;
+    border: 1px solid brown;
+    border-radius: 100px 0 100px 0;
+    margin-bottom: 24px;
+    padding: 14px;
+    font-size: 24px;
+    box-shadow: var(--drkShadow);
+    position: relative;
+  }
+
+  .recipe-box:nth-child(odd) {
+    background-color: var(--primary);
+    border-radius: 0 100px 0 100px;
+  }
+
+  .recipe-box-btn {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+  }
+
+  .recipe-box:nth-child(even) .recipe-box-header {
+    text-align: right;
+  }
+
+  .recipe-box:nth-child(even) .recipe-box-btn {
+    left: 14px;
+  }
+
+  .recipe-btn {
+    background-color: var(--bg-primary);
+    font-size: 24px;
+  }
+
+  .recipe-btn:hover {
+    background-color: var(--secondary);
+    color: var(--bg-secondary);
+    font-size: 32px;
   }
 `;
 

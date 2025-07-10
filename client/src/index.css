@@ -696,7 +696,7 @@ h6 {
     font-weight: 400;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     white-space: nowrap;
     transition: 0.3s;
   }
@@ -816,7 +816,7 @@ h6 {
     font-weight: 500;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     white-space: nowrap;
     transition: 0.3s;
   }
@@ -830,7 +830,7 @@ h6 {
     height: 30px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     border-radius: 50%;
     transition: 0.3s;
     background-color: color-mix(in srgb, var(--accent-color), transparent 90%);
@@ -2107,7 +2107,6 @@ section.Toastify {
 }
 
 /* MODAL CSS */
-
 .modal-dialog .modal-title-header {
   font-family: var(--secondary-font) !important;
 }
@@ -2117,3 +2116,54 @@ section.Toastify {
   color: var(--primary);
   width: unset;
 }
+
+.modal-dialog button.main-btn.action-btn-submit {
+  background-color: var(--bg-primary);
+  color: var(--primary);
+  width: unset;
+}
+
+/* UTILITIES CSS */
+.offcanvas {
+  background-color: var(--secondary);
+  font-size: 24px;
+  font-family: var(--main-font);
+  color: var(--bg-secondary);
+}
+
+.offcanvas .offcanvas-header .logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-right: 14px;
+}
+
+.offcanvas-title.h5 {
+  font-family: var(--secondary-font);
+  font-size: 36px;
+}
+
+.offcanvas .dropdown-menu {
+  font-size: 20px;
+  font-family: var(--nav-font);
+  background-color: transparent;
+  border: none;
+}
+
+.offcanvas .dropdown-menu a {
+  margin-bottom: 8px;
+  color: var(--bg-secondary);
+}
+
+.offcanvas .dropdown-menu a:active {
+  font-size: 22px;
+  margin-left: 8px;
+  color: var(--accent-color);
+}
+
+.offcanvas .dropdown-menu a:hover {
+  font-size: 22px;
+  margin-left: 10px;
+  background-color: var(--primary);
+}
+

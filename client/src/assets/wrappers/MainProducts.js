@@ -25,33 +25,70 @@ const Wrapper = styled.section`
     color: var(--primary);
   }
 
-  div#myTable_wrapper {
-    background-color: var(--primary);
-    padding: 24px;
-    margin-bottom: 14px;
-    border: 2px solid var(--bg-primary);
+  .container-table {
+    padding: 0 14px;
   }
 
-  .main-table {
-    border-collapse: separate;
-    color: var(--bg-primary);
-    /* border-spacing: 0 5px; */
+  .filters-container {
+    margin: 0 14px 1rem;
+    display: flex;
+    gap: 1rem;
   }
 
-  .main-table thead {
-    background-color: #f2f2f2;
+  .pagination-controls {
+    margin-top: 1rem;
+    text-align: center;
   }
 
-  .main-table thead {
-    background-color: #f2f2f2;
+  .pagination-controls span {
+    margin: 0 1rem;
   }
 
-  .main-table tr:nth-child(even) {
-    background-color: #f2f2f2;
+  .pagination-controls .page-btn {
+    background-color: var(--bg-secondary);
+    color: var(--secondary);
+  }
+
+  .pagination-controls .page-btn:hover {
+    background-color: var(--secondary);
+    color: var(--bg-secondary);
   }
 
   .prod-col {
     padding: 14px;
+  }
+
+  .prod-price {
+    text-align: right;
+  }
+
+  .prod-col {
+    color: var(--bg-primary) !important;
+  }
+
+  .prod-qty {
+    text-align: center;
+  }
+
+  .prod-qty span {
+    text-decoration: underline;
+    color: var(--bg-primary) !important;
+  }
+
+  .inventory-yellow-zone span,
+  .inventory-red-zone span {
+    cursor: pointer;
+    color: var(--bg-primary);
+    font-size: 24px;
+    text-decoration: underline;
+  }
+
+  .inventory-yellow-zone {
+    background-color: yellow;
+  }
+
+  .inventory-red-zone {
+    background-color: red;
   }
 
   td.prod_fotm {
@@ -89,6 +126,16 @@ const Wrapper = styled.section`
 
   .prod-notes p {
     margin-bottom: 10px;
+    font-size: 20px;
+  }
+
+  .abbrv-notes {
+    color: var(--bg-primary);
+    -webkit-text-stroke: 0.21px white;
+  }
+
+  .btn-back {
+    font-size: 20px;
   }
 
   /* RESPONSIVE */

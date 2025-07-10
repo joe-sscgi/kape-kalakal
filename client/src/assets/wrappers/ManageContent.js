@@ -16,8 +16,17 @@ const Wrapper = styled.section`
   background-position: center;
   background-attachment: fixed;
 
-  .main-prod {
-    background-color: unset;
+  .fotm-prod,
+  .best-prod,
+  .feat-brand {
+    margin: 100px 24px;
+    padding: 24px;
+    border-radius: 25px 0 25px 0;
+    box-shadow: var(--lgtShadow);
+  }
+
+  .section-title {
+    padding-bottom: 12px;
   }
 
   .section-title h1 {
@@ -30,59 +39,15 @@ const Wrapper = styled.section`
     font-family: var(--secondary-font);
     color: var(--bg-primary);
     text-align: center;
-  }
-
-  div#myTable_wrapper {
-    background-color: var(--primary);
-    padding: 24px;
     margin-bottom: 14px;
-    border: 2px solid var(--bg-primary);
-  }
-
-  .main-table {
-    border-collapse: separate;
-    color: var(--bg-primary);
-    /* border-spacing: 0 5px; */
-  }
-
-  .main-table thead {
-    background-color: #f2f2f2;
-  }
-
-  .main-table thead {
-    background-color: #f2f2f2;
-  }
-
-  .main-table tr:nth-child(even) {
-    background-color: #f2f2f2;
   }
 
   .prod-col {
     padding: 14px;
   }
 
-  td.prod_fotm {
-    text-align: center;
-  }
-
-  td.prod_best {
-    text-align: center;
-  }
-
-  .main-btn {
-    font-family: var(--main-font);
-    font-size: 14px;
-    /* color: var(--bg-primary); */
-    margin: 0;
-    margin-right: 10px;
-  }
-
   td {
     align-content: center;
-  }
-
-  .prod-notes p {
-    margin-bottom: 10px;
   }
 
   .best-prod {
@@ -99,14 +64,6 @@ const Wrapper = styled.section`
     font-family: var(--secondary-font);
     color: var(--bg-secondary);
     text-align: center;
-  }
-
-  .best-prod th {
-    color: var(--bg-secondary);
-  }
-
-  .best-prod tr {
-    color: var(--bg-secondary);
   }
 
   /* RESPONSIVE */

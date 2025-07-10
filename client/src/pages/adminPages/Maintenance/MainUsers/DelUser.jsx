@@ -19,7 +19,7 @@ export const action = async ({ request, params }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   try {
-    await customFetch.delete(`/admin/edit-user/${params.id}`, data);
+    await customFetch.patch(`/admin/del-user/${params.id}`, data);
 
     toast.success("User deleted successfully");
     return redirect("/admin/main-users");

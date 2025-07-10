@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 const Wrapper = styled.section`
-  /* height: 100vh; */
   background-color: var(--bg-secondary);
   background-image: linear-gradient(
       to top,
@@ -16,11 +15,7 @@ const Wrapper = styled.section`
     background-color: var(--primary);
     border-radius: 10px;
     box-shadow: var(--lgtShadow);
-
-    /* margin-top: 100px;
-    margin-bottom: 100px; */
     margin-top: 40px;
-    height: 70vh;
   }
 
   .section-title h1 {

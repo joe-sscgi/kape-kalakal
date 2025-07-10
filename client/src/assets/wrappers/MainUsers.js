@@ -25,6 +25,31 @@ const Wrapper = styled.section`
     color: var(--primary);
   }
 
+  .filters-container {
+    margin: 0 14px 1rem;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .pagination-controls {
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  .pagination-controls span {
+    margin: 0 1rem;
+  }
+
+  .pagination-controls .page-btn {
+    background-color: var(--bg-secondary);
+    color: var(--secondary);
+  }
+
+  .pagination-controls .page-btn:hover {
+    background-color: var(--secondary);
+    color: var(--bg-secondary);
+  }
+
   .main-btn {
     font-family: var(--main-font);
     font-size: 18px;

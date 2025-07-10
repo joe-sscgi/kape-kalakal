@@ -20,8 +20,8 @@ export const action = async ({ request }) => {
   try {
     await customFetch.post("/admin/add-product", data);
     toast.success("Product Created successful");
-    // return redirect("/admin/main-products");
-    // window.location.reload();
+    return redirect("/admin/main-products");
+    window.location.reload();
   } catch (error) {
     toast.error(error?.response?.data?.msg);
 
@@ -47,6 +47,7 @@ const AddProd = () => {
             encType="multipart/form-data"
           >
             <div className="add-prod-container">
+              <label htmlFor="prodName">Name</label>
               <FormRow
                 type="text"
                 id="prodName"
@@ -54,17 +55,20 @@ const AddProd = () => {
                 className="form-input"
                 placeholder="Product Name"
               />
+              <label htmlFor="prodDesc">Description</label>
               <textarea
                 id="prodDesc"
                 name="prodDesc"
                 className="form-input"
                 placeholder="Product Description"
               />
+              <label htmlFor="prodCat">Category</label>
               <FormRowSelect
                 name="prodCat"
                 defaultValue={PROD_CAT.DEFAULT}
                 list={Object.values(PROD_CAT)}
               />
+              <label htmlFor="prodPrice">Price</label>
               <FormRow
                 type="number"
                 id="prodPrice"
@@ -72,6 +76,7 @@ const AddProd = () => {
                 className="form-input"
                 placeholder="Product Price"
               />
+              <label htmlFor="prodQty">Quantity</label>
               <FormRow
                 type="number"
                 id="prodQty"
@@ -88,7 +93,7 @@ const AddProd = () => {
                   accept="image/*"
                 />
               </div> */}
-              <div className="add-prod-fotm">
+              {/* <div className="add-prod-fotm">
                 <input
                   type="checkbox"
                   id="prodIsFotm"
@@ -109,7 +114,7 @@ const AddProd = () => {
                   value="isBest"
                 />
                 <label htmlFor="isBest"> Best Seller</label>
-              </div>
+              </div> */}
               <div className="text-center add-prod-buttons">
                 <SubmitBtn className="btn add-prod-btn add-prod-submit" />
                 <Link to={"/admin/main-products"}>

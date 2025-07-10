@@ -4,7 +4,7 @@ export { default as Header } from "./header";
 export { default as Footer } from "./footer";
 export { default as FormRow } from "./formRow";
 export { default as BigSidebar } from "./BigSideBar";
-export { default as SmallSidebar } from "./smallSideBar";
+export { default as UtilsSidebar } from "./utilsSideBar";
 export { default as SubmitBtn } from "./submitBtn";
 
 // ADMIN

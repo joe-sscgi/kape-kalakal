@@ -20,7 +20,7 @@ export const action = async ({ request, params }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   try {
-    await customFetch.delete(`/admin/edit-product/${params.id}`, data);
+    await customFetch.patch(`/admin/del-product/${params.id}`, data);
 
     toast.success("Product deleted successfully");
     return redirect("/admin/main-products");
@@ -53,11 +53,21 @@ const DelProd = () => {
                 type="text"
                 id="prodName"
                 name="prodName"
+                className="form-input hidden"
+                placeholder="Product ID"
+                defaultValue={prod._id}
+              />
+              <label htmlFor="prodName">Name</label>
+              <FormRow
+                type="text"
+                id="prodName"
+                name="prodName"
                 className="form-input"
                 placeholder="Product Name"
                 defaultValue={prod.prodName}
                 dis="true"
               />
+              <label htmlFor="prodDesc">Descriptpion</label>
               <textarea
                 id="prodDesc"
                 name="prodDesc"
@@ -66,12 +76,14 @@ const DelProd = () => {
                 defaultValue={prod.prodDesc}
                 disabled
               />
+              <label htmlFor="prodCat">Category</label>
               <FormRowSelect
                 name="prodCat"
                 defaultValue={prod.prodCat}
                 list={Object.values(PROD_CAT)}
                 dis="true"
               />
+              <label htmlFor="prodPrice">Price</label>
               <FormRow
                 type="number"
                 id="prodPrice"
@@ -79,6 +91,16 @@ const DelProd = () => {
                 className="form-input"
                 placeholder="Product Price"
                 defaultValue={prod.prodPrice}
+                dis="true"
+              />
+              <label htmlFor="prodQty">Quantity</label>
+              <FormRow
+                type="number"
+                id="prodQty"
+                name="prodQty"
+                className="form-input"
+                placeholder="Current Product Quantity"
+                defaultValue={prod.prodQty}
                 dis="true"
               />
               <div className="add-prod-fotm">

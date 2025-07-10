@@ -3,22 +3,16 @@ import customFetch from "../../../utils/customFetch";
 import { toast } from "react-toastify";
 
 // ICONS
+import { FiPlusCircle } from "react-icons/fi";
 import { MdRemoveCircleOutline } from "react-icons/md";
-import { FaRegCheckCircle } from "react-icons/fa";
-import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { FiArrowLeftCircle } from "react-icons/fi";
 
 import Button from "react-bootstrap/Button";
+import Table from "react-bootstrap/Table";
 import Modal from "react-bootstrap/Modal";
 import { useState, useEffect } from "react";
-import { redirect, Form, Link, useLoaderData } from "react-router-dom";
+import { Form, Link, useLoaderData } from "react-router-dom";
 import { SubmitBtn } from "../../../components";
-
-import DataTable from "datatables.net-react";
-import DT from "datatables.net-bs5";
-import "datatables.net-select-dt";
-import "datatables.net-responsive-dt";
-import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
 
 export const loader = async () => {
   try {
@@ -38,8 +32,7 @@ export const action = async ({ request, params }) => {
     await customFetch.patch(`/admin/set-content/${data.manageID}`, data);
 
     toast.success("Product edited successfully");
-    //   return redirect("/admin/main-products");
-    //   window.location.reload();
+    window.location.reload();
   } catch (error) {
     toast.error(error?.response?.data?.msg);
     return error;
@@ -47,11 +40,9 @@ export const action = async ({ request, params }) => {
 };
 
 const ManageContent = () => {
-  const brands = useLoaderData().brands;
-  const countFeature = useLoaderData().countFeature;
-  const prods = useLoaderData().prods;
-  const countFotm = useLoaderData().countFotm;
-  const countBest = useLoaderData().countBest;
+  const productsFotmData = useLoaderData().productsFotmData;
+  const productsBestData = useLoaderData().productsBestData;
+  const brandsFeatData = useLoaderData().brandsFeatData;
 
   const [showM, setShowM] = useState(false);
   const [modalData, setModalData] = useState("");
@@ -91,13 +82,10 @@ const ManageContent = () => {
     data.data = val;
 
     setModalData(data);
-    console.log(modalData);
     modalShow();
   };
 
   const modalShow = () => setShowM(true);
-
-  DataTable.use(DT);
 
   return (
     <Wrapper>
@@ -111,72 +99,49 @@ const ManageContent = () => {
         <div className="manage-content-info">
           <h3>Set a max of 5 Flavor of the Month</h3>
         </div>
-        <DataTable
-          id="myTableFotm"
-          name="myTableFotm"
-          className="main-table myTableFotm striped"
-        >
+        <Table striped id="myTableFotm" name="myTableFotm">
           <thead>
             <tr>
-              <th>ACTION</th>
+              <th>
+                <Link to={"/admin/set-content/fotm"}>
+                  <Button
+                    type="button"
+                    className="btn set-fotm-btn main-btn"
+                    variant="success"
+                  >
+                    <FiPlusCircle /> <span>Set Flavor of the Month</span>
+                  </Button>
+                </Link>
+              </th>
               <th>Name</th>
-              <th>FotM</th>
             </tr>
           </thead>
           <tbody>
-            {prods.map((prod) => {
+            {productsFotmData.map((prod) => {
               return (
                 <tr key={prod._id} className="prod-row">
-                  {prod.prodIsFotm && prod.prodIsFotm == 1 ? (
-                    <td>
-                      <Button
-                        type="button"
-                        className="btn del-prod-btn main-btn"
-                        variant="danger"
-                        onClick={viewDetails.bind(
-                          null,
-                          "Product",
-                          prod,
-                          "Remove",
-                          "Flavor of the Month"
-                        )}
-                      >
-                        <MdRemoveCircleOutline /> <span>REMOVE</span>
-                      </Button>
-                    </td>
-                  ) : countFotm != 5 ? (
-                    <td>
-                      <Button
-                        type="button"
-                        className="btn edit-prod-btn main-btn"
-                        variant="primary"
-                        onClick={viewDetails.bind(
-                          null,
-                          "Product",
-                          prod,
-                          "Set",
-                          "Flavor of the Month"
-                        )}
-                      >
-                        <FaRegCheckCircle /> <span>SET</span>
-                      </Button>
-                    </td>
-                  ) : (
-                    <td>Max</td>
-                  )}
-                  <td className="prod-col">{prod.prodName}</td>
-                  <td className="prod-col prod_fotm">
-                    {prod.prodIsFotm ? (
-                      <FaRegCheckCircle />
-                    ) : (
-                      <MdCheckBoxOutlineBlank />
-                    )}
+                  <td>
+                    <Button
+                      type="button"
+                      className="btn del-prod-btn main-btn"
+                      variant="danger"
+                      onClick={viewDetails.bind(
+                        null,
+                        "Product",
+                        prod,
+                        "Remove",
+                        "Flavor of the Month"
+                      )}
+                    >
+                      <MdRemoveCircleOutline /> <span>REMOVE</span>
+                    </Button>
                   </td>
+                  <td className="prod-col">{prod.prodName}</td>
                 </tr>
               );
             })}
           </tbody>
-        </DataTable>
+        </Table>
       </section>
 
       <section id="best-prod" className="best-prod section">
@@ -188,76 +153,53 @@ const ManageContent = () => {
 
         <div className="manage-content-info">
           <h3>Set a max of 12 Best Sellers</h3>
-          <p>atleat 1 for each category</p>
+          <p>atleast 1 for each category</p>
         </div>
-        <DataTable
-          id="myTableBest"
-          name="myTableBest"
-          className="main-table myTableBest striped"
-        >
+        <Table striped id="myTableBest" name="myTableBest">
           <thead>
             <tr>
-              <th>ACTION</th>
+              <th>
+                <Link to={"/admin/set-content/best-sellers"}>
+                  <Button
+                    type="button"
+                    className="btn set-fotm-btn main-btn"
+                    variant="success"
+                  >
+                    <FiPlusCircle /> <span>Set Best Sellers</span>
+                  </Button>
+                </Link>
+              </th>
               <th>Name</th>
               <th>Category</th>
-              <th>Best Seller</th>
             </tr>
           </thead>
           <tbody>
-            {prods.map((prod) => {
+            {productsBestData.map((prod) => {
               return (
                 <tr key={prod._id} className="prod-row">
-                  {prod.prodIsBest && prod.prodIsBest == 1 ? (
-                    <td>
-                      <Button
-                        type="button"
-                        className="btn del-prod-btn main-btn"
-                        variant="danger"
-                        onClick={viewDetails.bind(
-                          null,
-                          "Product",
-                          prod,
-                          "Remove",
-                          "Best Seller"
-                        )}
-                      >
-                        <MdRemoveCircleOutline /> <span>REMOVE</span>
-                      </Button>
-                    </td>
-                  ) : countBest != 12 ? (
-                    <td>
-                      <Button
-                        type="button"
-                        className="btn edit-prod-btn main-btn"
-                        variant="primary"
-                        onClick={viewDetails.bind(
-                          null,
-                          "Product",
-                          prod,
-                          "Set",
-                          "Best Seller"
-                        )}
-                      >
-                        <FaRegCheckCircle /> <span>SET</span>
-                      </Button>
-                    </td>
-                  ) : (
-                    <td>Max</td>
-                  )}
+                  <td>
+                    <Button
+                      type="button"
+                      className="btn del-prod-btn main-btn"
+                      variant="danger"
+                      onClick={viewDetails.bind(
+                        null,
+                        "Product",
+                        prod,
+                        "Remove",
+                        "Best Seller"
+                      )}
+                    >
+                      <MdRemoveCircleOutline /> <span>REMOVE</span>
+                    </Button>
+                  </td>
                   <td className="prod-col">{prod.prodName}</td>
                   <td className="prod-col">{prod.prodCat}</td>
-                  <td className="prod-col prod_best">
-                    {prod.prodIsBest ? (
-                      <FaRegCheckCircle />
-                    ) : (
-                      <MdCheckBoxOutlineBlank />
-                    )}
-                  </td>
                 </tr>
               );
             })}
           </tbody>
-        </DataTable>
+        </Table>
       </section>
 
       <section id="feat-brand" className="feat-brand section">
@@ -270,78 +212,57 @@ const ManageContent = () => {
         <div className="manage-content-info">
           <h3>Set a max of 3 Featured Brands</h3>
         </div>
-        <DataTable
-          id="myTablefeatured"
-          name="myTablefeatured"
-          className="main-table myTablefeatured striped"
-        >
+        <Table striped id="myTablefeatured" name="myTablefeatured">
           <thead>
             <tr>
-              <th>ACTION</th>
+              <th>
+                <Link to={"/admin/set-content/featured-brands"}>
+                  <Button
+                    type="button"
+                    className="btn set-fotm-btn main-btn"
+                    variant="success"
+                  >
+                    <FiPlusCircle /> <span>Set Featured Brands</span>
+                  </Button>
+                </Link>
+              </th>
               <th>Name</th>
-              <th>Featured</th>
             </tr>
           </thead>
           <tbody>
-            {brands.map((brand) => {
+            {brandsFeatData.map((brand) => {
               return (
                 <tr key={brand._id} className="brand-row">
-                  {brand.brandIsFeatured && brand.brandIsFeatured == 1 ? (
-                    <td>
-                      <Button
-                        type="button"
-                        className="btn del-brand-btn main-btn"
-                        variant="danger"
-                        onClick={viewDetails.bind(
-                          null,
-                          "Brand",
-                          brand,
-                          "Remove",
-                          "Featured"
-                        )}
-                      >
-                        <MdRemoveCircleOutline /> <span>REMOVE</span>
-                      </Button>
-                    </td>
-                  ) : countFeature != 3 ? (
-                    <td>
-                      <Button
-                        type="button"
-                        className="btn edit-brand-btn main-btn"
-                        variant="primary"
-                        onClick={viewDetails.bind(
-                          null,
-                          "Brand",
-                          brand,
-                          "Set",
-                          "Featured"
-                        )}
-                      >
-                        <FaRegCheckCircle /> <span>SET</span>
-                      </Button>
-                    </td>
-                  ) : (
-                    <td>Max</td>
-                  )}
-                  <td className="brand-col">{brand.brandName}</td>
-                  <td className="brand-col brand_best">
-                    {brand.brandIsFeatured ? (
-                      <FaRegCheckCircle />
-                    ) : (
-                      <MdCheckBoxOutlineBlank />
-                    )}
+                  <td>
+                    <Button
+                      type="button"
+                      className="btn del-brand-btn main-btn"
+                      variant="danger"
+                      onClick={viewDetails.bind(
+                        null,
+                        "Brand",
+                        brand,
+                        "Remove",
+                        "Featured"
+                      )}
+                    >
+                      <MdRemoveCircleOutline /> <span>REMOVE</span>
+                    </Button>
                   </td>
+
+                  <td className="brand-col">{brand.brandName}</td>
                 </tr>
               );
             })}
           </tbody>
-        </DataTable>
-        <div className="container prod-notes">
-          <Link to={"/admin"} className="btn-back">
-            <FiArrowLeftCircle /> Back
-          </Link>
-        </div>
+        </Table>
       </section>
+
+      <div className="container prod-notes">
+        <Link to={"/admin"} className="btn-back">
+          <FiArrowLeftCircle /> Back
+        </Link>
+      </div>
 
       <Modal show={showM} onHide={closeModal} backdrop="static">
         <Modal.Header closeButton>

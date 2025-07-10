@@ -8,7 +8,11 @@ import {
   getHomepageData,
   addToTmpCart,
   checkout,
+  getTmpCart,
+  updateItemInCart,
   delItemInCart,
+  getAllRecipeType,
+  getRecipe,
   getCurrentUser,
   updateUserProfile,
   deleteUser,
@@ -19,12 +23,13 @@ const router = Router();
 
 router.get("/get-data", getHomepageData);
 
-router
-  .route("/shop")
-  .get(getAllProducts)
-  .post(addToTmpCart)
-  .post(checkout)
-  .delete(delItemInCart);
+router.route("/shop").get(getAllProducts).post(addToTmpCart).post(checkout);
+
+router.route("/cart").get(getTmpCart);
+router.route("/cart/:id").patch(updateItemInCart).delete(delItemInCart);
+
+router.route("/recipes/recipe-container/:type").get(getAllRecipeType);
+router.route("/recipes/recipe-container/:type/:id").get(getRecipe);
 
 router
   .route("/profile/:id")

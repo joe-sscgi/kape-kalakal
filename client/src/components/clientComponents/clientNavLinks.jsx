@@ -4,7 +4,7 @@ import LogoutContainer from "../logoutContainer";
 import { useHomepageLayoutContext } from "../../pages/HomepageLayout";
 
 const clientNavLinks = () => {
-  const { toggleMobileNavbar } = useHomepageLayoutContext();
+  const { toggleMobileNavbar, cartCtr } = useHomepageLayoutContext();
 
   return (
     <ul className="nav-links">
@@ -14,12 +14,14 @@ const clientNavLinks = () => {
           <NavLink
             to={path}
             key={text}
-            className="nav-link"
+            id={path + "-link"}
+            className={path == "cart" ? "cart-link nav-link" : "nav-link"}
             onClick={toggleMobileNavbar}
             end
           >
             <span className="icon">{icon}</span>
             {text}
+            {path == "cart" ? <sub>{cartCtr}</sub> : ""}
           </NavLink>
         );
       })}

@@ -25,7 +25,7 @@ const AdminDashboardLayoutContext = createContext();
 
 const AdminDashboardLayout = () => {
   const { user } = useLoaderData();
-  // console.log(user);
+  // console.log(useLoaderData());
   // const { user } = { username: "username" };
 
   const navigate = useNavigate();

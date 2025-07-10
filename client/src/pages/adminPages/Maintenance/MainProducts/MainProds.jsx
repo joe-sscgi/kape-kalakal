@@ -16,31 +16,52 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useState, useEffect } from "react";
-import { redirect, Form, Link, useLoaderData } from "react-router-dom";
-import DataTable from "datatables.net-react";
-import DT from "datatables.net-bs5";
-import "datatables.net-select-dt";
-import "datatables.net-responsive-dt";
-import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
-// import DataTable from "react-data-table-component";
+import {
+  redirect,
+  Form,
+  Link,
+  useLoaderData,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 
-// import $ from "jquery";
-// import "datatables.net";
-
-import { useQuery } from "@tanstack/react-query";
-
-export const loader = async () => {
+export const loader = async ({ request }) => {
   try {
-    const { data } = await customFetch.get("/admin/main-products");
-    // console.log(1, data.productsData);
-    return data.productsData;
+    const url = new URL(request.url);
+    const page = url.searchParams.get("page") || 1;
+    const limit = url.searchParams.get("limit") || 10;
+    const sortBy = url.searchParams.get("sortBy") || "prodName";
+    const sortOrder = url.searchParams.get("sortOrder") || "asc";
+    const category = url.searchParams.get("category") || "";
+    const search = url.searchParams.get("search") || "";
+
+    const queryParams = new URLSearchParams({
+      page,
+      limit,
+      sortBy,
+      sortOrder,
+    });
+    if (category) {
+      queryParams.append("category", category);
+    }
+
+    if (search) {
+      queryParams.append("search", search);
+    }
+
+    const { data } = await customFetch.get(
+      `/admin/main-products?${queryParams.toString()}`
+    );
+    return data;
   } catch (error) {
-    // return redirect("/admin");
+    console.error(error);
+    return { products: [], currentPage: 1, totalPages: 1 };
   }
 };
 
 const MainProds = () => {
-  const prods = useLoaderData();
+  // const prods = useLoaderData();
+  // console.log(useLoaderData());
 
   const [showM, setShowM] = useState(false);
   const [modalData, setModalData] = useState("");
@@ -54,28 +75,71 @@ const MainProds = () => {
 
   const modalShow = () => setShowM(true);
 
-  DataTable.use(DT);
+  const { products, currentPage, totalPages } = useLoaderData();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // SEARCH FILTER
-  const [filteredData, setFilteredData] = useState(prods);
-  // const [filteredValue, setFilteredValue] = useState("");
+  const searchParams = new URLSearchParams(location.search);
+  // const search = searchParams.get("search") || "";
+  const sortBy = searchParams.get("sortBy") || "prodName";
+  const sortOrder = searchParams.get("sortOrder") || "asc";
+  const category = searchParams.get("category") || "";
 
-  // const handleSelectChange = (event) => {
-  //   const value = event.target.value;
-  //   setFilteredValue(value);
-  // };
+  const params = new URLSearchParams(location.search);
+  const initialSearch = params.get("search") || "";
 
-  // if (filteredValue) {
-  //   if (filteredValue != "Select Category") {
-  //     const newFilteredData = prods.filter(
-  //       (item) => item.prodCat === filteredValue
-  //     );
-  //     setFilteredValue("");
-  //     setFilteredData(newFilteredData);
-  //   } else {
-  //     setFilteredData(prods);
-  //   }
-  // }
+  const [search, setSearch] = useState(initialSearch);
+  const [debouncedSearch, setDebouncedSearch] = useState(initialSearch);
+
+  const updateQueryParams = (newParams) => {
+    const searchParams = new URLSearchParams(location.search);
+    // Track if search or filters change (anything except 'page')
+    let filtersChanged = false;
+
+    Object.entries(newParams).forEach(([key, value]) => {
+      if (value) {
+        // Check if this param value differs from current
+        const currentValue = searchParams.get(key);
+        if (currentValue !== value && key !== "page") {
+          filtersChanged = true;
+        }
+        searchParams.set(key, value);
+      } else {
+        if (key !== "page" && searchParams.has(key)) {
+          filtersChanged = true;
+        }
+        searchParams.delete(key);
+      }
+    });
+
+    // If filters changed and no explicit page param provided, reset page to 1
+    if (filtersChanged && !newParams.hasOwnProperty("page")) {
+      searchParams.set("page", 1);
+    }
+
+    const newSearchString = searchParams.toString();
+    const currentSearchString = location.search.replace(/^\?/, "");
+
+    // Only navigate if URL actually changes to prevent infinite reloads
+    if (newSearchString !== currentSearchString) {
+      navigate(`${location.pathname}?${newSearchString}`, { replace: true });
+    }
+  };
+
+  // Debounce the search input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      updateQueryParams({ search: debouncedSearch });
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [debouncedSearch]);
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      updateQueryParams({ page });
+    }
+  };
 
   return (
     <Wrapper>
@@ -85,76 +149,115 @@ const MainProds = () => {
           <h1>Products</h1>
         </div>
         {/* <!-- End Section Title --> */}
+        <div className="container-table">
+          <div className="filters-container">
+            {/* Input Search */}
+            <input
+              type="text"
+              value={search}
+              onInput={(e) => setSearch(e.target.value)}
+              onChange={(e) => setDebouncedSearch(e.target.value)}
+              placeholder="Search products..."
+              className="form-control"
+            />
 
-        {/* <div className="container"> */}
-        {/* <div className="searchFormContainer">
-          <div className="container search-container row">
-            <div className="col-sm-4">
-              <label htmlFor="searchFilter" className="lblSearchFilter">
-                Filter
-              </label>
-              <FormRowSelect
-                name="prodCat"
-                className="form-input"
-                defaultValue={PROD_CAT.DEFAULT}
-                list={Object.values(PROD_CAT)}
-                onChange={handleSelectChange}
-                value={filteredValue}
-              />
-            </div>
+            {/* Category Filter */}
+            <select
+              value={category}
+              onChange={(e) =>
+                updateQueryParams({ category: e.target.value || null })
+              }
+              className="form-control"
+            >
+              <option value="">All Categories</option>
+              <option value="Coffee">Coffee</option>
+              <option value="Brewing Gear">Brewing Gear</option>
+              <option value="Tea">Tea</option>
+              <option value="Accessories">Accessories</option>
+            </select>
+
+            {/* Sort By */}
+            <select
+              value={sortBy}
+              onChange={(e) => updateQueryParams({ sortBy: e.target.value })}
+              className="form-control"
+            >
+              <option value="prodName">Sort by Name</option>
+              <option value="prodPrice">Sort by Price</option>
+            </select>
+
+            {/* Sort Order */}
+            <select
+              value={sortOrder}
+              onChange={(e) => updateQueryParams({ sortOrder: e.target.value })}
+              className="form-control"
+            >
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
           </div>
-        </div> */}
 
-        <DataTable id="myTable" name="myTable" className="main-table striped">
-          <thead>
-            <tr>
-              <th>
-                <Link to={"/admin/add-product"}>
-                  <Button
-                    type="button"
-                    className="btn search-prod-btn main-btn"
-                    variant="success"
-                  >
-                    <FiPlusCircle /> <span>ADD</span>
-                  </Button>
-                </Link>
-              </th>
-              <th>Name</th>
-              {/* <th>Description</th> */}
-              <th>Category</th>
-              <th>Price</th>
-              <th>Qty</th>
-              <th className="text-center">FotM</th>
-              <th className="text-center">Best</th>
-              {/* <th>Brand</th> */}
-            </tr>
-          </thead>
-          <tbody>
-            {filteredData.map((prod) => {
-              return (
-                <tr key={prod._id} className="prod-row">
-                  <td className="prod-col">
-                    <Link to={`/admin/edit-product/${prod._id}`}>
-                      <Button
-                        type="button"
-                        className="btn edit-prod-btn main-btn"
-                        variant="primary"
-                      >
-                        <TbEditCircle /> <span>EDIT</span>
-                      </Button>
-                    </Link>
-                    <Link to={`/admin/del-product/${prod._id}`}>
-                      <Button
-                        type="button"
-                        className="btn del-prod-btn main-btn"
-                        variant="danger"
-                      >
-                        <MdRemoveCircleOutline /> <span>DELETE</span>
-                      </Button>
-                    </Link>
-                  </td>
-                  <td className="prod-col">{prod.prodName}</td>
-                  {/* <td>
+          <Table striped>
+            <thead>
+              <tr>
+                <th>
+                  <Link to={"/admin/add-product"}>
+                    <Button
+                      type="button"
+                      className="btn search-prod-btn main-btn"
+                      variant="success"
+                    >
+                      <FiPlusCircle /> <span>ADD</span>
+                    </Button>
+                  </Link>
+                </th>
+                <th>Name</th>
+                {/* <th>Description</th> */}
+                <th>Category</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th className="text-center">FotM</th>
+                <th className="text-center">Best</th>
+                {/* <th>Brand</th> */}
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((prod) => {
+                var oos = "";
+                var inventoryDangerzone = "";
+                if (prod.prodQty == 0) {
+                  inventoryDangerzone = "inventory-red-zone ";
+                  oos = "Out of Stock";
+                } else if (prod.prodQty <= 10) {
+                  inventoryDangerzone = "inventory-yellow-zone ";
+                }
+                return (
+                  <tr key={prod._id} className="prod-row">
+                    <td className="prod-col">
+                      <Link to={`/admin/edit-product/${prod._id}`}>
+                        <Button
+                          type="button"
+                          className="btn edit-prod-btn main-btn"
+                          variant="primary"
+                        >
+                          <TbEditCircle /> <span>EDIT</span>
+                        </Button>
+                      </Link>
+                      <Link to={`/admin/del-product/${prod._id}`}>
+                        <Button
+                          type="button"
+                          className="btn del-prod-btn main-btn"
+                          variant="danger"
+                        >
+                          <MdRemoveCircleOutline /> <span>DELETE</span>
+                        </Button>
+                      </Link>
+                    </td>
+                    <td className="prod-col">
+                      {oos ? <sub>{"[" + oos + "]"}</sub> : ""}
+                      {prod.prodName}
+                    </td>
+                    {/* <td>
                     <Button
                       type="button"
                       variant="primary"
@@ -165,32 +268,75 @@ const MainProds = () => {
                       <span>View</span>
                     </Button>
                   </td> */}
-                  <td className="prod-col">{prod.prodCat}</td>
-                  <td className="prod-col">{prod.prodPrice}</td>
-                  <td className="prod-col">{prod.prodQty}</td>
-                  <td className="prod-col prod_fotm">
-                    {prod.prodIsFotm ? (
-                      <FaRegCheckCircle />
-                    ) : (
-                      <MdCheckBoxOutlineBlank />
-                    )}
-                  </td>
-                  <td className="prod-col prod_best">
-                    {prod.prodIsBest ? (
-                      <FaRegCheckCircle />
-                    ) : (
-                      <MdCheckBoxOutlineBlank />
-                    )}
-                  </td>
-                  {/* <td>{prod.prodBrandID}</td> */}
-                </tr>
-              );
-            })}
-          </tbody>
-        </DataTable>
+                    <td className="prod-col">{prod.prodCat}</td>
+                    <td className="prod-col prod-price">
+                      ₱{Number(prod.prodPrice).toFixed(2)}
+                    </td>
+                    <td className={inventoryDangerzone + "prod-col prod-qty"}>
+                      <Link to={`/admin/replenish-product/${prod._id}`}>
+                        <span>{prod.prodQty}</span>
+                      </Link>
+                    </td>
+                    <td className="prod-col prod_fotm">
+                      {prod.prodIsFotm ? (
+                        <FaRegCheckCircle />
+                      ) : (
+                        <MdCheckBoxOutlineBlank />
+                      )}
+                    </td>
+                    <td className="prod-col prod_best">
+                      {prod.prodIsBest ? (
+                        <FaRegCheckCircle />
+                      ) : (
+                        <MdCheckBoxOutlineBlank />
+                      )}
+                    </td>
+                    {/* <td>{prod.prodBrandID}</td> */}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+          <div className="pagination-controls">
+            <button
+              onClick={() => goToPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="btn page-btn"
+            >
+              Prev
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="btn page-btn"
+            >
+              Next
+            </button>
+          </div>
+        </div>
         <div className="container prod-notes">
-          <p>Flavor of the Month</p>
-          <p>Best Seller</p>
+          <p>
+            <span className="abbrv-notes">
+              <strong>FotM</strong>
+            </span>
+            <span> - Flavor of the Month</span>
+          </p>
+          <p>
+            <span className="abbrv-notes">
+              <strong>Best</strong>
+            </span>
+            <span> - Best Seller</span>
+          </p>
+          <p>
+            To{" "}
+            <span className="abbrv-notes">
+              <strong>REPLENISH</strong>
+            </span>{" "}
+            inventory stock, click Product Quantity
+          </p>
           <Link to={"/admin/maintenance"} className="btn-back">
             <FiArrowLeftCircle /> Back
           </Link>

@@ -20,9 +20,9 @@ export const action = async ({ request, params }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   try {
-    await customFetch.delete(`/admin/del-brand/${params.id}`, data);
+    await customFetch.patch(`/admin/del-brand/${params.id}`, data);
 
-    toast.success("Brand edited successfully");
+    toast.success("Brand deleted successfully");
     return redirect("/admin/main-brands");
     window.location.reload();
   } catch (error) {
@@ -47,6 +47,14 @@ const DelBrand = () => {
 
           <Form method="post" className="del-brand-form">
             <div className="del-brand-container">
+              <FormRow
+                type="text"
+                id="brandID"
+                name="brandID"
+                className="form-input hidden"
+                placeholder="Brand ID"
+                defaultValue={brand._id}
+              />
               <FormRow
                 type="text"
                 id="brandName"

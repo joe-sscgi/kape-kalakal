@@ -29,7 +29,8 @@ const HomepageLayoutContext = createContext();
 const HomepageLayout = () => {
   const userData = useLoaderData().userData;
   const HomepageData = useLoaderData();
-
+  const cartCtr = useLoaderData().cartData.length;
+  // console.log(useLoaderData());
   const navigate = useNavigate();
   const navigation = useNavigation();
   const isPageLoading = navigation.state === "loading";
@@ -74,6 +75,7 @@ const HomepageLayout = () => {
       value={{
         userData,
         HomepageData,
+        cartCtr,
         toggleMobileNavbar,
         isMobileActive,
         logoutUser,

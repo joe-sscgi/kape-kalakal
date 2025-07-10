@@ -54,7 +54,7 @@ const ProdImgs = () => {
         <section id="prod-imgs" className="container prod-imgs">
           {/* Section Title */}
           <div className="section-title">
-            <h1>Product Images</h1>
+            <h1>Upload Product Images</h1>
           </div>
           {/* End Section Title */}
 

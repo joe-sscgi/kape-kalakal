@@ -9,12 +9,13 @@ import { useHomepageLayoutContext } from "../pages/HomepageLayout";
 
 const header = () => {
   let userData;
+
   if (useHomepageLayoutContext()) {
     userData = useHomepageLayoutContext().userData;
+    // console.log(useHomepageLayoutContext());
   } else if (useAdminDashboardLayoutContext()) {
     userData = useAdminDashboardLayoutContext().user;
   }
-  // console.log(userData);
 
   const [isScrolled, setIsScrolled] = useState(false);
 

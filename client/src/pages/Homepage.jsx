@@ -1,4 +1,5 @@
 import Carousel from "react-bootstrap/Carousel";
+import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -19,7 +20,6 @@ const Homepage = () => {
   // const { featBrandsData } = useLoaderData().featBrandsData;
   // const { prodImgs } = useLoaderData().prodImgs;
   // const { recipes } = useLoaderData().recipes;
-  // const { userData } = useLoaderData().userData;
 
   useEffect(() => {
     AOS.init({
@@ -49,14 +49,23 @@ const Homepage = () => {
 
             <div className="fotm-container row">
               <div className="fotm-img-container col-sm-6">
-                <img src={defaultImg} alt="" />
+                <img
+                  src={
+                    fotmProductData.prodImg
+                      ? fotmProductData.prodImg
+                      : defaultImg
+                  }
+                  alt="Flavor of the Month"
+                />
               </div>
               <div className="fotm-desc-container col-sm-6">
                 <h2>{fotmProductData.prodName}</h2>
                 <p>{fotmProductData.prodDesc}</p>
-                <button type="button" className="btn main-btn shop-btn">
-                  Shop Now
-                </button>
+                <Link to={"/dashboard/shop"}>
+                  <button type="button" className="btn main-btn shop-btn">
+                    Shop Now
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -79,10 +88,16 @@ const Homepage = () => {
 
             <div className="best-container">
               {bestProductsData.map((prod) => {
+                var img = prod.prodImg;
+                var imgUrl = defaultImg;
+                if (img) {
+                  imgUrl = img.prodImgUrl;
+                } else {
+                }
                 return (
                   <div className="best-container-item" key={prod._id}>
                     <div className="best-img-container">
-                      <img src={defaultImg} alt="" />
+                      <img src={imgUrl} alt="Best Seller" />
                     </div>
                     <div className="best-desc-container">
                       <h2>{prod.prodName}</h2>
@@ -93,9 +108,11 @@ const Homepage = () => {
               })}
             </div>
             <div className="best-btn-container">
-              <button type="button" className="btn main-btn shop-btn">
-                Shop Now
-              </button>
+              <Link to={"/dashboard/shop"}>
+                <button type="button" className="btn main-btn shop-btn">
+                  Shop Now
+                </button>
+              </Link>
             </div>
           </div>
         </section>
@@ -130,9 +147,11 @@ const Homepage = () => {
                     </p>
                   </div>
                   <div className="recipe-box-btn">
-                    <button type="button" className="btn main-btn recipe-btn">
-                      View Recipe
-                    </button>
+                    <Link to={"/dashboard/recipe/coffee"}>
+                      <button type="button" className="btn main-btn recipe-btn">
+                        View Recipe
+                      </button>
+                    </Link>
                   </div>
                 </div>
                 <div className="recipe-box">
@@ -147,9 +166,11 @@ const Homepage = () => {
                     </p>
                   </div>
                   <div className="recipe-box-btn">
-                    <button type="button" className="btn main-btn recipe-btn">
-                      View Recipe
-                    </button>
+                    <Link to={"/dashboard/recipe/non-coffee"}>
+                      <button type="button" className="btn main-btn recipe-btn">
+                        View Recipe
+                      </button>
+                    </Link>
                   </div>
                 </div>
                 <div className="recipe-box">
@@ -164,9 +185,11 @@ const Homepage = () => {
                     </p>
                   </div>
                   <div className="recipe-box-btn">
-                    <button type="button" className="btn main-btn recipe-btn">
-                      View Recipe
-                    </button>
+                    <Link to={"/dashboard/recipe/pastry"}>
+                      <button type="button" className="btn main-btn recipe-btn">
+                        View Recipe
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </div>

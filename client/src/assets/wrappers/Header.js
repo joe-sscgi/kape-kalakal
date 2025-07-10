@@ -16,6 +16,15 @@ const Wrapper = styled.div`
     padding: 5px 50px;
   }
 
+  sub {
+    color: var(--accent-color);
+    margin-left: 2px;
+    margin-top: 5px;
+    font-weight: 700;
+    font-family: var(--nav-font);
+    font-size: 16px;
+  }
+
   /* RESPONSIVE */
   @media (max-width: 320px) {
     .logo {

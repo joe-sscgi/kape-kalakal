@@ -18,12 +18,39 @@ const Wrapper = styled.section`
 
   .section-title h1 {
     color: var(--primary);
+    margin-top: 24px;
+  }
+
+  .filters-container {
+    margin: 0 14px 1rem;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .pagination-controls {
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  .pagination-controls span {
+    margin: 0 1rem;
+  }
+
+  .pagination-controls .page-btn {
+    background-color: var(--bg-secondary);
+    color: var(--secondary);
+  }
+
+  .pagination-controls .page-btn:hover {
+    background-color: var(--secondary);
+    color: var(--bg-secondary);
   }
 
   .shop-container {
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
+    margin: 100px 0;
   }
 
   .shop-prod-card {
@@ -40,6 +67,7 @@ const Wrapper = styled.section`
     border-radius: 250px 0 250px 0;
     background-color: var(--primary);
     justify-items: center;
+    position: relative;
   }
 
   .shop-prod-img img {
@@ -47,6 +75,10 @@ const Wrapper = styled.section`
     height: 250px;
     margin-bottom: 24px;
     border-radius: 25px;
+  }
+
+  .shop-prod-info {
+    width: 100%;
   }
 
   .shop-prod-name,
@@ -65,6 +97,8 @@ const Wrapper = styled.section`
     align-items: center; /* Optional: vertically align items */
     gap: 1rem; /* Optional: spacing between the two sections */
     width: 100%;
+    position: absolute;
+    bottom: 0;
   }
 
   .shop-prod-price span {

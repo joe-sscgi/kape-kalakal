@@ -35,8 +35,6 @@ export const action = async ({ request, params }) => {
 };
 
 const EditProd = () => {
-  // const id = useLoaderData();
-  // const prod = useQuery(prodQuery(id)).data.prodData;
   const prod = useLoaderData();
 
   return (
@@ -56,10 +54,12 @@ const EditProd = () => {
                 type="text"
                 id="prodName"
                 name="prodName"
-                className="form-input"
-                placeholder="Product Name"
+                className="form-input hidden"
+                placeholder="Product ID"
                 defaultValue={prod._id}
+                dis="true"
               />
+              <label htmlFor="prodName">Name</label>
               <FormRow
                 type="text"
                 id="prodName"
@@ -68,6 +68,7 @@ const EditProd = () => {
                 placeholder="Product Name"
                 defaultValue={prod.prodName}
               />
+              <label htmlFor="prodDesc">Descriptpion</label>
               <textarea
                 id="prodDesc"
                 name="prodDesc"
@@ -75,11 +76,13 @@ const EditProd = () => {
                 placeholder="Product Description"
                 defaultValue={prod.prodDesc}
               />
+              <label htmlFor="prodCat">Category</label>
               <FormRowSelect
                 name="prodCat"
                 defaultValue={prod.prodCat}
                 list={Object.values(PROD_CAT)}
               />
+              <label htmlFor="prodPrice">Price</label>
               <FormRow
                 type="number"
                 id="prodPrice"
@@ -88,6 +91,7 @@ const EditProd = () => {
                 placeholder="Product Price"
                 defaultValue={prod.prodPrice}
               />
+              {/* <label htmlFor="prodQty">Quantity</label>
               <FormRow
                 type="number"
                 id="prodQty"
@@ -95,8 +99,8 @@ const EditProd = () => {
                 className="form-input"
                 placeholder="Product Quantity"
                 defaultValue={prod.prodQty}
-              />
-              <div className="add-prod-fotm">
+              /> */}
+              {/* <div className="add-prod-fotm">
                 <input
                   type="checkbox"
                   id="prodIsFotm"
@@ -119,7 +123,7 @@ const EditProd = () => {
                   defaultChecked={prod.prodIsBest ? "checked" : ""}
                 />
                 <label htmlFor="isBest"> Best Seller</label>
-              </div>
+              </div> */}
               <div className="text-center edit-prod-buttons">
                 <SubmitBtn
                   className="btn edit-prod-btn edit-prod-submit"
@@ -142,13 +146,6 @@ const EditProd = () => {
                     <span>Cancel</span>
                   </Button>
                 </Link>
-                {/* <a
-                  type="button"
-                  href="/admin/main-products"
-                  className="btn edit-prod-btn edit-prod-back"
-                >
-                  Cancel
-                </a> */}
               </div>
             </div>
           </Form>

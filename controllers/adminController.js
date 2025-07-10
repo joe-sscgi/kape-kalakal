@@ -40,8 +40,17 @@ function createUploadPath(type, data) {
   return;
 }
 
+export const getAdminDashboardData = async (req, res) => {
+  const critProd = await Products.find({ prodQty: { $lte: 10 }, prodIsDel: 0 });
+
+  const allData = {};
+  allData.critProd = critProd;
+
+  res.status(StatusCodes.OK).json({ allData });
+};
+
 // CONTENT
-export const getContentData = async (req, res) => {
+export const getContentDatav1 = async (req, res) => {
   const countFotm = await Products.countDocuments({ prodIsFotm: 1 });
   const countBest = await Products.countDocuments({ prodIsBest: 1 });
   const countFeature = await Brands.countDocuments({ brandIsFeatured: 1 });
@@ -61,6 +70,27 @@ export const getContentData = async (req, res) => {
   allData.prods = productsData;
   allData.countFotm = countFotm;
   allData.countBest = countBest;
+
+  res.status(StatusCodes.OK).json({ allData });
+};
+
+export const getContentData = async (req, res) => {
+  const brandsFeatData = await Brands.find({ brandIsFeatured: 1 }, null, {
+    sort: { brandName: 1 },
+  });
+
+  const productsFotmData = await Products.find({ prodIsFotm: 1 }, null, {
+    sort: { prodName: 1 },
+  });
+
+  const productsBestData = await Products.find({ prodIsBest: 1 }, null, {
+    sort: { prodName: 1 },
+  });
+
+  const allData = {};
+  allData.brandsFeatData = brandsFeatData;
+  allData.productsFotmData = productsFotmData;
+  allData.productsBestData = productsBestData;
 
   res.status(StatusCodes.OK).json({ allData });
 };
@@ -106,10 +136,307 @@ export const setContentData = async (req, res) => {
   }
 };
 
+export const getFotmProducts = async (req, res) => {
+  // GET ALL PRODUCTS THAT ARE NOT FOTM
+  try {
+    // 1. Extract query params
+    const {
+      page = 1,
+      limit = 15,
+      sortBy = "prodName",
+      sortOrder = "asc",
+      category,
+      search,
+    } = req.query;
+
+    const query = {};
+
+    // FILTER NOT DELETED
+    query.prodIsDel = 0;
+
+    // FILTER NOT FOTM
+    query.prodIsFotm = 0;
+
+    // FILTER COFFEE ONLY FOR FOTM
+    query.prodCat = "Coffee";
+
+    // 2. Optional search filter
+    if (search) {
+      query.prodName = { $regex: search, $options: "i" }; // case-insensitive search
+    }
+
+    // 4. Sorting
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    // 5. Pagination
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // 6. Get products with pagination and sorting
+    const productsData = await Products.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(Number(limit));
+
+    // 7. Get total count for pagination info
+    const totalProducts = await Products.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / Number(limit));
+
+    // 8. Attach first image to each product
+    const productIds = productsData.map((p) => p._id);
+    const imagesData = await Products_Images.find({
+      prodImgProdID: { $in: productIds },
+    }).sort({ _id: 1 });
+
+    const firstImageByProductId = {};
+    for (const img of imagesData) {
+      const key = img.prodImgProdID.toString();
+      if (!firstImageByProductId[key]) {
+        firstImageByProductId[key] = img;
+      }
+    }
+
+    const productsWithFirstImage = productsData.map((product) => ({
+      ...product.toObject(),
+      prodImg: firstImageByProductId[product._id.toString()] || null,
+    }));
+
+    // 9. Return the result
+    res.status(StatusCodes.OK).json({
+      products: productsWithFirstImage,
+      currentPage: Number(page),
+      totalPages,
+    });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Something went wrong." });
+  }
+};
+
+export const getBestProducts = async (req, res) => {
+  // GET ALL PRODUCTS THAT ARE NOT BEST SELLER
+  try {
+    // 1. Extract query params
+    const {
+      page = 1,
+      limit = 15,
+      sortBy = "prodName",
+      sortOrder = "asc",
+      category,
+      search,
+    } = req.query;
+
+    const query = {};
+
+    // FILTER NOT DELETED
+    query.prodIsDel = 0;
+
+    // FILTER NOT BEST SELLER
+    query.prodIsBest = 0;
+
+    // 2. Optional search filter
+    if (search) {
+      query.prodName = { $regex: search, $options: "i" }; // case-insensitive search
+    }
+
+    // 3. Optional category filter
+    if (category) {
+      query.prodCat = category;
+    }
+
+    // 4. Sorting
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    // 5. Pagination
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // 6. Get products with pagination and sorting
+    const productsData = await Products.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(Number(limit));
+
+    // 7. Get total count for pagination info
+    const totalProducts = await Products.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / Number(limit));
+
+    // 8. Attach first image to each product
+    const productIds = productsData.map((p) => p._id);
+    const imagesData = await Products_Images.find({
+      prodImgProdID: { $in: productIds },
+    }).sort({ _id: 1 });
+
+    const firstImageByProductId = {};
+    for (const img of imagesData) {
+      const key = img.prodImgProdID.toString();
+      if (!firstImageByProductId[key]) {
+        firstImageByProductId[key] = img;
+      }
+    }
+
+    const productsWithFirstImage = productsData.map((product) => ({
+      ...product.toObject(),
+      prodImg: firstImageByProductId[product._id.toString()] || null,
+    }));
+
+    // 9. Return the result
+    res.status(StatusCodes.OK).json({
+      products: productsWithFirstImage,
+      currentPage: Number(page),
+      totalPages,
+    });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Something went wrong." });
+  }
+};
+
+export const getFeatBrands = async (req, res) => {
+  // GET ALL BRANDS THAT ARE NOT FEATURED
+  try {
+    // 1. Extract query params
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = "brandName",
+      sortOrder = "asc",
+      category,
+      search,
+    } = req.query;
+
+    const query = {};
+
+    // FILTER NOT DELETED
+    query.brandIsDel = 0;
+
+    // FILTER NOT FEATURED
+    query.brandIsFeatured = 0;
+
+    // 2. Optional search filter
+    if (search) {
+      query.brandName = { $regex: search, $options: "i" }; // case-insensitive search
+    }
+
+    // 3. Optional category filter
+    if (category) {
+      query.brandCat = category;
+    }
+
+    // 4. Sorting
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    // 5. Pagination
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // 6. Get products with pagination and sorting
+    const brandsData = await Brands.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(Number(limit));
+
+    // 7. Get total count for pagination info
+    const totalBrands = await Brands.countDocuments(query);
+    const totalPages = Math.ceil(totalBrands / Number(limit));
+
+    // 9. Return the result
+    res.status(StatusCodes.OK).json({
+      brands: brandsData,
+      currentPage: Number(page),
+      totalPages,
+    });
+  } catch (error) {
+    console.error("Error fetching brands:", error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Something went wrong." });
+  }
+};
+
+// PROFILE
+export const getUserProfile = async (req, res) => {
+  const userProfile = await UserInfo.findOne({ userUserID: req.user.userId });
+
+  res.status(StatusCodes.OK).json({ userProfile: userProfile });
+};
+
+export const updateProfile = async (req, res) => {
+  const updatedUserProfile = await UserInfo.findByIdAndUpdate(
+    req.body.profileID,
+    req.body
+  );
+
+  const updatedUser = await UserInfo.findByIdAndUpdate(
+    req.body.userID,
+    req.body
+  );
+
+  res.status(StatusCodes.OK).json({ msg: "user profile updated" });
+};
+// END PROFILE
+
 // BRANDS
 export const getAllBrands = async (req, res) => {
-  const brandsData = await Brands.find({});
-  res.status(StatusCodes.OK).json({ brandsData });
+  try {
+    // 1. Extract query params
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = "brandName",
+      sortOrder = "asc",
+      category,
+      search,
+    } = req.query;
+
+    const query = {};
+
+    // FILTER NOT DELETED
+    query.brandIsDel = 0;
+
+    // 2. Optional search filter
+    if (search) {
+      query.brandName = { $regex: search, $options: "i" }; // case-insensitive search
+    }
+
+    // 3. Optional category filter
+    if (category) {
+      query.brandCat = category;
+    }
+
+    // 4. Sorting
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    // 5. Pagination
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // 6. Get products with pagination and sorting
+    const brandsData = await Brands.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(Number(limit));
+
+    // 7. Get total count for pagination info
+    const totalBrands = await Brands.countDocuments(query);
+    const totalPages = Math.ceil(totalBrands / Number(limit));
+
+    // 9. Return the result
+    res.status(StatusCodes.OK).json({
+      brands: brandsData,
+      currentPage: Number(page),
+      totalPages,
+    });
+  } catch (error) {
+    console.error("Error fetching brands:", error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Something went wrong." });
+  }
 };
 
 export const createBrand = async (req, res) => {
@@ -130,8 +457,11 @@ export const updateBrand = async (req, res) => {
 };
 
 export const deleteBrand = async (req, res) => {
-  const deleteBrand = await Brands.findByIdAndDelete(req.params.id);
-  res.status(StatusCodes.OK).json({ msg: "brand deleted", prod: deleteBrand });
+  const deleteBrand = await Brands.findByIdAndUpdate(req.params.id, {
+    brandIsDel: 1,
+    new: true,
+  });
+  res.status(StatusCodes.OK).json({ msg: "brand deleted", brand: deleteBrand });
 };
 // END BRANDS
 
@@ -181,7 +511,7 @@ export const getAllProducts = async (req, res) => {
     // 1. Extract query params
     const {
       page = 1,
-      limit = 6,
+      limit = 15,
       sortBy = "prodName",
       sortOrder = "asc",
       category,
@@ -189,6 +519,9 @@ export const getAllProducts = async (req, res) => {
     } = req.query;
 
     const query = {};
+
+    // FILTER NOT DELETED
+    query.prodIsDel = 0;
 
     // 2. Optional search filter
     if (search) {
@@ -293,8 +626,26 @@ export const updateProduct = async (req, res) => {
     .json({ msg: "product updated", Products: updatedProd });
 };
 
+export const replenishProduct = async (req, res) => {
+  var prodQty = req.body.prodQty;
+  var replenishQty = req.body.prodReplenishQty;
+  var updatedProdQty = parseInt(prodQty) + parseInt(replenishQty);
+  req.body.prodQty = updatedProdQty;
+
+  const replenishedProd = await Products.findByIdAndUpdate(
+    req.params.id,
+    req.body
+  );
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "product updated", Products: replenishedProd });
+};
+
 export const deleteProduct = async (req, res) => {
-  const deleteProd = await Products.findByIdAndDelete(req.params.id);
+  const deleteProd = await Products.findByIdAndUpdate(req.params.id, {
+    prodIsDel: 1,
+    new: true,
+  });
   res.status(StatusCodes.OK).json({ msg: "product deleted", prod: deleteProd });
 };
 
@@ -327,8 +678,64 @@ export const getProductImgs = async (req, res) => {
 
 // USERS
 export const getAllUsers = async (req, res) => {
-  const usersData = await Users.find({});
-  res.status(StatusCodes.OK).json({ usersData });
+  try {
+    // 1. Extract query params
+    const {
+      page = 1,
+      limit = 15,
+      sortBy = "userUsername",
+      sortOrder = "asc",
+      category,
+      search,
+    } = req.query;
+
+    const query = {};
+
+    // FILTER NOT DELETED
+    query.userIsDel = 0;
+
+    // 2. Optional search filter
+    if (search) {
+      query.$or = [
+        { userUsername: { $regex: search, $options: "i" } },
+        { userEmail: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // 3. Optional category filter
+    if (category) {
+      query.userUserType = category;
+    }
+
+    // 4. Sorting
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    // 5. Pagination
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // 6. Get products with pagination and sorting
+    const usersData = await Users.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(Number(limit));
+
+    // 7. Get total count for pagination info
+    const totalUsers = await Users.countDocuments(query);
+    const totalPages = Math.ceil(totalUsers / Number(limit));
+
+    // 9. Return the result
+    res.status(StatusCodes.OK).json({
+      users: usersData,
+      currentPage: Number(page),
+      totalPages,
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Something went wrong." });
+  }
 };
 
 export const getUser = async (req, res) => {
@@ -346,8 +753,8 @@ export const createUser = async (req, res) => {
   const isFirstAccount = (await Users.countDocuments()) === 0;
   req.body.userType = isFirstAccount ? "Super Admin" : req.body.useUserType;
 
-  // const hashedPassword = await hashPassword(req.body.userPassword);
-  // req.body.userPassword = hashedPassword;
+  const hashedPassword = await hashPassword(req.body.userPassword);
+  req.body.userPassword = hashedPassword;
 
   const user = await Users.create(req.body);
 
@@ -368,7 +775,10 @@ export const updateUser = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
-  const deleteUser = await Users.findByIdAndDelete(req.params.id);
+  const deleteUser = await Users.findByIdAndUpdate(req.params.id, {
+    userIsDel: 1,
+    new: true,
+  });
   res.status(StatusCodes.OK).json({ msg: "user deleted", user: deleteUser });
 };
 
@@ -392,8 +802,64 @@ export const changePassword = async (req, res) => {
 
 // RECIPES
 export const getAllRecipes = async (req, res) => {
-  const recipesData = await Recipes.find({});
-  res.status(StatusCodes.OK).json({ recipesData });
+  try {
+    // 1. Extract query params
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = "recipeName",
+      sortOrder = "asc",
+      category,
+      search,
+    } = req.query;
+
+    const query = {};
+
+    // FILTER NOT DELETED
+    query.recipeIsDel = 0;
+
+    // 2. Optional search filter
+    if (search) {
+      query.$or = [
+        { recipeName: { $regex: search, $options: "i" } },
+        { recipeAuthor: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // 3. Optional category filter
+    if (category) {
+      query.recipeCat = category;
+    }
+
+    // 4. Sorting
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    // 5. Pagination
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // 6. Get products with pagination and sorting
+    const recipesData = await Recipes.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(Number(limit));
+
+    // 7. Get total count for pagination info
+    const totalRecipes = await Recipes.countDocuments(query);
+    const totalPages = Math.ceil(totalRecipes / Number(limit));
+
+    // 9. Return the result
+    res.status(StatusCodes.OK).json({
+      recipes: recipesData,
+      currentPage: Number(page),
+      totalPages,
+    });
+  } catch (error) {
+    console.error("Error fetching recipes:", error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Something went wrong." });
+  }
 };
 
 export const createRecipe = async (req, res) => {
@@ -417,9 +883,317 @@ export const updateRecipe = async (req, res) => {
 };
 
 export const deleteRecipe = async (req, res) => {
-  const deleteRecipe = await Recipes.findByIdAndDelete(req.params.id);
+  const deleteRecipe = await Recipes.findByIdAndUpdate(req.params.id, {
+    recipeIsDel: 1,
+    new: true,
+  });
   res
     .status(StatusCodes.OK)
     .json({ msg: "recipe deleted", Recipe: deleteRecipe });
 };
 // END RECIPES
+
+// ARCHIVES
+export const getAllArchiveBrands = async (req, res) => {
+  try {
+    // 1. Extract query params
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = "brandName",
+      sortOrder = "asc",
+      category,
+      search,
+    } = req.query;
+
+    const query = {};
+
+    // FILTER NOT DELETED
+    query.brandIsDel = 1;
+
+    // 2. Optional search filter
+    if (search) {
+      query.brandName = { $regex: search, $options: "i" }; // case-insensitive search
+    }
+
+    // 3. Optional category filter
+    if (category) {
+      query.brandCat = category;
+    }
+
+    // 4. Sorting
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    // 5. Pagination
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // 6. Get products with pagination and sorting
+    const brandsData = await Brands.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(Number(limit));
+
+    // 7. Get total count for pagination info
+    const totalBrands = await Brands.countDocuments(query);
+    const totalPages = Math.ceil(totalBrands / Number(limit));
+
+    // 9. Return the result
+    res.status(StatusCodes.OK).json({
+      brands: brandsData,
+      currentPage: Number(page),
+      totalPages,
+    });
+  } catch (error) {
+    console.error("Error fetching brands:", error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Something went wrong." });
+  }
+};
+
+export const restoreArchiveBrand = async (req, res) => {
+  const restoredBrand = await Brands.findByIdAndUpdate(req.params.id, {
+    brandIsDel: 0,
+    new: true,
+  });
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "brand restored", band: restoredBrand });
+};
+
+export const deleteArchiveBrand = async (req, res) => {
+  const deleteBrand = await Brands.findByIdAndDelete(req.params.id);
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "brand deleted permanently", brand: deleteBrand });
+};
+
+export const getAllArchiveProducts = async (req, res) => {
+  try {
+    // 1. Extract query params
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = "prodName",
+      sortOrder = "asc",
+      category,
+      search,
+    } = req.query;
+
+    const query = {};
+
+    // FILTER NOT DELETED
+    query.prodIsDel = 1;
+
+    // 2. Optional search filter
+
+    if (search) {
+      query.prodName = { $regex: search, $options: "i" }; // case-insensitive search
+    }
+
+    // 3. Optional category filter
+    if (category) {
+      query.prodCat = category;
+    }
+
+    // 4. Sorting
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    // 5. Pagination
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // 6. Get products with pagination and sorting
+    const prodsData = await Products.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(Number(limit));
+
+    // 7. Get total count for pagination info
+    const totalProducts = await Products.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / Number(limit));
+
+    // 9. Return the result
+    res.status(StatusCodes.OK).json({
+      products: prodsData,
+      currentPage: Number(page),
+      totalPages,
+    });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Something went wrong." });
+  }
+};
+
+export const restoreArchiveProduct = async (req, res) => {
+  const restoredProduct = await Products.findByIdAndUpdate(req.params.id, {
+    prodIsDel: 0,
+    new: true,
+  });
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "product restored", prod: restoredProduct });
+};
+
+export const deleteArchiveProduct = async (req, res) => {
+  const deleteProduct = await Products.findByIdAndDelete(req.params.id);
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "product deleted permanently", prod: deleteProduct });
+};
+
+export const getAllArchiveRecipes = async (req, res) => {
+  try {
+    // 1. Extract query params
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = "recipeName",
+      sortOrder = "asc",
+      category,
+      search,
+    } = req.query;
+
+    const query = {};
+
+    // FILTER NOT DELETED
+    query.recipeIsDel = 1;
+
+    // 2. Optional search filter
+
+    if (search) {
+      query.recipeName = { $regex: search, $options: "i" }; // case-insensitive search
+    }
+
+    // 3. Optional category filter
+    if (category) {
+      query.recipeCat = category;
+    }
+
+    // 4. Sorting
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    // 5. Pagination
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // 6. Get products with pagination and sorting
+    const recipesData = await Recipes.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(Number(limit));
+
+    // 7. Get total count for pagination info
+    const totalRecipes = await Recipes.countDocuments(query);
+    const totalPages = Math.ceil(totalRecipes / Number(limit));
+
+    // 9. Return the result
+    res.status(StatusCodes.OK).json({
+      recipes: recipesData,
+      currentPage: Number(page),
+      totalPages,
+    });
+  } catch (error) {
+    console.error("Error fetching recipes:", error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Something went wrong." });
+  }
+};
+
+export const restoreArchiveRecipe = async (req, res) => {
+  const restoredRecipe = await Recipes.findByIdAndUpdate(req.params.id, {
+    recipeIsDel: 0,
+    new: true,
+  });
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "Recipe restored", recipe: restoredRecipe });
+};
+
+export const deleteArchiveRecipe = async (req, res) => {
+  const deleteRecipe = await Recipes.findByIdAndDelete(req.params.id);
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "recipe deleted permanently", recipe: deleteRecipe });
+};
+
+export const getAllArchiveUsers = async (req, res) => {
+  try {
+    // 1. Extract query params
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = "userUserame",
+      sortOrder = "asc",
+      category,
+      search,
+    } = req.query;
+
+    const query = {};
+
+    // FILTER NOT DELETED
+    query.userIsDel = 1;
+
+    // 2. Optional search filter
+    if (search) {
+      query.$or = [
+        { userUsername: { $regex: search, $options: "i" } },
+        { userEmail: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // 3. Optional category filter
+    if (category) {
+      query.userUserType = category;
+    }
+
+    // 4. Sorting
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    // 5. Pagination
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // 6. Get products with pagination and sorting
+    const usersData = await Users.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(Number(limit));
+
+    // 7. Get total count for pagination info
+    const totalUsers = await Users.countDocuments(query);
+    const totalPages = Math.ceil(totalUsers / Number(limit));
+
+    // 9. Return the result
+    res.status(StatusCodes.OK).json({
+      users: usersData,
+      currentPage: Number(page),
+      totalPages,
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Something went wrong." });
+  }
+};
+
+export const restoreArchiveUser = async (req, res) => {
+  const restoredUser = await Users.findByIdAndUpdate(req.params.id, {
+    userIsDel: 0,
+    new: true,
+  });
+  res.status(StatusCodes.OK).json({ msg: "User restored", user: restoredUser });
+};
+
+export const deleteArchiveUser = async (req, res) => {
+  const deleteUser = await Users.findByIdAndDelete(req.params.id);
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "User deleted permanently", prod: deleteUser });
+};
+// END ARCHIVES

@@ -21,9 +21,9 @@ export const action = async ({ request, params }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   try {
-    await customFetch.delete(`/admin/edit-recipe/${params.id}`, data);
+    await customFetch.patch(`/admin/del-recipe/${params.id}`, data);
 
-    toast.success("Recipe edited successfully");
+    toast.success("Recipe deleted successfully");
     return redirect("/admin/main-recipes");
     window.location.reload();
   } catch (error) {
@@ -94,7 +94,7 @@ const DelRecipe = () => {
               <div className="text-center del-recipe-buttons">
                 <SubmitBtn
                   className="btn del-recipe-btn del-recipe-submit"
-                  buttonText="Update"
+                  buttonText="Delete"
                 />
                 <Link to={"/admin/main-recipes"}>
                   <Button

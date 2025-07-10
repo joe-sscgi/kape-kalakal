@@ -18,12 +18,11 @@ const Wrapper = styled.section`
     box-shadow: var(--lgtShadow);
 
     margin-top: 40px;
-    height: 70vh;
   }
 
   .section-title h1 {
     font-family: var(--secondary-font);
-    color: var(--primary);
+    color: var(--bg-primary);
     margin-bottom: 14px;
   }
 

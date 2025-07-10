@@ -12,7 +12,11 @@ const Error = () => {
           <img src={img} alt="not found" />
           <h3>Ohh! page not found</h3>
           <p>we can't seem to find the page you are looking for</p>
-          <Link to="/admin">back home</Link>
+          {/* {userData.userUserType == "Customer" ? (
+            <Link to="/dashboard">back home</Link>
+          ) : (
+            <Link to="/admin">back home</Link>
+          )} */}
         </div>
       </Wrapper>
     );
@@ -21,7 +25,11 @@ const Error = () => {
     <Wrapper>
       <div>
         <h3>something went wrong</h3>
-        <Link to="/admin">back home</Link>
+        {/* {userData.userUserType == "Customer" ? (
+          <Link to="/dashboard">back home</Link>
+        ) : (
+          <Link to="/admin">back home</Link>
+        )} */}
       </div>
     </Wrapper>
   );

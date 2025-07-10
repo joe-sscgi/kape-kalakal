@@ -15,16 +15,44 @@ import Orders from "../models/OrdersModel.js";
 export const getHomepageData = async (req, res) => {
   const userData = await Users.findOne({ _id: req.user.userId });
   const featBrandsData = await Brands.find({ brandIsFeatured: 1 });
+
   const fotmProductData = await Products.findOne({ prodIsFotm: "1" });
+  const fotmProdImgsData = await Products_Images.findOne({
+    prodImgProdID: fotmProductData._id,
+  });
+  const fotmProductsWithFirstImage = {
+    ...fotmProductData.toObject(),
+    prodImg: fotmProdImgsData,
+  };
+  // console.log(fotmProductsWithFirstImage);
+  const cartData = await TempCart.find({ userID: req.user.userId });
+
   const bestProductsData = await Products.find({ prodIsBest: "1" });
-  const prodImgsData = await Products_Images.find({});
+  // 8. Attach first image to each product
+  const bestProductIds = bestProductsData.map((p) => p._id);
+  const imagesData = await Products_Images.find({
+    prodImgProdID: { $in: bestProductIds },
+  }).sort({ _id: 1 });
+
+  const firstImageByProductId = {};
+  for (const img of imagesData) {
+    const key = img.prodImgProdID.toString();
+    if (!firstImageByProductId[key]) {
+      firstImageByProductId[key] = img;
+    }
+  }
+
+  const bestProductsWithFirstImage = bestProductsData.map((product) => ({
+    ...product.toObject(),
+    prodImg: firstImageByProductId[product._id.toString()] || null,
+  }));
 
   const homepageData = {};
   homepageData.userData = userData;
   homepageData.featBrandsData = featBrandsData;
-  homepageData.bestProductsData = bestProductsData;
-  homepageData.fotmProductData = fotmProductData;
-  homepageData.prodImgs = prodImgsData;
+  homepageData.bestProductsData = bestProductsWithFirstImage;
+  homepageData.fotmProductData = fotmProductsWithFirstImage;
+  homepageData.cartData = cartData;
 
   // console.log(homepageData);
 
@@ -32,11 +60,48 @@ export const getHomepageData = async (req, res) => {
 };
 
 export const addToTmpCart = async (req, res) => {
-  const tmpCart = await TempCart.create(req.body);
-  res.status(StatusCodes.CREATED).json({ tmpCart });
+  const checkCartItem = await TempCart.findOne({
+    userID: req.user.userId,
+    prodID: req.body.prodID,
+  });
+
+  //CHECK PRODUCT IF EXISTING
+  if (checkCartItem) {
+    checkCartItem.prodQty += 1;
+    const updatedCart = await TempCart.findByIdAndUpdate(
+      checkCartItem._id,
+      checkCartItem
+    );
+    res
+      .status(StatusCodes.OK)
+      .json({ msg: "Cart Itemm Updated Successfully", cart: updatedCart });
+  } else {
+    console.log(2);
+    const tmpCart = await TempCart.create(req.body);
+    res.status(StatusCodes.CREATED).json({ tmpCart });
+  }
+};
+
+export const getTmpCart = async (req, res) => {
+  const userCart = await TempCart.find({ userID: req.user.userId });
+  res.status(StatusCodes.OK).json({ cart: userCart });
+};
+
+export const updateItemInCart = async (req, res) => {
+  // console.log(req.body);
+  const updatedCartItem = await TempCart.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true }
+  );
+
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "Cart Itemm Updated Successfully", cart: updatedCartItem });
 };
 
 export const delItemInCart = async (req, res) => {
+  // console.log(req.params.id);
   const delTmpCartItem = await TempCart.findByIdAndDelete(req.params.id);
   res
     .status(StatusCodes.OK)
@@ -46,6 +111,28 @@ export const delItemInCart = async (req, res) => {
 export const checkout = async (req, res) => {
   const cart = await Cart.create(req.body);
   res.status(StatusCodes.CREATED).json({ cart });
+};
+
+// RECIPES
+export const getAllRecipeType = async (req, res) => {
+  // console.log(3, req.params);
+  let type = "";
+  if (req.params.type == "coffee") {
+    type = "Coffee";
+  } else if (req.params.type == "non-coffee") {
+    type = "Non-Coffee";
+  } else if (req.params.type == "pastry") {
+    type = "Kashi Pastry";
+  }
+
+  const recipe = await Recipes.find({ recipeCat: type });
+
+  res.status(StatusCodes.OK).json({ recipe: recipe });
+};
+
+export const getRecipe = async (req, res) => {
+  const recipe = await Recipes.findOne({ _id: req.params.id });
+  res.status(StatusCodes.OK).json({ recipe: recipe });
 };
 
 // USER

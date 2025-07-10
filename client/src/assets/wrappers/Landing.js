@@ -20,8 +20,14 @@ const Wrapper = styled.section`
     font-size: 18px;
   }
 
+  .navmenu li:hover > a, .navmenu .active, .navmenu .active:focus {
+        color: unset !important;
+    }
+}
+
   .navmenu .dropdown ul li a:hover {
     font-size: 32px;
+    padding-left: 0px;
   }
 
   /* HERO SECTION */
@@ -332,6 +338,12 @@ const Wrapper = styled.section`
 
   /* RESPONSIVE */
   /* HEADER/NAVBAR SECTION */
+  @media (min-width: 1200px) {
+    .navmenu .dropdown ul li {
+      min-width: unset !important;
+    }
+  }
+
   @media (max-width: 1199px) {
     .mobile-nav-active .navmenu {
       width: 50vw;

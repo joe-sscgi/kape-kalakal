@@ -104,6 +104,7 @@ const Wrapper = styled.section`
 
   .best-img-container img {
     width: 250px;
+    height: 300px;
     border-radius: 25px;
   }
 
@@ -123,6 +124,7 @@ const Wrapper = styled.section`
   /* RECIPES SECTION */
   .recipes-section {
     background-color: var(--secondary);
+    height: unset;
   }
 
   .recipe-box {

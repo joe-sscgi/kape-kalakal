@@ -7,11 +7,19 @@ const TmpCartSchema = new mongoose.Schema(
     },
     prodID: {
       type: String,
-      alias: "name",
+    },
+    prodName: {
+      type: String,
+    },
+    prodImgUrl: {
+      type: String,
     },
     prodQty: {
       type: Number,
-      alias: "quantity",
+      default: 0,
+    },
+    prodPrice: {
+      type: Number,
       default: 0,
     },
   },

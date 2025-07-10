@@ -43,7 +43,7 @@ const ProdImgs = () => {
         <section id="prod-gallery" className="container prod-gallery">
           {/* Section Title */}
           <div className="section-title">
-            <h1>Product Images</h1>
+            <h1>Product Gallery Images</h1>
             <h3>{prod.prodImgs ? "" : "No Uploaded Images"}</h3>
           </div>
           {/* End Section Title */}

@@ -179,6 +179,13 @@ const router = createBrowserRouter([
         // action: actionSetContent,
       },
       {
+        path: "profile",
+        element: <Profile />,
+        errorElement: <Error />,
+        loader: profileLoader,
+        action: actionUpdateProfile,
+      },
+      {
         path: "cart",
         element: <Cart />,
         errorElement: <Error />,

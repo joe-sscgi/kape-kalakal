@@ -33,10 +33,6 @@ router.route("/cart/checkout").get(checkingOut);
 router.route("/recipes/recipe-container/:type").get(getAllRecipeType);
 router.route("/recipes/recipe-container/:type/:id").get(getRecipe);
 
-router
-  .route("/profile/:id")
-  .get(validateIdParam, getCurrentUser)
-  .patch(validateIdParam, updateUserProfile)
-  .delete(validateIdParam, deleteUser);
+router.route("/profile/:id").patch(updateUserProfile);
 
 export default router;

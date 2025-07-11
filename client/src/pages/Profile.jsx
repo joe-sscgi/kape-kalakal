@@ -19,8 +19,11 @@ export const action = async ({ request, params }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   try {
-    await customFetch.patch(`/admin/profile/${params.id}`, data);
-
+    if (data.userType == "Customer") {
+      await customFetch.patch(`/dashboard/profile/${params.id}`, data);
+    } else {
+      await customFetch.patch(`/admin/profile/${params.id}`, data);
+    }
     toast.success("Profile updated successfully");
     window.location.reload();
   } catch (error) {
@@ -30,7 +33,7 @@ export const action = async ({ request, params }) => {
 };
 
 const Profile = () => {
-  const { user } = useOutletContext();
+  const { user, userData } = useOutletContext();
   const { userProfile } = useLoaderData();
 
   return (
@@ -43,23 +46,33 @@ const Profile = () => {
               <Form method="post" className="edit-profile-form">
                 <div className="edit-profile-container">
                   <div className="profile-group row">
-                    <div className="col-sm-6">
+                    <div className="col-sm-4">
                       <label htmlFor="userID">Profile ID</label>
                       <input
                         type="text"
                         name="profileID"
                         className="profileID form-control"
-                        defaultValue={userProfile._id}
+                        defaultValue={userProfile?._id}
                         readOnly
                       />
                     </div>
-                    <div className="col-sm-6">
+                    <div className="col-sm-4">
                       <label htmlFor="userID">User ID</label>
                       <input
                         type="text"
                         name="userID"
                         className="userID form-control"
-                        defaultValue={user._id}
+                        defaultValue={(user || userData)?._id}
+                        readOnly
+                      />
+                    </div>
+                    <div className="col-sm-4">
+                      <label htmlFor="userID">User Type</label>
+                      <input
+                        type="text"
+                        name="userType"
+                        className="userID form-control"
+                        defaultValue={(user || userData)?.userUserType}
                         readOnly
                       />
                     </div>
@@ -71,7 +84,7 @@ const Profile = () => {
                         type="text"
                         name="userLastName"
                         className="userLastName form-control"
-                        defaultValue={userProfile.userLastName}
+                        defaultValue={userProfile?.userLastName}
                       />
                     </div>
                     <div className="col-sm-4">
@@ -80,7 +93,7 @@ const Profile = () => {
                         type="text"
                         name="userFirstName"
                         className="userFirstName form-control"
-                        defaultValue={userProfile.userFirstName}
+                        defaultValue={userProfile?.userFirstName}
                       />
                     </div>
                     <div className="col-sm-4">
@@ -89,7 +102,7 @@ const Profile = () => {
                         type="text"
                         name="userMiddleName"
                         className="userMiddleName form-control"
-                        defaultValue={userProfile.userMiddleName}
+                        defaultValue={userProfile?.userMiddleName}
                         placeholder="(Optional)"
                       />
                     </div>
@@ -101,7 +114,7 @@ const Profile = () => {
                         type="text"
                         name="userAddressNoStBrgy"
                         className="userAddressNoStBrgy form-control"
-                        defaultValue={userProfile.userAddressNoStBrgy}
+                        defaultValue={userProfile?.userAddressNoStBrgy}
                         placeholder="House/Blk/Lot/Unit No. Street/Barangay"
                       />
                     </div>
@@ -110,7 +123,7 @@ const Profile = () => {
                         type="text"
                         name="userAddressCityMunicipality"
                         className="userAddressCityMunicipality form-control"
-                        defaultValue={userProfile.userAddressCityMunicipality}
+                        defaultValue={userProfile?.userAddressCityMunicipality}
                         placeholder="City/Municipality"
                       />
                     </div>
@@ -119,7 +132,7 @@ const Profile = () => {
                         type="text"
                         name="userProvince"
                         className="userProvince form-control"
-                        defaultValue={userProfile.userProvince}
+                        defaultValue={userProfile?.userProvince}
                         placeholder="Province"
                       />
                     </div>
@@ -131,7 +144,7 @@ const Profile = () => {
                         type="text"
                         name="userEmail"
                         className="userEmail form-control"
-                        defaultValue={user.userEmail}
+                        defaultValue={(user || userData)?.userEmail}
                       />
                     </div>
                     <div className="col-sm-6">
@@ -140,7 +153,7 @@ const Profile = () => {
                         type="text"
                         name="userUsername"
                         className="userUsername form-control"
-                        defaultValue={user.userUsername}
+                        defaultValue={(user || userData)?.userUsername}
                       />
                     </div>
                   </div>

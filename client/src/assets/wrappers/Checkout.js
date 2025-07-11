@@ -16,10 +16,12 @@ const Wrapper = styled.section`
   }
 
   .checkout-header h3,
+  .other-address-details-header h3,
   .checkout-order-total h2,
   .checkout-order-total h5 {
     font-family: var(--secondary-font);
     margin-bottom: 14px;
+    color: var(--primary);
   }
 
   .checkout-order-total h2,
@@ -29,6 +31,11 @@ const Wrapper = styled.section`
 
   .checkout-user-details label {
     margin-bottom: 14px;
+    margin-left: 14px;
+  }
+
+  span.defaultAddress {
+    font-size: 24px;
   }
 
   .checkout-info {
@@ -93,6 +100,7 @@ const Wrapper = styled.section`
     justify-content: space-between;
   }
 
+  .other-address-details-header,
   .checkout-grandtotal {
     margin-top: 14px;
   }

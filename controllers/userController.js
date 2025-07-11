@@ -180,23 +180,15 @@ export const changePassword = async (req, res) => {
 // END USERS
 
 export const updateUserProfile = async (req, res) => {
-  const userInfo = { ...req.body };
-  // const userInfo = user;
-  // delete userInfo.userEmail;
-  // delete userInfo.userUsername;
-  // delete userInfo.userPassword;
+  const updatedUserProfile = await UserInfo.findByIdAndUpdate(
+    req.body.profileID,
+    req.body
+  );
 
-  const updatedUser = await Users.findByIdAndUpdate(req.params.id, userInfo);
+  const updatedUser = await UserInfo.findByIdAndUpdate(
+    req.body.userID,
+    req.body
+  );
 
-  const userInfoData = await UserInfo.find(req.params.id);
-  if (userInfoData) {
-    const updatedUserProfile = await UserInfo.findByIdAndUpdate(
-      userInfoData._id,
-      obj
-    );
-  }
-
-  res
-    .status(StatusCodes.OK)
-    .json({ msg: "user profile updated", Users: updatedUser });
+  res.status(StatusCodes.OK).json({ msg: "user profile updated" });
 };

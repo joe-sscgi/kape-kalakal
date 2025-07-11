@@ -62,25 +62,32 @@ const Checkout = () => {
               !userInfo?.userProvince?.trim() ? (
                 <span>No saved address</span>
               ) : (
-                <span>
-                  {userInfo?.userAddressNoStBrgy +
-                    " " +
-                    userInfo?.userAddressCityMunicipality +
-                    " " +
-                    userInfo?.userProvince}
-                </span>
+                <div>
+                  <span>Your Default Address : </span>
+                  <span className="default-address">
+                    {userInfo?.userAddressNoStBrgy +
+                      " " +
+                      userInfo?.userAddressCityMunicipality +
+                      " " +
+                      userInfo?.userProvince}
+                  </span>
+                </div>
               )}
               {!isChecked && (
-                <div className="default-address-details">
-                  <Form method="post" className="edit-profile-form">
-                    <div className="profile-group">
+                <div className="other-address-details">
+                  <Form method="post" className="other-address-details-form">
+                    <div className="other-address-details-header">
+                      <h3>Provide a Shipping Address</h3>
+                    </div>
+
+                    <div className="other-address-details">
                       <div className="">
                         <input
                           type="text"
                           name="userAddressNoStBrgy"
                           className="userAddressNoStBrgy form-control checkout-form-control"
                           placeholder="House/Blk/Lot/Unit No. Street/Barangay"
-                          required
+                          required={isChecked}
                         />
                       </div>
                       <div className="">
@@ -89,7 +96,7 @@ const Checkout = () => {
                           name="userAddressCityMunicipality"
                           className="userAddressCityMunicipality form-control checkout-form-control"
                           placeholder="City/Municipality"
-                          required
+                          required={isChecked}
                         />
                       </div>
                       <div className="">
@@ -98,7 +105,7 @@ const Checkout = () => {
                           name="userProvince"
                           className="userProvince form-control checkout-form-control"
                           placeholder="Province"
-                          required
+                          required={isChecked}
                         />
                       </div>
                       <div className="">

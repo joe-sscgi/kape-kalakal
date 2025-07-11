@@ -108,6 +108,18 @@ export const delItemInCart = async (req, res) => {
     .json({ msg: "cart item deleted", cartItem: delTmpCartItem });
 };
 
+export const checkingOut = async (req, res) => {
+  // GET USER DETAILS SPECIALLY ADDRESS FOR SHIPPING DETAILS
+  const userInfo = await UserInfo.findOne({ userUserID: req.user.userId });
+  const userCart = await TempCart.find({ userID: req.user.userId });
+
+  const checkoutDetails = {};
+  checkoutDetails.userInfo = userInfo;
+  checkoutDetails.userCart = userCart;
+
+  res.status(StatusCodes.OK).json({ checkoutDetails: checkoutDetails });
+};
+
 export const checkout = async (req, res) => {
   const cart = await Cart.create(req.body);
   res.status(StatusCodes.CREATED).json({ cart });

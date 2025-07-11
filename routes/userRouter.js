@@ -7,6 +7,7 @@ import {
 import {
   getHomepageData,
   addToTmpCart,
+  checkingOut,
   checkout,
   getTmpCart,
   updateItemInCart,
@@ -27,6 +28,7 @@ router.route("/shop").get(getAllProducts).post(addToTmpCart).post(checkout);
 
 router.route("/cart").get(getTmpCart);
 router.route("/cart/:id").patch(updateItemInCart).delete(delItemInCart);
+router.route("/cart/checkout").get(checkingOut);
 
 router.route("/recipes/recipe-container/:type").get(getAllRecipeType);
 router.route("/recipes/recipe-container/:type/:id").get(getRecipe);

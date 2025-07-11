@@ -17,6 +17,7 @@ import {
   RecipeDetail,
   Shop,
   Cart,
+  Checkout,
   Profile,
   AdminDashboardLayout,
   AdminDashboard,
@@ -85,6 +86,7 @@ import { loader as recipeLoader } from "./pages/RecipeContainer";
 import { loader as recipeDetailLoader } from "./pages/RecipeDetail";
 import { loader as shopLoader } from "./pages/Shop";
 import { loader as cartLoader } from "./pages/Cart";
+import { loader as checkoutLoader } from "./pages/Checkout";
 import { loader as contentLoader } from "./pages/adminPages/ManageContent/ManageContent";
 import { loader as setFotmLoader } from "./pages/adminPages/ManageContent/SetFotm";
 import { loader as setBestSellerLoader } from "./pages/adminPages/ManageContent/SetBestSellers";
@@ -181,7 +183,12 @@ const router = createBrowserRouter([
         element: <Cart />,
         errorElement: <Error />,
         loader: cartLoader,
-        // action: actionSetContent,
+      },
+      {
+        path: "/dashboard/cart/checkout",
+        element: <Checkout />,
+        errorElement: <Error />,
+        loader: checkoutLoader,
       },
     ],
   },

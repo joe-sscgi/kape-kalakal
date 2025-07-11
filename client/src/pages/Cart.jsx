@@ -1,17 +1,10 @@
-import {
-  Link,
-  redirect,
-  useLoaderData,
-  useNavigate,
-  useNavigation,
-  useLocation,
-} from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import { Link, useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
+import { MdRemoveCircleOutline } from "react-icons/md";
 
 import customFetch from "../utils/customFetch";
 import Wrapper from "../assets/wrappers/Cart";
-import { useHomepageLayoutContext } from "../pages/HomepageLayout";
+import { useEffect, useState } from "react";
 
 export const loader = async () => {
   try {
@@ -24,9 +17,22 @@ export const loader = async () => {
 };
 
 const Cart = () => {
-  // const userData = useHomepageLayoutContext().userData;
   const cartData = useLoaderData().cart;
-  //   console.log(cartData);
+
+  var subTotal = 0;
+
+  const [isMobileSm, setIsMobileSm] = useState(window.innerWidth <= 720);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileSm(window.innerWidth <= 720);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Clean up on unmount
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   function decQty(cartItem, label) {
     var qtyVal = document.getElementById(cartItem + label).value;
@@ -85,76 +91,130 @@ const Cart = () => {
           <h1>Cart</h1>
         </div>
 
-        <div className="">
+        <div className="cart-outer-container">
           <div className="cart-container">
             <div className="cart-header">
-              <h3 className="header-qty">Quantity</h3>
-              <h3>Image</h3>
-              <h3>Product Name</h3>
-              <h3 className="header-price">Price</h3>
-              <h3 className="header-action">Action</h3>
+              <h4 className="header-action"></h4>
+              <h4 className="header-product">Products</h4>
+              <h4 className="header-qty">Quantity</h4>
+              <h4 className="header-price">Price</h4>
+              <h4 className="header-total">Total</h4>
             </div>
-            {cartData.length === 0 ? (
-              <p>Cart Empty.</p>
-            ) : (
-              cartData.map((cart) => {
-                return (
-                  <div className="cart-card" key={cart._id}>
-                    <div className="cart-card-inner">
-                      <div className="cart-info">
-                        <div className="cart-qty">
-                          <button
-                            type="button"
-                            onClick={decQty.bind(null, cart._id, "-cart-qty")}
-                            className="btn cart-btn cart-qty-btn"
-                          >
-                            -
-                          </button>
-                          <input
-                            type="number"
-                            value={cart.prodQty}
-                            id={cart._id + "-cart-qty"}
-                            className="form-control"
-                          />
+            <hr />
+            <div className="cart-items">
+              {cartData.length === 0 ? (
+                <p>Cart Empty.</p>
+              ) : (
+                cartData.map((cart) => {
+                  var total = cart.prodPrice * cart.prodQty;
+                  subTotal += total;
 
-                          <button
-                            type="button"
-                            onClick={incQty.bind(null, cart._id, "-cart-qty")}
-                            className="btn cart-btn cart-qty-btn"
-                          >
-                            +
-                          </button>
-                        </div>
-                        <div className="cart-prod-img">
-                          <img src={cart.prodImgUrl} alt={cart.prodName} />
-                        </div>
-                        <div className="cart-name">
-                          <span>{cart.prodName}</span>
-                        </div>
+                  const CartInfoContent = () => (
+                    <>
+                      <div className="cart-qty">
+                        <button
+                          type="button"
+                          onClick={decQty.bind(null, cart._id, "-cart-qty")}
+                          className="btn cart-btn cart-qty-btn cart-inc-qty-btn"
+                          disabled={cart.prodQty === 1}
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          value={cart.prodQty}
+                          id={cart._id + "-cart-qty"}
+                          className="form-control"
+                          readOnly
+                        />
+                        <button
+                          type="button"
+                          onClick={incQty.bind(null, cart._id, "-cart-qty")}
+                          className="btn cart-btn cart-qty-btn cart-dec-qty-btn"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div className="cart-price">
+                        <span>
+                          ₱
+                          {Number(cart.prodPrice).toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </span>
+                      </div>
+                      <div className="cart-total">
+                        <span>
+                          ₱
+                          {Number(total).toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </span>
+                      </div>
+                    </>
+                  );
 
-                        <div className="cart-price">
-                          <span>₱{Number(cart.prodPrice).toFixed(2)}</span>
-                        </div>
-                        <div className="cart-add-to-cart-btn">
-                          <button
-                            type="button"
-                            className="btn cart-btn del-to-cart-btn"
-                            onClick={delToTmpCart.bind(null, cart.userID, cart)}
-                          >
-                            Delete
-                          </button>
+                  return (
+                    <div className="cart-card" key={cart._id}>
+                      <div className="cart-card-inner">
+                        <div className="cart-info">
+                          <div className="cart-del-to-cart-btn">
+                            <button
+                              type="button"
+                              className="btn cart-btn del-to-cart-btn"
+                              onClick={delToTmpCart.bind(
+                                null,
+                                cart.userID,
+                                cart
+                              )}
+                            >
+                              <MdRemoveCircleOutline /> <span>DELETE</span>
+                            </button>
+                          </div>
+                          <div className="cart-prod">
+                            <div className="cart-prod-img">
+                              <img src={cart.prodImgUrl} alt={cart.prodName} />
+                            </div>
+                            <div className="cart-name">
+                              <span>{cart.prodName}</span>
+                            </div>
+                          </div>
+                          {isMobileSm ? (
+                            <div className="cart-prod-info-mobile">
+                              <CartInfoContent />
+                            </div>
+                          ) : (
+                            <>
+                              <CartInfoContent />
+                            </>
+                          )}
                         </div>
                       </div>
+                      <hr />
                     </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-          <div className="cart-checkout">
-            <button type="button" className="btn btn-checkout">
-              Checkout
-            </button>
+                  );
+                })
+              )}
+            </div>
+            <div className="cart-sub-total">
+              <h4>Subtotal : </h4>
+              <span>
+                ₱{" "}
+                {Number(subTotal).toLocaleString("en-PH", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </span>
+            </div>
+            <div className="cart-checkout">
+              <Link to={"/dashboard/cart/checkout"}>
+                <button type="button" className="btn btn-checkout">
+                  Checkout
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

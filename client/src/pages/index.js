@@ -17,6 +17,7 @@ export { default as RecipeContainer } from "./RecipeContainer";
 export { default as RecipeDetail } from "./RecipeDetail";
 export { default as Shop } from "./Shop";
 export { default as Cart } from "./Cart";
+export { default as Checkout } from "./Checkout";
 export { default as Profile } from "./Profile";
 
 // ADMIN PAGES

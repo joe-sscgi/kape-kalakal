@@ -16,6 +16,10 @@ import {
   RecipeContainer,
   RecipeDetail,
   Shop,
+  Product,
+  BrandLayout,
+  Brands,
+  BrandContainer,
   Cart,
   Checkout,
   Profile,
@@ -25,6 +29,7 @@ import {
   SetFotm,
   SetBest,
   SetFeat,
+  ManageOrders,
   MaintenanceDashboard,
   MainUsers,
   AddUser,
@@ -85,6 +90,9 @@ import { loader as homepageLoader } from "./pages/HomepageLayout";
 import { loader as recipeLoader } from "./pages/RecipeContainer";
 import { loader as recipeDetailLoader } from "./pages/RecipeDetail";
 import { loader as shopLoader } from "./pages/Shop";
+import { loader as productLoader } from "./pages/Product";
+import { loader as brandsLoader } from "./pages/Brands";
+import { loader as brandContainerLoader } from "./pages/BrandContainer";
 import { loader as cartLoader } from "./pages/Cart";
 import { loader as checkoutLoader } from "./pages/Checkout";
 import { loader as contentLoader } from "./pages/adminPages/ManageContent/ManageContent";
@@ -148,6 +156,45 @@ const router = createBrowserRouter([
         element: <Homepage />,
       },
       {
+        path: "shop",
+        element: <Shop />,
+        errorElement: <Error />,
+        loader: shopLoader,
+        // action: actionSetContent,
+      },
+      {
+        path: "shop/product/:id",
+        element: <Product />,
+        errorElement: <Error />,
+        loader: productLoader,
+        // action: actionSetContent,
+      },
+
+      {
+        path: "brands",
+        element: <BrandLayout />,
+        errorElement: <Error />,
+        children: [
+          {
+            index: true,
+            element: <Brands />,
+            loader: brandsLoader,
+          },
+          {
+            path: "brand/:id",
+            element: <BrandContainer />,
+            errorElement: <Error />,
+            loader: brandContainerLoader,
+          },
+          {
+            path: "recipe-container/:type/:id",
+            element: <RecipeDetail />,
+            errorElement: <Error />,
+            loader: recipeDetailLoader,
+          },
+        ],
+      },
+      {
         path: "recipes",
         element: <RecipeLayout />,
         errorElement: <Error />,
@@ -171,13 +218,7 @@ const router = createBrowserRouter([
           },
         ],
       },
-      {
-        path: "shop",
-        element: <Shop />,
-        errorElement: <Error />,
-        loader: shopLoader,
-        // action: actionSetContent,
-      },
+
       {
         path: "profile",
         element: <Profile />,
@@ -237,6 +278,13 @@ const router = createBrowserRouter([
         errorElement: <Error />,
         loader: setFeatBrandLoader,
         action: actionSetFeat,
+      },
+      {
+        path: "manage-orders",
+        element: <ManageOrders />,
+        errorElement: <Error />,
+        // loader: profileLoader,
+        // action: actionUpdateProfile,
       },
       {
         path: "profile",

@@ -5,7 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "node server.js",
     "setup-project": "npm i && cd client && npm i",
+    "build": "npm i && cd client && npm i && npm run build",
     "server": "nodemon --delay 3s server",
     "client": "cd client && npm run dev",
     "dev": "concurrently --kill-others-on-fail \" npm run server\" \" npm run client\""

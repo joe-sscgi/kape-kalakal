@@ -460,10 +460,6 @@ const Landing = () => {
           <div className="container">
             <div className="row gy-5">
               {brands.map((brand) => {
-                var imgVal = defaultImg;
-                if (brand.brandImg) {
-                  imgVal = brand.brandImg;
-                }
                 return (
                   <div
                     className="col-lg-4 col-md-6"
@@ -471,9 +467,6 @@ const Landing = () => {
                     data-aos-delay="100"
                   >
                     <div className="brand">
-                      <div className="pic">
-                        <img src={imgVal} className="img-fluid" alt="" />
-                      </div>
                       <div className="brand-info">
                         <h4>{brand.brandName}</h4>
                       </div>

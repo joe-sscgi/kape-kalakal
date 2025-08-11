@@ -8,6 +8,8 @@ import Users from "../models/UsersModel.js";
 import UserInfo from "../models/UserInfoModel.js";
 import Recipes from "../models/RecipesModel.js";
 import Products_Images from "../models/ProductImgsModel.js";
+import Orders from "../models/OrdersModel.js";
+import ContactUs from "../models/ContactUsModel.js";
 import { hashPassword } from "../utils/passwordUtils.js";
 import { response } from "express";
 
@@ -41,12 +43,50 @@ function createUploadPath(type, data) {
 }
 
 export const getAdminDashboardData = async (req, res) => {
-  const critProd = await Products.find({ prodQty: { $lte: 10 }, prodIsDel: 0 });
+  try {
+    const critProd = await Products.find({
+      prodQty: { $lte: 10 },
+      prodIsDel: false,
+    });
 
-  const allData = {};
-  allData.critProd = critProd;
+    const lowStockItems = await Products.find({
+      prodQty: { $gt: 10, $lte: 20 },
+      prodIsDel: false,
+    });
 
-  res.status(StatusCodes.OK).json({ allData });
+    const [products, users] = await Promise.all([
+      Products.find({ prodIsDel: false }),
+      Users.find(),
+    ]);
+
+    // Optional: calculate total sales (e.g., from orders)
+    let totalSales = 0;
+    const orders = await Orders.find({ status: "completed" }); // or whatever your status is
+    totalSales = orders.reduce((acc, order) => acc + (order.total || 0), 0);
+
+    // Optional: get pending orders/requests
+    const pendingOrders = await Orders.find({ status: "pending" });
+
+    // Optional: get unread support tickets or messages
+    const unreadMessages = await ContactUs.find({ status: "Unread" });
+
+    const allData = {
+      critProd,
+      lowStockItems,
+      products,
+      users,
+      totalSales,
+      pendingOrders,
+      unreadMessages,
+    };
+
+    res.status(StatusCodes.OK).json({ allData });
+  } catch (error) {
+    console.error("Error fetching admin dashboard data:", error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: "Failed to load dashboard data.",
+    });
+  }
 };
 
 // CONTENT

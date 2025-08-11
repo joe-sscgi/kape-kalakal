@@ -50,8 +50,12 @@ const Wrapper = styled.section`
     margin-left: 36px;
   }
 
-  .carousel-item p {
-    font-family: var(--secondary-font);
+  .carousel-item {
+    height: 100vh;
+    
+    p {
+      font-family: var(--secondary-font);
+    }
   }
 
   /* CAROUSEL REACT BOOTSTRAP */

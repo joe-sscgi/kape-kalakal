@@ -2,8 +2,14 @@ import mongoose from "mongoose";
 
 const InvoiceSchema = new mongoose.Schema(
   {
-    cartID: {
+    invoiceID: {
       type: String,
+      required: true,
+      unique: true,
+    },
+    orderID: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }

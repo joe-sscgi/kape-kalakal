@@ -47,7 +47,7 @@ const RecipeDetail = () => {
                     <span>{recipe.recipeAuthor}</span>
                   </div>
                   <div className="recipe-desc">
-                    <pre style={{ whiteSpace: "pre-wrap" }}>
+                    <pre style={{ whiteSpace: "pre-wrap", overflow: "hidden" }}>
                       {recipe.recipeDesc}
                     </pre>
                   </div>

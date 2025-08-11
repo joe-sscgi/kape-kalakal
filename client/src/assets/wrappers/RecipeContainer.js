@@ -24,6 +24,11 @@ const Wrapper = styled.section`
     border-radius: 25px 0 25px 0;
     margin-bottom: 24px;
     position: relative;
+    transition: border-radius 0.3s ease;
+  }
+
+  .recipe-card:hover {
+    border-radius: 0 25px 0 25px;
   }
 
   .recipe-name h3 {
@@ -49,6 +54,7 @@ const Wrapper = styled.section`
     bottom: 0;
     right: 0;
     padding: 24px;
+    transition: border-radius 0.3s ease;
   }
 
   .view-recipe-btn {

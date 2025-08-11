@@ -1,6 +1,8 @@
 import { Link, useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
 import { MdRemoveCircleOutline } from "react-icons/md";
+import { MdDeleteForever } from "react-icons/md";
+import { FiArrowLeftCircle } from "react-icons/fi";
 
 import customFetch from "../utils/customFetch";
 import Wrapper from "../assets/wrappers/Cart";
@@ -22,6 +24,7 @@ const Cart = () => {
   var subTotal = 0;
 
   const [isMobileSm, setIsMobileSm] = useState(window.innerWidth <= 720);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -34,53 +37,70 @@ const Cart = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  function decQty(cartItem, label) {
-    var qtyVal = document.getElementById(cartItem + label).value;
-    var updatedQtyVal = parseInt(qtyVal) - 1;
-    if (qtyVal != 1) {
-      document.getElementById(cartItem + label).value = updatedQtyVal;
-      updateCartItemQty(cartItem, updatedQtyVal);
-    } else {
-      toast.error("Item Quantity can not be 0, delete it instead");
-    }
-  }
+  const decQty = async (cartItem, label) => {
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      const qtyInput = document.getElementById(cartItem + label);
+      const qtyVal = parseInt(qtyInput.value);
+      const updatedQtyVal = qtyVal - 1;
 
-  function incQty(cartItem, label) {
-    var qtyVal = document.getElementById(cartItem + label).value;
-    var updatedQtyVal = parseInt(qtyVal) + 1;
-    document.getElementById(cartItem + label).value = updatedQtyVal;
-    updateCartItemQty(cartItem, updatedQtyVal);
-  }
+      if (updatedQtyVal < 1) {
+        toast.error("Item Quantity cannot be 0, delete instead");
+        return;
+      }
+
+      qtyInput.value = updatedQtyVal;
+      await updateCartItemQty(cartItem, updatedQtyVal);
+    } catch (err) {
+      toast.error("Something went wrong");
+    }
+  };
+
+  const incQty = async (cartItem, label) => {
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      const qtyInput = document.getElementById(cartItem + label);
+      const qtyVal = parseInt(qtyInput.value);
+      const updatedQtyVal = qtyVal + 1;
+
+      qtyInput.value = updatedQtyVal;
+      await updateCartItemQty(cartItem, updatedQtyVal);
+    } catch (err) {
+      toast.error("Something went wrong");
+    }
+  };
 
   const updateCartItemQty = async (cartItemId, qtyVal) => {
     const cartItemQty = { prodQty: qtyVal };
-    // console.log(cartItemQty);
+
     try {
       await customFetch.patch(`/dashboard/cart/${cartItemId}`, cartItemQty);
-
       toast.success("Product Quantity Updated");
-      //   return redirect("/dashboard/cart/");
-      setTimeout(function () {
-        window.location.reload();
-      }, 3000);
-    } catch (error) {
-      toast.error(error?.response?.data?.msg);
 
-      return error;
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      toast.error(error?.response?.data?.msg || "Error updating item");
     }
   };
 
   const delToTmpCart = async (userId, cart) => {
+    if (isLoading) return;
+    setIsLoading(true);
     try {
-      await customFetch.delete(`/dashboard/cart/${cart._id}`, cart);
+      await customFetch.delete(`/dashboard/cart/${cart._id}`);
+      toast.success("Product Deleted from Cart");
 
-      toast.success("Product Deleted to Cart");
-      //   return redirect("/dashboard/cart/");
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       toast.error(error?.response?.data?.msg);
-
-      return error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -116,7 +136,7 @@ const Cart = () => {
                           type="button"
                           onClick={decQty.bind(null, cart._id, "-cart-qty")}
                           className="btn cart-btn cart-qty-btn cart-inc-qty-btn"
-                          disabled={cart.prodQty === 1}
+                          disabled={cart.prodQty === 1 || isLoading}
                         >
                           -
                         </button>
@@ -131,6 +151,7 @@ const Cart = () => {
                           type="button"
                           onClick={incQty.bind(null, cart._id, "-cart-qty")}
                           className="btn cart-btn cart-qty-btn cart-dec-qty-btn"
+                          disabled={isLoading}
                         >
                           +
                         </button>
@@ -164,13 +185,16 @@ const Cart = () => {
                             <button
                               type="button"
                               className="btn cart-btn del-to-cart-btn"
+                              disabled={isLoading}
                               onClick={delToTmpCart.bind(
                                 null,
                                 cart.userID,
                                 cart
                               )}
                             >
-                              <MdRemoveCircleOutline /> <span>DELETE</span>
+                              <MdDeleteForever />
+                              {/* <MdRemoveCircleOutline /> */}
+                              {/* <span>DELETE</span> */}
                             </button>
                           </div>
                           <div className="cart-prod">
@@ -182,7 +206,10 @@ const Cart = () => {
                             </div>
                           </div>
                           {isMobileSm ? (
-                            <div className="cart-prod-info-mobile">
+                            <div
+                              className="cart-prod-info-mobile"
+                              disabled={isLoading}
+                            >
                               <CartInfoContent />
                             </div>
                           ) : (
@@ -209,11 +236,25 @@ const Cart = () => {
               </span>
             </div>
             <div className="cart-checkout">
-              <Link to={"/dashboard/cart/checkout"}>
-                <button type="button" className="btn btn-checkout">
-                  Checkout
-                </button>
-              </Link>
+              <div>
+                <Link to={"/dashboard/shop"}>
+                  <span>
+                    <FiArrowLeftCircle /> Continue Shopping
+                  </span>
+                </Link>
+              </div>
+              <button
+                type="button"
+                className="btn btn-checkout"
+                disabled={isLoading || cartData.length === 0}
+                onClick={() => {
+                  if (!isLoading) {
+                    window.location.href = "/dashboard/cart/checkout";
+                  }
+                }}
+              >
+                {isLoading ? "Processing..." : "Checkout"}
+              </button>
             </div>
           </div>
         </div>

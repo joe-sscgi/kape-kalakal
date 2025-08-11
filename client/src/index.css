@@ -1040,10 +1040,11 @@ h6 {
   [data-aos-delay] {
     transition-delay: 0 !important;
   }
-  html, body {
+}
+
+html, body {
     overflow: auto;
   }
-}
 
 /*--------------------------------------------------------------
 # Global Page Titles & Breadcrumbs
@@ -1100,7 +1101,7 @@ section,
   background-color: var(--background-color);
   padding: 60px 0;
   scroll-margin-top: 112px;
-  overflow: clip;
+  /* overflow: clip; */
 }
 
 @media (max-width: 1199px) {

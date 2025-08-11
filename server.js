@@ -52,7 +52,20 @@ app.use(errorHandlerMiddleware);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-app.use(express.static(path.resolve(__dirname, "./public")));
+app.use(express.static(path.resolve(__dirname, "./client/dist")));
+// app.use(express.static(path.resolve(__dirname, "./public")));
+
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "./client/dist", "index.html"));
+// });
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./client/dist", "index.html"));
+});
+
+app.use("*", (req, res) => {
+  res.status(404).json({ msg: "not found" });
+});
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,

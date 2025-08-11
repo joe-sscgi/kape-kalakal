@@ -36,6 +36,9 @@ const Profile = () => {
   const { user, userData } = useOutletContext();
   const { userProfile } = useLoaderData();
 
+  const userType = (user || userData)?.userUserType;
+  const isAdmin = userType === "Admin" || userType === "Super Admin";
+
   return (
     <Wrapper>
       <div className="edit-profile-container">
@@ -45,7 +48,7 @@ const Profile = () => {
             <div className="profile-container">
               <Form method="post" className="edit-profile-form">
                 <div className="edit-profile-container">
-                  <div className="profile-group row">
+                  <div className="profile-group row hidden">
                     <div className="col-sm-4">
                       <label htmlFor="userID">Profile ID</label>
                       <input
@@ -162,7 +165,7 @@ const Profile = () => {
                       className="btn edit-profile-btn edit-profile-submit"
                       buttonText="Save"
                     />
-                    <Link to={"/admin"}>
+                    <Link to={isAdmin ? "/admin" : "/dashboard"}>
                       <Button
                         type="button"
                         className="btn edit-profile-btn edit-profile-back"

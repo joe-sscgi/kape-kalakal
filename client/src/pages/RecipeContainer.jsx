@@ -4,6 +4,7 @@ import { FiArrowLeftCircle } from "react-icons/fi";
 
 import customFetch from "../utils/customFetch";
 import Wrapper from "../assets/wrappers/RecipeContainer";
+
 export const loader = async ({ params }) => {
   try {
     const { data } = await customFetch.get(

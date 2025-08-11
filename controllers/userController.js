@@ -11,6 +11,7 @@ import TempCart from "../models/TmpCartModel.js";
 import Cart from "../models/CartModel.js";
 import Invoice from "../models/InvoiceModel.js";
 import Orders from "../models/OrdersModel.js";
+import mongoose from "mongoose";
 
 export const getHomepageData = async (req, res) => {
   const userData = await Users.findOne({ _id: req.user.userId });
@@ -59,15 +60,46 @@ export const getHomepageData = async (req, res) => {
   res.status(StatusCodes.OK).json({ homepageData });
 };
 
+export const getProduct = async (req, res) => {
+  const id = req.params.id;
+
+  const [productWithImages] = await Products.aggregate([
+    {
+      $match: { _id: new mongoose.Types.ObjectId(id) },
+    },
+    {
+      $lookup: {
+        from: "products_images",
+        let: { prodIdStr: { $toString: "$_id" } },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$prodImgProdID", "$$prodIdStr"],
+              },
+            },
+          },
+        ],
+        as: "images",
+      },
+    },
+    { $limit: 1 },
+  ]);
+
+  res.status(StatusCodes.OK).json({ product: productWithImages });
+};
+
 export const addToTmpCart = async (req, res) => {
   const checkCartItem = await TempCart.findOne({
     userID: req.user.userId,
     prodID: req.body.prodID,
   });
 
+  const addToCartData = req.body;
+
   //CHECK PRODUCT IF EXISTING
   if (checkCartItem) {
-    checkCartItem.prodQty += 1;
+    checkCartItem.prodQty += addToCartData.prodQty;
     const updatedCart = await TempCart.findByIdAndUpdate(
       checkCartItem._id,
       checkCartItem
@@ -76,7 +108,6 @@ export const addToTmpCart = async (req, res) => {
       .status(StatusCodes.OK)
       .json({ msg: "Cart Itemm Updated Successfully", cart: updatedCart });
   } else {
-    console.log(2);
     const tmpCart = await TempCart.create(req.body);
     res.status(StatusCodes.CREATED).json({ tmpCart });
   }
@@ -123,6 +154,26 @@ export const checkingOut = async (req, res) => {
 export const checkout = async (req, res) => {
   const cart = await Cart.create(req.body);
   res.status(StatusCodes.CREATED).json({ cart });
+};
+
+export const getAllBrandCat = async (req, res) => {
+  try {
+    const categories = await Brands.distinct("brandCat");
+    res.status(200).json({ categories });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Failed to fetch categories" });
+  }
+};
+
+export const getBrand = async (req, res) => {
+  try {
+    const categories = await Brands.distinct("brandCat");
+    res.status(200).json({ categories });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Failed to fetch categories" });
+  }
 };
 
 // RECIPES

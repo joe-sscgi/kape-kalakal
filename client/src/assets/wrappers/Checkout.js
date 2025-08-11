@@ -87,6 +87,17 @@ const Wrapper = styled.section`
     display: flex;
   }
 
+  .checkout-order-summary {
+    overflow: auto;
+    max-height: 550px;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+  }
+
   .checkout-order-total {
     width: 30%;
   }

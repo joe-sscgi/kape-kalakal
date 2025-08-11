@@ -13,82 +13,6 @@ import Wrapper from "../assets/wrappers/Shop";
 import { useHomepageLayoutContext } from "../pages/HomepageLayout";
 import logo from "../assets/images/logo/kape-kalakal-logo.jpg";
 
-// export const loader = async () => {
-//   try {
-//     const { data } = await customFetch.get("/dashboard/shop");
-//     return data;
-//   } catch (error) {
-//     // return redirect("/admin");
-//     console.log(error);
-//   }
-// };
-
-// const Shop = () => {
-//   const prodData = useLoaderData().productsData;
-//   //   console.log(prodData);
-
-//   const [products, setProducts] = useState([]);
-//   const [pageInfo, setPageInfo] = useState({ currentPage: 1, totalPages: 1 });
-//   const [loading, setLoading] = useState(false);
-
-//   return (
-//     <Wrapper>
-//       <section id="shop" className="shop section shop-section">
-//         {/* <!-- Section Title --> */}
-//         <div className="section-title">
-//           <div>
-//             <h1>Welcome to our Shop</h1>
-//           </div>
-//         </div>
-//         {/* <!-- End Section Title --> */}
-//         {loading ? (
-//           <p>Loading...</p>
-//         ) : (
-//           <div className="container">
-//             <div className="shop-container">
-//               {prodData.map((prod) => {
-//                 var img = "";
-//                 var imgUrl = "";
-//                 if (prod.prodImg) {
-//                   img = prod.prodImg;
-//                   imgUrl = img.prodImgUrl;
-//                 }
-//                 return (
-//                   <div className="shop-prod-card">
-//                     <div className="shop-prod-card-inner">
-//                       <div className="shop-prod-img">
-//                         {imgUrl ? <img src={imgUrl} /> : <img src={logo} />}
-//                       </div>
-//                       <div className="shop-prod-info">
-//                         <div className="shop-prod-name">
-//                           <span>{prod.prodName}</span>
-//                         </div>
-//                         <div className="shop-prod-info-align">
-//                           <div className="shop-prod-price">
-//                             <span>₱{Number(prod.prodPrice).toFixed(2)}</span>
-//                           </div>
-//                           <div className="shop-prod-add-to-cart">
-//                             <button
-//                               type="button"
-//                               className="btn main-btn add-to-cart-btn"
-//                             >
-//                               Add to Cart
-//                             </button>
-//                           </div>
-//                         </div>
-//                       </div>
-//                     </div>
-//                   </div>
-//                 );
-//               })}
-//             </div>
-//           </div>
-//         )}
-//       </section>
-//     </Wrapper>
-//   );
-// };
-
 export const loader = async ({ request }) => {
   try {
     const url = new URL(request.url);
@@ -123,20 +47,6 @@ export const loader = async ({ request }) => {
     return { products: [], currentPage: 1, totalPages: 1 };
   }
 };
-
-// export const action = async ({ request }) => {
-//   const formData = await request.formData();
-
-//   try {
-//     await customFetch.post("/auth/register", data);
-//     toast.success("Registration successful");
-//     return redirect("/login");
-//   } catch (error) {
-//     toast.error(error?.response?.data?.msg);
-
-//     return error;
-//   }
-// };
 
 const Shop = () => {
   const { products, currentPage, totalPages } = useLoaderData();
@@ -300,11 +210,30 @@ const Shop = () => {
                   <div className="shop-prod-card" key={prod._id}>
                     <div className="shop-prod-card-inner">
                       <div className="shop-prod-img">
-                        <img src={imgUrl} alt={prod.prodName} />
+                        <Link to={`product/${prod._id}`}>
+                          <img src={imgUrl} alt={prod.prodName} />
+                        </Link>
+                        {/* BADGES positioned absolutely over image */}
+                        {(prod.prodIsBest || prod.prodIsFotm) && (
+                          <div className="shop-prod-badge-container">
+                            {prod.prodIsBest && (
+                              <span className="badge best-seller">
+                                🔥 Best Seller
+                              </span>
+                            )}
+                            {prod.prodIsFotm && (
+                              <span className="badge flavor">
+                                🧊 Flavor of the Month
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                       <div className="shop-prod-info">
                         <div className="shop-prod-name">
-                          <span>{prod.prodName}</span>
+                          <Link to={`product/${prod._id}`}>
+                            <span>{prod.prodName}</span>
+                          </Link>
                         </div>
                         <div className="shop-prod-cat">
                           <span>{prod.prodCat}</span>

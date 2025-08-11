@@ -147,7 +147,7 @@ const Homepage = () => {
                     </p>
                   </div>
                   <div className="recipe-box-btn">
-                    <Link to={"/dashboard/recipe/coffee"}>
+                    <Link to={"/dashboard/recipes/recipe-container/coffee"}>
                       <button type="button" className="btn main-btn recipe-btn">
                         View Recipe
                       </button>
@@ -166,7 +166,7 @@ const Homepage = () => {
                     </p>
                   </div>
                   <div className="recipe-box-btn">
-                    <Link to={"/dashboard/recipe/non-coffee"}>
+                    <Link to={"/dashboard/recipes/recipe-container/non-coffee"}>
                       <button type="button" className="btn main-btn recipe-btn">
                         View Recipe
                       </button>
@@ -185,7 +185,7 @@ const Homepage = () => {
                     </p>
                   </div>
                   <div className="recipe-box-btn">
-                    <Link to={"/dashboard/recipe/pastry"}>
+                    <Link to={"/dashboard/recipes/recipe-container/pastry"}>
                       <button type="button" className="btn main-btn recipe-btn">
                         View Recipe
                       </button>

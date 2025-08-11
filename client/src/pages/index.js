@@ -16,6 +16,10 @@ export { default as Recipe } from "./Recipe";
 export { default as RecipeContainer } from "./RecipeContainer";
 export { default as RecipeDetail } from "./RecipeDetail";
 export { default as Shop } from "./Shop";
+export { default as Product } from "./Product";
+export { default as BrandLayout } from "./BrandLayout";
+export { default as Brands } from "./Brands";
+export { default as BrandContainer } from "./BrandContainer";
 export { default as Cart } from "./Cart";
 export { default as Checkout } from "./Checkout";
 export { default as Profile } from "./Profile";
@@ -51,6 +55,7 @@ export { default as ManageContent } from "./adminPages/ManageContent/ManageConte
 export { default as SetFotm } from "./adminPages/ManageContent/SetFotm";
 export { default as SetBest } from "./adminPages/ManageContent/SetBestSellers";
 export { default as SetFeat } from "./adminPages/ManageContent/SetFeatBrands";
+export { default as ManageOrders } from "./adminPages/ManageOrders/ManageOrders";
 
 // UTILS
 export { default as UtilitiesDashboard } from "./adminPages/Utils/UtilitiesDashboard";

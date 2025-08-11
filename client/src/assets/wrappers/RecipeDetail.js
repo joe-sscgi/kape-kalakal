@@ -44,6 +44,13 @@ const Wrapper = styled.section`
     font-family: var(--main-font);
   }
 
+  .recipe-desc pre {
+    font-family: var(--main-font);
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
   .btn-back {
     color: var(--bg-primary);
   }

@@ -14,48 +14,62 @@ import Orders from "../models/OrdersModel.js";
 import mongoose from "mongoose";
 
 export const getHomepageData = async (req, res) => {
-  const userData = await Users.findOne({ _id: req.user.userId });
+  // 1. Get user data
+  const userData = (await Users.findOne({ _id: req.user.userId })) || null;
+
+  // 2. Get featured brands
   const featBrandsData = await Brands.find({ brandIsFeatured: 1 });
+  const safeFeatBrandsData =
+    featBrandsData && featBrandsData.length > 0 ? featBrandsData : [];
 
+  // 3. Get FOTM product
   const fotmProductData = await Products.findOne({ prodIsFotm: "1" });
-  const fotmProdImgsData = await Products_Images.findOne({
-    prodImgProdID: fotmProductData._id,
-  });
-  const fotmProductsWithFirstImage = {
-    ...fotmProductData.toObject(),
-    prodImg: fotmProdImgsData,
-  };
-  // console.log(fotmProductsWithFirstImage);
-  const cartData = await TempCart.find({ userID: req.user.userId });
-
-  const bestProductsData = await Products.find({ prodIsBest: "1" });
-  // 8. Attach first image to each product
-  const bestProductIds = bestProductsData.map((p) => p._id);
-  const imagesData = await Products_Images.find({
-    prodImgProdID: { $in: bestProductIds },
-  }).sort({ _id: 1 });
-
-  const firstImageByProductId = {};
-  for (const img of imagesData) {
-    const key = img.prodImgProdID.toString();
-    if (!firstImageByProductId[key]) {
-      firstImageByProductId[key] = img;
-    }
+  let fotmProdImgsData = [];
+  let fotmProductsWithFirstImage = null;
+  if (fotmProductData) {
+    fotmProdImgsData =
+      (await Products_Images.findOne({
+        prodImgProdID: fotmProductData._id,
+      })) || null;
+    fotmProductsWithFirstImage = {
+      ...fotmProductData.toObject(),
+      prodImg: fotmProdImgsData,
+    };
   }
 
-  const bestProductsWithFirstImage = bestProductsData.map((product) => ({
-    ...product.toObject(),
-    prodImg: firstImageByProductId[product._id.toString()] || null,
-  }));
+  // 4. Get cart data
+  const cartData = (await TempCart.find({ userID: req.user.userId })) || [];
 
-  const homepageData = {};
-  homepageData.userData = userData;
-  homepageData.featBrandsData = featBrandsData;
-  homepageData.bestProductsData = bestProductsWithFirstImage;
-  homepageData.fotmProductData = fotmProductsWithFirstImage;
-  homepageData.cartData = cartData;
+  // 5. Get best products
+  const bestProductsData = await Products.find({ prodIsBest: "1" });
+  let bestProductsWithFirstImage = [];
+  if (bestProductsData && bestProductsData.length > 0) {
+    let bestProductIds = bestProductsData.map((p) => p._id);
+    let imagesData = await Products_Images.find({
+      prodImgProdID: { $in: bestProductIds },
+    }).sort({ _id: 1 });
 
-  // console.log(homepageData);
+    const firstImageByProductId = {};
+    for (const img of imagesData) {
+      const key = img.prodImgProdID.toString();
+      if (!firstImageByProductId[key]) {
+        firstImageByProductId[key] = img;
+      }
+    }
+
+    bestProductsWithFirstImage = bestProductsData.map((product) => ({
+      ...product.toObject(),
+      prodImg: firstImageByProductId[product._id.toString()] || null,
+    }));
+  }
+
+  const homepageData = {
+    userData,
+    featBrandsData: safeFeatBrandsData,
+    bestProductsData: bestProductsWithFirstImage,
+    fotmProductData: fotmProductsWithFirstImage,
+    cartData,
+  };
 
   res.status(StatusCodes.OK).json({ homepageData });
 };

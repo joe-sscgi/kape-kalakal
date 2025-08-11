@@ -1,5 +1,5 @@
 // IMPORTS REACT
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, use, useContext, useEffect, useState } from "react";
 import {
   Outlet,
   Link,
@@ -17,7 +17,7 @@ import { Header, Loading, Footer } from "../components";
 export const loader = async () => {
   try {
     const { data } = await customFetch.get("/dashboard/get-data");
-    return data.homepageData;
+    return data;
   } catch (error) {
     // return redirect("/admin");
     console.log(error);
@@ -27,10 +27,9 @@ export const loader = async () => {
 const HomepageLayoutContext = createContext();
 
 const HomepageLayout = () => {
-  const userData = useLoaderData().userData;
-  const HomepageData = useLoaderData();
-  const cartCtr = useLoaderData().cartData.length;
-  // console.log(useLoaderData());
+  const { homepageData } = useLoaderData();
+  const { userData, cartData } = homepageData;
+  const cartCtr = cartData.length;
   const navigate = useNavigate();
   const navigation = useNavigation();
   const isPageLoading = navigation.state === "loading";
@@ -74,7 +73,7 @@ const HomepageLayout = () => {
     <HomepageLayoutContext.Provider
       value={{
         userData,
-        HomepageData,
+        homepageData,
         cartCtr,
         toggleMobileNavbar,
         isMobileActive,

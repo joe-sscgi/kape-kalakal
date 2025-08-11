@@ -133,6 +133,12 @@ const Wrapper = styled.section`
     justify-self: center;
   }
 
+  .no-data-display {
+    display: block !important;
+    text-align: center;
+    width: 100%;
+  }
+
   /* RECIPES SECTION */
   .recipes-section {
     background-color: var(--secondary);

@@ -13,9 +13,9 @@ import logo from "../assets/images/logo/kape-kalakal-logo.jpg";
 import defaultImg from "../assets/images/default-img.jpg";
 
 const Homepage = () => {
-  const HomepageData = useHomepageLayoutContext().HomepageData;
-  const bestProductsData = HomepageData.bestProductsData;
-  const fotmProductData = HomepageData.fotmProductData;
+  const { homepageData } = useHomepageLayoutContext();
+  const bestProductsData = homepageData.bestProductsData;
+  const fotmProductData = homepageData.fotmProductData;
   // console.log(bestProductsData);
   // const { featBrandsData } = useLoaderData().featBrandsData;
   // const { prodImgs } = useLoaderData().prodImgs;
@@ -51,21 +51,27 @@ const Homepage = () => {
               <div className="fotm-img-container col-sm-6">
                 <img
                   src={
-                    fotmProductData.prodImg
-                      ? fotmProductData.prodImg
+                    fotmProductData?.prodImg
+                      ? fotmProductData?.prodImg
                       : defaultImg
                   }
                   alt="Flavor of the Month"
                 />
               </div>
               <div className="fotm-desc-container col-sm-6">
-                <h2>{fotmProductData.prodName}</h2>
-                <p>{fotmProductData.prodDesc}</p>
-                <Link to={"/dashboard/shop"}>
-                  <button type="button" className="btn main-btn shop-btn">
-                    Shop Now
-                  </button>
-                </Link>
+                <h2>{fotmProductData?.prodName}</h2>
+                <p>{fotmProductData?.prodDesc}</p>
+                {fotmProductData ? (
+                  <Link to={"/dashboard/shop"}>
+                    <button type="button" className="btn main-btn shop-btn">
+                      Shop Now
+                    </button>
+                  </Link>
+                ) : (
+                  <p className="no-data-message">
+                    No Flavor of the Month Available
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -87,33 +93,38 @@ const Homepage = () => {
             {/* <!-- End Section Title --> */}
 
             <div className="best-container">
-              {bestProductsData.map((prod) => {
-                var img = prod.prodImg;
-                var imgUrl = defaultImg;
-                if (img) {
-                  imgUrl = img.prodImgUrl;
-                } else {
-                }
-                return (
-                  <div className="best-container-item" key={prod._id}>
-                    <div className="best-img-container">
-                      <img src={imgUrl} alt="Best Seller" />
+              {bestProductsData && bestProductsData.length > 0 ? (
+                bestProductsData.map((prod) => {
+                  var img = prod.prodImg;
+                  var imgUrl = defaultImg;
+                  if (img) {
+                    imgUrl = img.prodImgUrl;
+                  }
+                  return (
+                    <div className="best-container-item" key={prod._id}>
+                      <div className="best-img-container">
+                        <img src={imgUrl} alt="Best Seller" />
+                      </div>
+                      <div className="best-desc-container">
+                        <h2>{prod.prodName}</h2>
+                        <p>{prod.prodDesc}</p>
+                      </div>
                     </div>
-                    <div className="best-desc-container">
-                      <h2>{prod.prodName}</h2>
-                      <p>{prod.prodDesc}</p>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              ) : (
+                <div className="no-data-display">No Best Sellers Available</div>
+              )}
             </div>
-            <div className="best-btn-container">
-              <Link to={"/dashboard/shop"}>
-                <button type="button" className="btn main-btn shop-btn">
-                  Shop Now
-                </button>
-              </Link>
-            </div>
+            {bestProductsData && bestProductsData.length > 0 && (
+              <div className="best-btn-container">
+                <Link to={"/dashboard/shop"}>
+                  <button type="button" className="btn main-btn shop-btn">
+                    Shop Now
+                  </button>
+                </Link>
+              </div>
+            )}
           </div>
         </section>
         {/* END BEST SELLERS SECTION */}

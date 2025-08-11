@@ -1,17 +1,17 @@
 import styled from "styled-components";
+import bgImg from "../images/background/background-recipes.jpg";
 
 const Wrapper = styled.section`
-  /* background-color: var(--bg-secondary); */
+  background-color: var(--bg-secondary);
   font-family: var(--main-font);
   font-size: 18px;
   color: var(--primary);
-
   background-image: linear-gradient(
       to top,
-      rgba(245, 246, 252, 0.19),
+      rgba(245, 246, 252, 0.1),
       rgb(116 35 35 / 75%)
     ),
-    url("../src/assets/images/background/background-recipes.jpg");
+    url(${bgImg});
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

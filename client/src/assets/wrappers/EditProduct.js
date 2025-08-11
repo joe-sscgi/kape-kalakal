@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import bgImg from "../images/background/background-4.jpg";
 
 const Wrapper = styled.section`
   background-color: var(--bg-secondary);
@@ -7,8 +8,9 @@ const Wrapper = styled.section`
       rgba(245, 246, 252, 0.1),
       rgb(116 35 35 / 75%)
     ),
-    url(../src/assets/images/background/background-4.jpg);
-  background-size: cover;
+    url(${bgImg});
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
   background-attachment: fixed;
 
   .edit-prod {

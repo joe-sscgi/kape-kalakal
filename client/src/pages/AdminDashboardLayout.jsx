@@ -15,6 +15,11 @@ import { Header, Loading, Footer } from "../components";
 export const loader = async () => {
   try {
     const { data } = await customFetch.get("/admin/current-user");
+
+    if (data?.user?.userUserType?.toLowerCase() === "customer") {
+      toast.error("Unauthorized access! Redirecting to dashboard.");
+      return redirect("/dashboard");
+    }
     return data;
   } catch (error) {
     // return redirect("/");
@@ -25,8 +30,6 @@ const AdminDashboardLayoutContext = createContext();
 
 const AdminDashboardLayout = () => {
   const { user } = useLoaderData();
-  // console.log(useLoaderData());
-  // const { user } = { username: "username" };
 
   const navigate = useNavigate();
   const navigation = useNavigation();

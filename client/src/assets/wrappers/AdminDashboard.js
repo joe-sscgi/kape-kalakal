@@ -2,7 +2,6 @@ import styled from "styled-components";
 import bgImg from "../images/background/background-1.jpg";
 
 const Wrapper = styled.section`
-  /* height: 100vh; */
   background-color: var(--bg-secondary);
   background-image: linear-gradient(
       to top,
@@ -10,13 +9,8 @@ const Wrapper = styled.section`
       rgb(116 35 35 / 75%)
     ),
     url(${bgImg});
-  /* background-image: linear-gradient(
-      to bottom,
-      rgba(133, 82, 29, 0.1),
-      rgba(228, 216, 204, 0.85)
-    ),
-    url("../src/assets/images/background/background-1.jpg"); */
-  background-size: cover;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
   background-attachment: fixed;
 
   .admin-dashboard-container {

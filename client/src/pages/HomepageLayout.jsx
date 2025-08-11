@@ -17,6 +17,13 @@ import { Header, Loading, Footer } from "../components";
 export const loader = async () => {
   try {
     const { data } = await customFetch.get("/dashboard/get-data");
+    if (
+      data?.homepageData?.userData?.userUserType?.toLowerCase() ===
+        "super admin" ||
+      data?.homepageData?.userData?.userUserType?.toLowerCase() === "admin"
+    ) {
+      return redirect("/admin");
+    }
     return data;
   } catch (error) {
     // return redirect("/admin");

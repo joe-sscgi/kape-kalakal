@@ -1,20 +1,17 @@
 import styled from "styled-components";
+import bgImg from "../images/background/background-edit-profile.jpg";
 
 const Wrapper = styled.section`
-  background-color: var(--bg-secondary);
-  font-family: var(--main-font);
-  font-size: 18px;
-  color: var(--primary);
-  /* height: 100vh; */
-
   background-color: var(--bg-secondary);
   background-image: linear-gradient(
       to top,
       rgba(245, 246, 252, 0.1),
       rgb(116 35 35 / 75%)
     ),
-    url("../src/assets/images/background/background-edit-profile.jpg");
-  background-size: cover;
+    url(${bgImg});
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-attachment: fixed;
 
   .edit-profile-container {
     margin-top: 100px;

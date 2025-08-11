@@ -298,7 +298,7 @@ const SetFeat = () => {
               Next
             </button>
           </div>
-          <Link to={"/admin/maintenance"} className="btn-back">
+          <Link to={"/admin/set-content"} className="btn-back">
             <FiArrowLeftCircle /> Back
           </Link>
         </div>

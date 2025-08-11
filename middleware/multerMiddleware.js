@@ -4,7 +4,7 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     var uploadCat = "";
     var uploadTypeCat = "";
-    var uploadPath = "client/src/assets/images/uploads/";
+    var uploadPath = "client/src/assets/images/Uploads/";
 
     var uploadType = req.body.type.toUpperCase();
     if (uploadType == "PRODUCTS") {

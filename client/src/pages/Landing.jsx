@@ -29,31 +29,6 @@ import hero2 from "../assets/images/hero-banner/hero-banner-3.jpg";
 import hero3 from "../assets/images/hero-banner/hero-banner-5.jpg";
 
 import defaultImg from "../assets/images/default-img.jpg";
-import el_salvador_light_roast from "../assets/images/products/coffee/El-Salvador-Don-Jaime-Pacas-Natural-Light-Roast.jpg";
-import el_salvador_medium_roast from "../assets/images/products/coffee/Seasonal-Blend-Haru-Kochi-Medium-Roast.jpg";
-import haru_kochi_dark_roast from "../assets/images/products/coffee/Seasonal-Blend-Haru-Kochi-Medium-Roast.jpg";
-
-import Kalita_Mino_yaki_Dripper from "../assets/images/products/brewing-gear/Kalita Mino-yaki Dripper.png";
-import kinto_mini_pour_over_kettle_430ml from "../assets/images/products/brewing-gear/kinto-mini-pour-over-kettle-430ml.png";
-import ORIGAMI_ReWork_Dripper from "../assets/images/products/brewing-gear/ORIGAMI ReWork Dripper.png";
-
-import two_Tone_Logo_Sticker from "../assets/images/products/accessories/2 Tone Logo Sticker.png";
-import Kurasu_Logo_T_shirts_Black from "../assets/images/products/accessories/Kurasu Logo T-shirts (Black).png";
-import Kurasu_original_postcard from "../assets/images/products/accessories/Kurasu original postcard.jpg";
-
-import Matcha_Kurasu_Blend_No_Sugar from "../assets/images/products/tea/Matcha Kurasu Blend (No Sugar).png";
-import Matcha_Kurasu_Blend_With_Sugar from "../assets/images/products/tea/Matcha Kurasu Blend (With Sugar).jpg";
-import Matcha_SUI_Blend from "../assets/images/products/tea/Matcha SUI Blend.png";
-
-import daibo from "../assets/images/products/brands/daibo.jpg";
-import simplify from "../assets/images/products/brands/simplify.png";
-import claska from "../assets/images/products/brands/claska.jpg";
-
-import author1 from "../assets/img/testimonials/testimonials-1.jpg";
-import author2 from "../assets/img/testimonials/testimonials-2.jpg";
-import author3 from "../assets/img/testimonials/testimonials-3.jpg";
-import author4 from "../assets/img/testimonials/testimonials-4.jpg";
-import author5 from "../assets/img/testimonials/testimonials-5.jpg";
 
 export const loader = async () => {
   try {

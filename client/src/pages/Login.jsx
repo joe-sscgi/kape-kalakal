@@ -49,7 +49,7 @@ const Login = () => {
                 name="userUsername"
                 className="form-input"
                 placeholder="username"
-                defaultValue="superadmin"
+                // defaultValue="superadmin"
               />
               <FormRow
                 type="password"
@@ -57,7 +57,7 @@ const Login = () => {
                 name="userPassword"
                 className="form-input"
                 placeholder="password"
-                defaultValue="aDmin_321"
+                // defaultValue="aDmin_321"
               />
               <div className="text-center login-buttons">
                 <SubmitBtn className="login-submit" />

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import bgImg from "../images/background/background-1.jpg";
 
 const Wrapper = styled.section`
   /* height: 100vh; */
@@ -8,7 +9,13 @@ const Wrapper = styled.section`
       rgba(245, 246, 252, 0.1),
       rgb(116 35 35 / 75%)
     ),
-    url("../src/assets/images/background/background-1.jpg");
+    url(${bgImg});
+  /* background-image: linear-gradient(
+      to bottom,
+      rgba(133, 82, 29, 0.1),
+      rgba(228, 216, 204, 0.85)
+    ),
+    url("../src/assets/images/background/background-1.jpg"); */
   background-size: cover;
   background-attachment: fixed;
 

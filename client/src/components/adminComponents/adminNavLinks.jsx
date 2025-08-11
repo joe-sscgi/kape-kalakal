@@ -7,18 +7,26 @@ import LogoutContainer from "../logoutContainer";
 import { useAdminDashboardLayoutContext } from "../../pages/AdminDashboardLayout";
 
 const AdminNavLinks = () => {
-  const { toggleMobileNavbar } = useAdminDashboardLayoutContext();
+  const { toggleMobileNavbar, user } = useAdminDashboardLayoutContext();
   const [openDropdown, setOpenDropdown] = useState(null);
 
-  const handleToggleDropdown = (text) => {
-    setOpenDropdown((prev) => (prev === text ? null : text));
+  const handleBlur = (e, linkText) => {
+    // Check if the blur target is outside the dropdown
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      setOpenDropdown(null);
+    }
   };
 
   return (
     <ul className="nav-links">
       {AdminLink.map((link) => {
+        if (
+          link.text === "Utilities" &&
+          user?.userUserType?.toLowerCase() === "admin"
+        ) {
+          return null;
+        }
         const hasChildren = !!link.children;
-
         return (
           <li key={link.text} className="nav-item">
             {hasChildren ? (
@@ -28,6 +36,8 @@ const AdminNavLinks = () => {
                 }`}
                 onMouseEnter={() => setOpenDropdown(link.text)}
                 onMouseLeave={() => setOpenDropdown(null)}
+                onFocus={() => setOpenDropdown(link.text)}
+                onBlur={(e) => handleBlur(e, link.text)}
               >
                 <button className="nav-link dropdown-toggle">
                   {link.icon && <span className="icon">{link.icon}</span>}

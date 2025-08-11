@@ -26,6 +26,7 @@ import hero2 from "../assets/images/hero-banner/hero-banner-3.jpg";
 import hero3 from "../assets/images/hero-banner/hero-banner-5.jpg";
 
 import defaultImg from "../assets/images/default-img.jpg";
+import { useNavigate } from "react-router-dom";
 
 export const loader = async () => {
   try {
@@ -38,10 +39,25 @@ export const loader = async () => {
 };
 
 const Landing = () => {
-  const brands = useLoaderData().brands;
-  const prods = useLoaderData().prods;
-  const prodImgs = useLoaderData().prodImgs;
-  // console.log(prodImgs);
+  const { brands, prods, prodImgs } = useLoaderData();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    customFetch
+      .get("/auth/current-user")
+      .then((res) => {
+        const userType = res.data.user.userUserType;
+        if (userType === "Super Admin" || userType === "Admin") {
+          navigate("/admin");
+        } else if (userType) {
+          navigate("/dashboard");
+        }
+        // If no userType, stay on landing
+      })
+      .catch(() => {
+        // Not logged in, stay on landing
+      });
+  }, [navigate]);
 
   const [isMobileActive, setMobileActive] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);

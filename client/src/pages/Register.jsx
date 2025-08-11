@@ -1,8 +1,9 @@
-import { Link, redirect, Form } from "react-router-dom";
+import { Link, redirect, Form, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Wrapper from "../assets/wrappers/Register";
 import customFetch from "../utils/customFetch";
 import { Logo, FormRow, SubmitBtn } from "../components/";
+import { useEffect } from "react";
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
@@ -20,6 +21,24 @@ export const action = async ({ request }) => {
 };
 
 const Register = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    customFetch
+      .get("/auth/current-user")
+      .then((res) => {
+        const userType = res.data.user.userUserType;
+        if (userType === "Super Admin" || userType === "Admin") {
+          navigate("/admin");
+        } else if (userType) {
+          navigate("/dashboard");
+        }
+        // If no userType, stay on landing
+      })
+      .catch(() => {
+        // Not logged in, stay on landing
+      });
+  }, [navigate]);
   return (
     <Wrapper>
       <main className="main">

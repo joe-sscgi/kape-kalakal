@@ -4,7 +4,12 @@ import {
   validateRegisterInput,
   validateLoginInput,
 } from "../middleware/validationMiddleware.js";
-import { register, login, logout } from "../controllers/authController.js";
+import {
+  register,
+  login,
+  logout,
+  getCurrentUser,
+} from "../controllers/authController.js";
 
 const router = Router();
 
@@ -12,6 +17,7 @@ const router = Router();
 router.post("/register", validateRegisterInput, register);
 router.post("/login", validateLoginInput, login);
 router.get("/logout", logout);
+router.get("/current-user", getCurrentUser);
 
 // forgot password
 

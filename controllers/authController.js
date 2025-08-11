@@ -4,7 +4,7 @@ import Users from "../models/UsersModel.js";
 import UserInfo from "../models/UserInfoModel.js";
 import { comparePassword, hashPassword } from "../utils/passwordUtils.js";
 import { UnauthenticatedError } from "../error/errorCodes.js";
-import { createJWT } from "../utils/tokenUtils.js";
+import { createJWT, verifyJWT } from "../utils/tokenUtils.js";
 
 export const register = async (req, res) => {
   const isFirstAccount = (await Users.countDocuments()) === 0;
@@ -66,4 +66,33 @@ export const logout = (req, res) => {
     expires: new Date(Date.now()),
   });
   res.status(StatusCodes.OK).json({ msg: "user logged out!" });
+};
+
+export const getCurrentUser = async (req, res) => {
+  try {
+    // 1. Get token from cookies (or Authorization header if that's what you use)
+    const token =
+      req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
+    if (!token) {
+      return res.status(StatusCodes.OK).json({ user: null });
+    }
+
+    // 2. Decode the token
+    const decoded = verifyJWT(token);
+    req.user = { userId: decoded.userId }; // <-- now req.user exists
+
+    // 3. Find the user
+    const user = await Users.findOne({ _id: req.user.userId }).select(
+      "-password"
+    );
+    if (!user) {
+      return res.status(StatusCodes.OK).json({ user: null });
+    }
+
+    // 4. Send response
+    res.status(StatusCodes.OK).json({ user });
+  } catch (error) {
+    // If token invalid or expired, just return no user
+    return res.status(StatusCodes.OK).json({ user: null });
+  }
 };

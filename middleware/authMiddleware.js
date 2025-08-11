@@ -18,33 +18,43 @@ export const authenticateUser = (req, res, next) => {
   }
 };
 
+// export const levelOfAccess = (req, res, next) => {
+//   const { token } = req.cookies;
+//   if (!token) throw new UnauthenticatedError("authentication invalid");
+
+//   try {
+//     const { userId, userType } = verifyJWT(token);
+//     req.user = { userId, userType };
+
+//     if (
+//       req.user.userUserType != "Super Admin" ||
+//       req.user.userUserType != "Admin"
+//     ) {
+//       throw new UnauthorizedError("Unauthorized access");
+//     }
+//     // console.log(req.user.userType);
+
+//     next();
+//   } catch (error) {
+//     throw new UnauthorizedError("Unauthorized access");
+//   }
+// };
+
 export const levelOfAccess = (req, res, next) => {
   const { token } = req.cookies;
-  if (!token) throw new UnauthenticatedError("authentication invalid");
+  if (!token) throw new UnauthenticatedError("Authentication invalid");
 
   try {
-    const { userId, userType } = verifyJWT(token);
-    req.user = { userId, userType };
+    const { userId, userUserType } = verifyJWT(token); // make sure your token payload has this exact key
+    req.user = { userId, userUserType };
 
-    if (
-      req.user.userUserType != "Super Admin" ||
-      req.user.userUserType != "Admin"
-    ) {
+    // Only allow Super Admin or Admin
+    if (userUserType !== "Super Admin" && userUserType !== "Admin") {
       throw new UnauthorizedError("Unauthorized access");
     }
-    // console.log(req.user.userType);
 
     next();
   } catch (error) {
     throw new UnauthorizedError("Unauthorized access");
   }
-};
-
-export const authorizePermissions = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      throw new UnauthorizedError("Unauthorized access");
-    }
-    next();
-  };
 };

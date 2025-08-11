@@ -1,12 +1,35 @@
 import Wrapper from "../../../assets/wrappers/UtilitiesDashboard";
 import { UtilsSidebar } from "../../../components";
+import { useAdminDashboardLayoutContext } from "../../AdminDashboardLayout";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { createContext, use, useContext, useEffect, useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
+import { toast } from "react-toastify";
 
 const UtilitiesDashboardContext = createContext();
 const UtilitiesDashboard = () => {
+  const { user } = useAdminDashboardLayoutContext();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let redirectPath = "dashboard";
+    if (
+      user?.userUserType?.toLowerCase() !== "super admin" &&
+      user?.userUserType?.toLowerCase() === "customer"
+    ) {
+      redirectPath = "dashboard";
+      navigate("/dashboard");
+    } else if (
+      user?.userUserType?.toLowerCase() !== "super admin" &&
+      user?.userUserType?.toLowerCase() === "admin"
+    ) {
+      redirectPath = "admin dashboard";
+      navigate("/admin");
+    }
+    toast.error(`Unauthorized access! Redirecting to ${redirectPath}.`);
+  }, [user, navigate]);
+
   const [showSidebar, setShowSidebar] = useState(false);
 
   const closeSidebar = () => setShowSidebar(false);

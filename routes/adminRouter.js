@@ -4,8 +4,7 @@ import {
   validateIdParam,
 } from "../middleware/validationMiddleware.js";
 import upload from "../middleware/multerMiddleware.js";
-
-// import levelOfAccess from "../middleware/authMiddleware.js";
+// import { levelOfAccess } from "../middleware/authMiddleware.js";
 
 import {
   getAdminDashboardData,

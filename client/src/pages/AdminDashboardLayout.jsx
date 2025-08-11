@@ -22,7 +22,8 @@ export const loader = async () => {
     }
     return data;
   } catch (error) {
-    // return redirect("/");
+    // toast.error("Unauthorized access! Redirecting to dashboard.");
+    // return redirect("/dashboard");
   }
 };
 

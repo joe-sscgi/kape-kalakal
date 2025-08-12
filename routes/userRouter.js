@@ -34,6 +34,7 @@ router.route("/shop/product/:id").get(getProduct);
 router.route("/cart").get(getTmpCart);
 router.route("/cart/:id").patch(updateItemInCart).delete(delItemInCart);
 router.route("/cart/checkout").get(checkingOut);
+router.route("/cart/checkout/place-order").post(checkout);
 
 router.route("/brands").get(getAllBrands);
 router.route("/brands/categories").get(getAllBrandCat);

@@ -34,8 +34,11 @@ const AdminNavLinks = () => {
                 className={`dropdown-wrapper ${
                   openDropdown === link.text ? "open" : ""
                 }`}
-                onMouseEnter={() => setOpenDropdown(link.text)}
-                onMouseLeave={() => setOpenDropdown(null)}
+                onClick={() =>
+                  setOpenDropdown((prev) =>
+                    prev === link.text ? null : link.text
+                  )
+                }
                 onFocus={() => setOpenDropdown(link.text)}
                 onBlur={(e) => handleBlur(e, link.text)}
               >

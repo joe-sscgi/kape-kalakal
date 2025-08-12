@@ -56,7 +56,8 @@ const Wrapper = styled.section`
   }
 
   .fotm-desc-container p {
-    font-size: 32px;
+    font-size: 28px;
+    font-weight: 350;
   }
 
   .shop-btn {

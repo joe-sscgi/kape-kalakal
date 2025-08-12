@@ -30,6 +30,14 @@ const UserInfoSchema = new mongoose.Schema(
       type: String,
       alias: "province",
     },
+    userPostalCode: {
+      type: Number,
+      alias: "postal",
+    },
+    userLandmark: {
+      type: String,
+      alias: "postal",
+    },
     userInfoIsDel: {
       type: Boolean,
       alias: "isDel",

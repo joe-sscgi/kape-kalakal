@@ -16,6 +16,7 @@ import {
   RecipeContainer,
   RecipeDetail,
   Shop,
+  PaymentDashboard,
   Product,
   BrandLayout,
   Brands,
@@ -83,6 +84,8 @@ import { action as actionArchiveBrand } from "./pages/adminPages/Utils/Archive/A
 import { action as actionArchiveProduct } from "./pages/adminPages/Utils/Archive/ArchiveProducts";
 import { action as actionArchiveRecipes } from "./pages/adminPages/Utils/Archive/ArchiveRecipes";
 import { action as actionArchiveUsers } from "./pages/adminPages/Utils/Archive/ArchiveUsers";
+
+import { action as actionCheckout } from "./pages/Checkout";
 
 // LOADERS
 import { loader as landingLoader } from "./pages/Landing";
@@ -169,7 +172,6 @@ const router = createBrowserRouter([
         loader: productLoader,
         // action: actionSetContent,
       },
-
       {
         path: "brands",
         element: <BrandLayout />,
@@ -218,7 +220,6 @@ const router = createBrowserRouter([
           },
         ],
       },
-
       {
         path: "profile",
         element: <Profile />,
@@ -237,6 +238,14 @@ const router = createBrowserRouter([
         element: <Checkout />,
         errorElement: <Error />,
         loader: checkoutLoader,
+        action: actionCheckout,
+      },
+      {
+        path: "/dashboard/cart/checkout/place-order",
+        element: <PaymentDashboard />,
+        errorElement: <Error />,
+        // loader: checkoutLoader,
+        // action: actionCheckout,
       },
     ],
   },

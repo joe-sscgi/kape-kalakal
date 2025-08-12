@@ -16,10 +16,6 @@ const Homepage = () => {
   const { homepageData } = useHomepageLayoutContext();
   const bestProductsData = homepageData.bestProductsData;
   const fotmProductData = homepageData.fotmProductData;
-  // console.log(bestProductsData);
-  // const { featBrandsData } = useLoaderData().featBrandsData;
-  // const { prodImgs } = useLoaderData().prodImgs;
-  // const { recipes } = useLoaderData().recipes;
 
   useEffect(() => {
     AOS.init({
@@ -52,7 +48,7 @@ const Homepage = () => {
                 <img
                   src={
                     fotmProductData?.prodImg
-                      ? fotmProductData?.prodImg
+                      ? fotmProductData?.prodImg.prodImgUrl
                       : defaultImg
                   }
                   alt="Flavor of the Month"

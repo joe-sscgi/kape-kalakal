@@ -158,16 +158,21 @@ export const checkingOut = async (req, res) => {
   const userInfo = await UserInfo.findOne({ userUserID: req.user.userId });
   const userCart = await TempCart.find({ userID: req.user.userId });
 
-  const checkoutDetails = {};
-  checkoutDetails.userInfo = userInfo;
-  checkoutDetails.userCart = userCart;
+  const checkoutDetails = {
+    userInfo: userInfo,
+    userCart: userCart,
+  };
 
   res.status(StatusCodes.OK).json({ checkoutDetails: checkoutDetails });
 };
 
 export const checkout = async (req, res) => {
-  const cart = await Cart.create(req.body);
-  res.status(StatusCodes.CREATED).json({ cart });
+  // place order 1st, minus the cart item qty to product qty, order status is pending, payment status is pending
+  const { shippingDetails } = req.body;
+  const { userCart } = shippingDetails;
+  console.log(shippingDetails);
+  // const cart = await Cart.create(userCart);
+  // res.status(StatusCodes.CREATED).json({ cart });
 };
 
 export const getAllBrandCat = async (req, res) => {

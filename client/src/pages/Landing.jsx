@@ -453,6 +453,7 @@ const Landing = () => {
                     className="col-lg-4 col-md-6"
                     data-aos="fade-up"
                     data-aos-delay="100"
+                    key={brand._id}
                   >
                     <div className="brand">
                       <div className="brand-info">

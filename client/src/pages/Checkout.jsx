@@ -1,34 +1,60 @@
-import { Form, Link, useLoaderData } from "react-router-dom";
+import { Form, useLoaderData } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import Wrapper from "../assets/wrappers/Checkout";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { CheckoutPaypalTest } from "../components";
 
 export const loader = async () => {
   try {
     const { data } = await customFetch.get("/dashboard/cart/checkout");
     return data;
   } catch (error) {
-    // return redirect("/admin");
+    console.log(error);
+  }
+};
+
+export const action = async ({ request }) => {
+  try {
+    const formData = await request.formData();
+
+    const shippingDetails = {
+      userAddressNoStBrgy: formData.get("userAddressNoStBrgy"),
+      userAddressCityMunicipality: formData.get("userAddressCityMunicipality"),
+      userProvince: formData.get("userProvince"),
+      userLandmark: formData.get("userLandmark"),
+      userPostalCode: formData.get("userPostalCode"),
+      userInfo: JSON.parse(formData.get("userInfo")),
+      userCart: JSON.parse(formData.get("userCart")),
+      defaultAddress: formData.get("defaultAddress") === "on",
+    };
+
+    const { data } = await customFetch.post(
+      "/dashboard/cart/checkout/place-order",
+      { shippingDetails }
+    );
+
+    return data;
+  } catch (error) {
     console.log(error);
   }
 };
 
 const Checkout = () => {
   const data = useLoaderData().checkoutDetails;
-
   const { userInfo, userCart } = data;
 
   const [isChecked, setIsChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCheckboxChange = (e) => {
     setIsChecked(e.target.checked);
   };
 
-  var prodSubTotal = 0;
-  var total = 0;
-  var totalItems = 0;
-  var discountPrice = 0;
-  var shippingPrice = 60;
+  let totalPrice = 0;
+  let prodSubTotal = 0;
+  let totalItems = 0;
+  let discountPrice = 0;
+  let shippingPrice = 60;
 
   return (
     <Wrapper>
@@ -38,15 +64,20 @@ const Checkout = () => {
         </div>
 
         <div className="container">
-          <div className="checkout-container">
+          <Form
+            method="post"
+            className="checkout-container"
+            onSubmit={() => setIsLoading(true)}
+          >
+            {/* Shipping Details */}
             <div className="checkout-user-details">
               <div className="checkout-header">
                 <h3>Shipping Details</h3>
               </div>
               <input
                 type="checkbox"
-                name="Default Address"
                 id="defaultAddress"
+                name="defaultAddress"
                 checked={isChecked}
                 onChange={handleCheckboxChange}
                 disabled={
@@ -73,57 +104,81 @@ const Checkout = () => {
                   </span>
                 </div>
               )}
+
+              {/* If default address selected → send hidden fields */}
+              {isChecked && (
+                <>
+                  <input
+                    type="hidden"
+                    name="userAddressNoStBrgy"
+                    value={userInfo?.userAddressNoStBrgy}
+                  />
+                  <input
+                    type="hidden"
+                    name="userAddressCityMunicipality"
+                    value={userInfo?.userAddressCityMunicipality}
+                  />
+                  <input
+                    type="hidden"
+                    name="userProvince"
+                    value={userInfo?.userProvince}
+                  />
+                  <input
+                    type="hidden"
+                    name="userLandmark"
+                    value={userInfo?.userLandmark || ""}
+                  />
+                </>
+              )}
+
+              {/* If custom address → show inputs */}
               {!isChecked && (
                 <div className="other-address-details">
-                  <Form method="post" className="other-address-details-form">
-                    <div className="other-address-details-header">
-                      <h3>Provide a Shipping Address</h3>
-                    </div>
-
-                    <div className="other-address-details">
-                      <div className="">
-                        <input
-                          type="text"
-                          name="userAddressNoStBrgy"
-                          className="userAddressNoStBrgy form-control checkout-form-control"
-                          placeholder="House/Blk/Lot/Unit No. Street/Barangay"
-                          required={isChecked}
-                        />
-                      </div>
-                      <div className="">
-                        <input
-                          type="text"
-                          name="userAddressCityMunicipality"
-                          className="userAddressCityMunicipality form-control checkout-form-control"
-                          placeholder="City/Municipality"
-                          required={isChecked}
-                        />
-                      </div>
-                      <div className="">
-                        <input
-                          type="text"
-                          name="userProvince"
-                          className="userProvince form-control checkout-form-control"
-                          placeholder="Province"
-                          required={isChecked}
-                        />
-                      </div>
-                      <div className="">
-                        <input
-                          type="text"
-                          name="userLandmark"
-                          className="userLandmark form-control checkout-form-control"
-                          placeholder="Landmark(Optional)"
-                        />
-                      </div>
-                    </div>
-                  </Form>
+                  <div className="other-address-details-header">
+                    <h3>Provide a Shipping Address</h3>
+                  </div>
+                  <div className="other-address-details">
+                    <input
+                      type="text"
+                      name="userAddressNoStBrgy"
+                      className="form-control checkout-form-control"
+                      placeholder="House/Blk/Lot/Unit No. Street/Barangay"
+                      required={!isChecked}
+                    />
+                    <input
+                      type="text"
+                      name="userAddressCityMunicipality"
+                      className="form-control checkout-form-control"
+                      placeholder="City/Municipality"
+                      required={!isChecked}
+                    />
+                    <input
+                      type="text"
+                      name="userProvince"
+                      className="form-control checkout-form-control"
+                      placeholder="Province"
+                      required={!isChecked}
+                    />
+                    <input
+                      type="text"
+                      name="userPostalCode"
+                      className="form-control checkout-form-control"
+                      placeholder="Postal Code(Optional)"
+                    />
+                    <input
+                      type="text"
+                      name="userLandmark"
+                      className="form-control checkout-form-control"
+                      placeholder="Landmark(Optional)"
+                    />
+                  </div>
                 </div>
               )}
             </div>
+            {/* Order Summary */}
             <div className="checkout-user-order-summary">
               <div className="checkout-header">
-                <h3>Oder Summary</h3>
+                <h3>Order Summary</h3>
               </div>
               <div className="checkout-order-summary-container">
                 <div className="checkout-order-summary">
@@ -131,7 +186,7 @@ const Checkout = () => {
                     <p>Cart Empty.</p>
                   ) : (
                     userCart.map((cart) => {
-                      var prodTotal = cart.prodPrice * cart.prodQty;
+                      let prodTotal = cart.prodPrice * cart.prodQty;
                       prodSubTotal += prodTotal;
                       totalItems += cart.prodQty;
                       return (
@@ -151,7 +206,6 @@ const Checkout = () => {
                                   </span>
                                 </div>
                               </div>
-
                               <div className="checkout-total">
                                 <span>
                                   ₱
@@ -167,7 +221,25 @@ const Checkout = () => {
                       );
                     })
                   )}
+                  {/* Set total price after mapping */}
+                  {(() => {
+                    totalPrice = prodSubTotal + shippingPrice - discountPrice;
+                    return null; // Nothing to render here
+                  })()}
                 </div>
+
+                {/* Hidden user infor and cart data for submission */}
+                <input
+                  type="hidden"
+                  name="userCart"
+                  value={JSON.stringify(userCart)}
+                />
+                <input
+                  type="hidden"
+                  name="userInfo"
+                  value={JSON.stringify(userInfo)}
+                />
+
                 <div className="checkout-order-total">
                   <div className="checkout-total">
                     <div className="checkout-item-total">
@@ -194,7 +266,6 @@ const Checkout = () => {
                         })}
                       </span>
                     </div>
-
                     <div className="checkout-discount">
                       <h5>Discount : </h5>
                       <span>
@@ -209,9 +280,7 @@ const Checkout = () => {
                       <h2>Total : </h2>
                       <span>
                         ₱
-                        {Number(
-                          prodSubTotal + shippingPrice - discountPrice
-                        ).toLocaleString("en-PH", {
+                        {Number(totalPrice).toLocaleString("en-PH", {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })}
@@ -219,19 +288,48 @@ const Checkout = () => {
                     </div>
                   </div>
                   <div className="checkout-checkout">
-                    <Link to={"/dashboard/cart/checkout"}>
-                      <button type="button" className="btn btn-checkout">
-                        Checkout
-                      </button>
-                    </Link>
+                    <button type="submit" className="btn btn-checkout">
+                      {isLoading ? "Processing..." : "Place Order"}
+                    </button>
+                    <CheckoutPaypalTest
+                      cartData={userCart}
+                      isLoading={isLoading}
+                      totalAmount={totalPrice}
+                      shippingDetails={{
+                        fullName: userInfo?.fullName || "Customer", // or from a name input field
+                        addressLine1: isChecked
+                          ? userInfo?.userAddressNoStBrgy
+                          : document.querySelector(
+                              "[name='userAddressNoStBrgy']"
+                            )?.value,
+                        addressLine2: isChecked
+                          ? userInfo?.userLandmark || ""
+                          : document.querySelector("[name='userLandmark']")
+                              ?.value || "",
+                        city: isChecked
+                          ? userInfo?.userAddressCityMunicipality
+                          : document.querySelector(
+                              "[name='userAddressCityMunicipality']"
+                            )?.value,
+                        province: isChecked
+                          ? userInfo?.userProvince
+                          : document.querySelector("[name='userProvince']")
+                              ?.value,
+                        postalCode: isChecked
+                          ? userInfo?.userPostalCode
+                          : document.querySelector("[name='userPostalCode']")
+                              ?.value, // If you don’t have postal code input, you can make this optional
+                      }}
+                    />
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </Form>
         </div>
       </section>
     </Wrapper>
   );
 };
+
 export default Checkout;

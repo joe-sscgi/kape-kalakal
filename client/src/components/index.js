@@ -15,3 +15,5 @@ export { default as FormRowSelect } from "./adminComponents/formRowSelect";
 // CLIENT
 export { default as ClientNavBar } from "./clientComponents/clientNavBar";
 export { default as ClientNavLinks } from "./clientComponents/clientNavLinks";
+
+export { default as CheckoutPaypalTest } from "./CheckoutPaypalTest";

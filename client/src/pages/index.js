@@ -63,3 +63,6 @@ export { default as ArchiveBrands } from "./adminPages/Utils/Archive/ArchiveBran
 export { default as ArchiveProducts } from "./adminPages/Utils/Archive/ArchiveProducts";
 export { default as ArchiveRecipes } from "./adminPages/Utils/Archive/ArchiveRecipes";
 export { default as ArchiveUsers } from "./adminPages/Utils/Archive/ArchiveUsers";
+
+// PAYPAL
+export { default as PaymentDashboard } from "./PaymentDashboard";

@@ -13,6 +13,10 @@ const Wrapper = styled.section`
   background-size: 100% 100%;
   background-attachment: fixed;
 
+  .recipe-section {
+    background-color: unset;
+  }
+
   .section-title h1 {
     color: var(--primary);
     margin-top: 24px;

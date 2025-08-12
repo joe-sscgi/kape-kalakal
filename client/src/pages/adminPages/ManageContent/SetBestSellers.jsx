@@ -73,7 +73,7 @@ export const action = async ({ request, params }) => {
 };
 
 const SetBest = () => {
-  const { products, currentPage, totalPages } = useLoaderData();
+  const { products, currentPage, totalPages, countBest } = useLoaderData();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -258,20 +258,24 @@ const SetBest = () => {
                 return (
                   <tr key={prod._id} className="prod-row">
                     <td className="prod-col">
-                      <Button
-                        type="button"
-                        className="btn edit-prod-btn main-btn"
-                        variant="primary"
-                        onClick={viewDetails.bind(
-                          null,
-                          "Product",
-                          prod,
-                          "Set",
-                          "Best Seller"
-                        )}
-                      >
-                        <FaRegCheckCircle /> <span>SET</span>
-                      </Button>
+                      {countBest > 12 ? (
+                        <Button
+                          type="button"
+                          className="btn edit-prod-btn main-btn"
+                          variant="primary"
+                          onClick={viewDetails.bind(
+                            null,
+                            "Product",
+                            prod,
+                            "Set",
+                            "Best Seller"
+                          )}
+                        >
+                          <FaRegCheckCircle /> <span>SET</span>
+                        </Button>
+                      ) : (
+                        ""
+                      )}
                     </td>
                     <td className="prod-col">{prod.prodName}</td>
                     <td className="prod-col">

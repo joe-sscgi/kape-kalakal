@@ -49,6 +49,7 @@ export const loader = async ({ request }) => {
     const { data } = await customFetch.get(
       `/admin/set-content/featured-brands/?${queryParams.toString()}`
     );
+
     return data;
   } catch (error) {
     console.error(error);
@@ -74,7 +75,7 @@ export const action = async ({ request, params }) => {
 };
 
 const SetFeat = () => {
-  const { brands, currentPage, totalPages } = useLoaderData();
+  const { brands, currentPage, totalPages, countFeature } = useLoaderData();
   const list = Object.values(BRAND_CAT);
   const navigate = useNavigate();
   const location = useLocation();
@@ -179,7 +180,6 @@ const SetFeat = () => {
     data.data = val;
 
     setModalData(data);
-    console.log(modalData);
     modalShow();
   };
 
@@ -255,22 +255,26 @@ const SetFeat = () => {
             <tbody>
               {brands.map((brand) => {
                 return (
-                  <tr>
+                  <tr key={brand._id}>
                     <td>
-                      <Button
-                        type="button"
-                        className="btn edit-brand-btn main-btn"
-                        variant="primary"
-                        onClick={viewDetails.bind(
-                          null,
-                          "Brand",
-                          brand,
-                          "Set",
-                          "Featured"
-                        )}
-                      >
-                        <FaRegCheckCircle /> <span>SET</span>
-                      </Button>
+                      {countFeature > 3 ? (
+                        <Button
+                          type="button"
+                          className="btn edit-brand-btn main-btn"
+                          variant="primary"
+                          onClick={viewDetails.bind(
+                            null,
+                            "Brand",
+                            brand,
+                            "Set",
+                            "Featured"
+                          )}
+                        >
+                          <FaRegCheckCircle /> <span>SET</span>
+                        </Button>
+                      ) : (
+                        ""
+                      )}
                     </td>
                     <td>{brand.brandName}</td>
                     <td>{brand.brandCat}</td>

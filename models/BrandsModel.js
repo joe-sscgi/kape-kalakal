@@ -24,6 +24,7 @@ const BrandsSchema = new mongoose.Schema(
     brandIsFeatured: {
       type: Boolean,
       alias: "isFeatured",
+      default: 0,
     },
     brandIsDel: {
       type: Boolean,

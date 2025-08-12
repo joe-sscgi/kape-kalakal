@@ -30,10 +30,12 @@ const ProductsSchema = new mongoose.Schema(
     prodIsFotm: {
       type: Boolean,
       alias: "isfotm",
+      default: 0,
     },
     prodIsBest: {
       type: Boolean,
       alias: "isbest",
+      default: 0,
     },
     prodBrandID: {
       type: String,

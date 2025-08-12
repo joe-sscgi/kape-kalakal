@@ -17,7 +17,6 @@ import { SubmitBtn } from "../../../components";
 export const loader = async () => {
   try {
     const { data } = await customFetch.get("/admin/set-content");
-    // console.log(1, data);
     return data.allData;
   } catch (error) {
     // return redirect("/admin");
@@ -40,9 +39,14 @@ export const action = async ({ request, params }) => {
 };
 
 const ManageContent = () => {
-  const productsFotmData = useLoaderData().productsFotmData;
-  const productsBestData = useLoaderData().productsBestData;
-  const brandsFeatData = useLoaderData().brandsFeatData;
+  const {
+    productsFotmData,
+    countFotm,
+    productsBestData,
+    countBest,
+    brandsFeatData,
+    countFeature,
+  } = useLoaderData();
 
   const [showM, setShowM] = useState(false);
   const [modalData, setModalData] = useState("");
@@ -97,21 +101,26 @@ const ManageContent = () => {
         {/* <!-- End Section Title --> */}
 
         <div className="manage-content-info">
-          <h3>Set a max of 5 Flavor of the Month</h3>
+          {/* <h3>Set a max of 5 Flavor of the Month</h3> */}
+          <h3>Set ONE Flavor of the Month</h3>
         </div>
         <Table striped id="myTableFotm" name="myTableFotm">
           <thead>
             <tr>
               <th>
-                <Link to={"/admin/set-content/fotm"}>
-                  <Button
-                    type="button"
-                    className="btn set-fotm-btn main-btn"
-                    variant="success"
-                  >
-                    <FiPlusCircle /> <span>Set Flavor of the Month</span>
-                  </Button>
-                </Link>
+                {countFotm == 0 ? (
+                  <Link to={"/admin/set-content/fotm"}>
+                    <Button
+                      type="button"
+                      className="btn set-fotm-btn main-btn"
+                      variant="success"
+                    >
+                      <FiPlusCircle /> <span>Set Flavor of the Month</span>
+                    </Button>
+                  </Link>
+                ) : (
+                  ""
+                )}
               </th>
               <th>Name</th>
             </tr>
@@ -159,15 +168,19 @@ const ManageContent = () => {
           <thead>
             <tr>
               <th>
-                <Link to={"/admin/set-content/best-sellers"}>
-                  <Button
-                    type="button"
-                    className="btn set-fotm-btn main-btn"
-                    variant="success"
-                  >
-                    <FiPlusCircle /> <span>Set Best Sellers</span>
-                  </Button>
-                </Link>
+                {countBest <= 12 ? (
+                  <Link to={"/admin/set-content/best-sellers"}>
+                    <Button
+                      type="button"
+                      className="btn set-fotm-btn main-btn"
+                      variant="success"
+                    >
+                      <FiPlusCircle /> <span>Set Best Sellers</span>
+                    </Button>
+                  </Link>
+                ) : (
+                  ""
+                )}
               </th>
               <th>Name</th>
               <th>Category</th>
@@ -216,15 +229,20 @@ const ManageContent = () => {
           <thead>
             <tr>
               <th>
-                <Link to={"/admin/set-content/featured-brands"}>
-                  <Button
-                    type="button"
-                    className="btn set-fotm-btn main-btn"
-                    variant="success"
-                  >
-                    <FiPlusCircle /> <span>Set Featured Brands</span>
-                  </Button>
-                </Link>
+                {countFeature < 3 ? (
+                  <Link to={"/admin/set-content/featured-brands"}>
+                    <Button
+                      type="button"
+                      className="btn set-fotm-btn main-btn"
+                      variant="success"
+                    >
+                      <FiPlusCircle />{" "}
+                      <span>Set Featured Brands {countFeature}</span>
+                    </Button>
+                  </Link>
+                ) : (
+                  ""
+                )}
               </th>
               <th>Name</th>
             </tr>

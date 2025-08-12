@@ -12,6 +12,7 @@ import Orders from "../models/OrdersModel.js";
 import ContactUs from "../models/ContactUsModel.js";
 import { hashPassword } from "../utils/passwordUtils.js";
 import { response } from "express";
+import { count } from "console";
 
 function createUploadPath(type, data) {
   var uploadType = "";
@@ -90,30 +91,6 @@ export const getAdminDashboardData = async (req, res) => {
 };
 
 // CONTENT
-export const getContentDatav1 = async (req, res) => {
-  const countFotm = await Products.countDocuments({ prodIsFotm: 1 });
-  const countBest = await Products.countDocuments({ prodIsBest: 1 });
-  const countFeature = await Brands.countDocuments({ brandIsFeatured: 1 });
-  // console.log(`Total Best Seller: ${count}`);
-
-  const brandsData = await Brands.find({}, null, {
-    sort: { brandName: 1 },
-  });
-
-  const productsData = await Products.find({}, null, {
-    sort: { prodName: 1 },
-  });
-
-  const allData = {};
-  allData.brands = brandsData;
-  allData.countFeature = countFeature;
-  allData.prods = productsData;
-  allData.countFotm = countFotm;
-  allData.countBest = countBest;
-
-  res.status(StatusCodes.OK).json({ allData });
-};
-
 export const getContentData = async (req, res) => {
   const brandsFeatData = await Brands.find({ brandIsFeatured: 1 }, null, {
     sort: { brandName: 1 },
@@ -127,10 +104,18 @@ export const getContentData = async (req, res) => {
     sort: { prodName: 1 },
   });
 
-  const allData = {};
-  allData.brandsFeatData = brandsFeatData;
-  allData.productsFotmData = productsFotmData;
-  allData.productsBestData = productsBestData;
+  const countFotm = await Products.countDocuments({ prodIsFotm: 1 });
+  const countBest = await Products.countDocuments({ prodIsBest: 1 });
+  const countFeature = await Brands.countDocuments({ brandIsFeatured: 1 });
+
+  const allData = {
+    brandsFeatData: brandsFeatData,
+    countFotm: countFotm,
+    productsFotmData: productsFotmData,
+    countBest: countBest,
+    productsBestData: productsBestData,
+    countFeature: countFeature,
+  };
 
   res.status(StatusCodes.OK).json({ allData });
 };
@@ -241,9 +226,12 @@ export const getFotmProducts = async (req, res) => {
       prodImg: firstImageByProductId[product._id.toString()] || null,
     }));
 
+    const countFotm = await Products.countDocuments({ prodIsFotm: 1 });
+
     // 9. Return the result
     res.status(StatusCodes.OK).json({
       products: productsWithFirstImage,
+      countFotm,
       currentPage: Number(page),
       totalPages,
     });
@@ -322,9 +310,12 @@ export const getBestProducts = async (req, res) => {
       prodImg: firstImageByProductId[product._id.toString()] || null,
     }));
 
+    const countBest = await Products.countDocuments({ prodIsBest: 1 });
+
     // 9. Return the result
     res.status(StatusCodes.OK).json({
       products: productsWithFirstImage,
+      countBest,
       currentPage: Number(page),
       totalPages,
     });
@@ -384,9 +375,12 @@ export const getFeatBrands = async (req, res) => {
     const totalBrands = await Brands.countDocuments(query);
     const totalPages = Math.ceil(totalBrands / Number(limit));
 
+    const countFeature = await Brands.countDocuments({ brandIsFeatured: 1 });
+
     // 9. Return the result
     res.status(StatusCodes.OK).json({
       brands: brandsData,
+      countFeature,
       currentPage: Number(page),
       totalPages,
     });

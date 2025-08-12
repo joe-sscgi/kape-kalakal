@@ -68,7 +68,7 @@ export const action = async ({ request, params }) => {
 };
 
 const SetFotm = () => {
-  const { products, currentPage, totalPages } = useLoaderData();
+  const { products, currentPage, totalPages, countFotm } = useLoaderData();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -171,7 +171,6 @@ const SetFotm = () => {
     data.data = val;
 
     setModalData(data);
-    console.log(modalData);
     modalShow();
   };
 
@@ -238,20 +237,24 @@ const SetFotm = () => {
                 return (
                   <tr key={prod._id} className="prod-row">
                     <td className="prod-col">
-                      <Button
-                        type="button"
-                        className="btn edit-prod-btn main-btn"
-                        variant="primary"
-                        onClick={viewDetails.bind(
-                          null,
-                          "Product",
-                          prod,
-                          "Set",
-                          "Flavor of the Month"
-                        )}
-                      >
-                        <FaRegCheckCircle /> <span>SET</span>
-                      </Button>
+                      {countFotm > 1 ? (
+                        <Button
+                          type="button"
+                          className="btn edit-prod-btn main-btn"
+                          variant="primary"
+                          onClick={viewDetails.bind(
+                            null,
+                            "Product",
+                            prod,
+                            "Set",
+                            "Flavor of the Month"
+                          )}
+                        >
+                          <FaRegCheckCircle /> <span>SET</span>
+                        </Button>
+                      ) : (
+                        ""
+                      )}
                     </td>
                     <td className="prod-col">{prod.prodName}</td>
                     <td className="prod-col">

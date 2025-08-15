@@ -3,16 +3,20 @@ import mongoose from "mongoose";
 const UserInfoSchema = new mongoose.Schema(
   {
     userUserID: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Users",
       alias: "userID",
+      required: true,
     },
     userLastName: {
       type: String,
       alias: "lastName",
+      required: true,
     },
     userFirstName: {
       type: String,
       alias: "firstName",
+      required: true,
     },
     userMiddleName: {
       type: String,
@@ -21,27 +25,30 @@ const UserInfoSchema = new mongoose.Schema(
     userAddressNoStBrgy: {
       type: String,
       alias: "noStBrgy",
+      required: true,
     },
     userAddressCityMunicipality: {
       type: String,
       alias: "cityMunicipality",
+      required: true,
     },
     userProvince: {
       type: String,
       alias: "province",
+      required: true,
     },
     userPostalCode: {
-      type: Number,
+      type: String,
       alias: "postal",
     },
     userLandmark: {
       type: String,
-      alias: "postal",
+      alias: "landmark",
     },
     userInfoIsDel: {
       type: Boolean,
       alias: "isDel",
-      default: 0,
+      default: false,
     },
   },
   { timestamps: true }

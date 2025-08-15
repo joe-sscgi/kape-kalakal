@@ -155,8 +155,13 @@ export const delItemInCart = async (req, res) => {
 
 export const checkingOut = async (req, res) => {
   // GET USER DETAILS SPECIALLY ADDRESS FOR SHIPPING DETAILS
-  const userInfo = await UserInfo.findOne({ userUserID: req.user.userId });
-  const userCart = await TempCart.find({ userID: req.user.userId });
+  const userInfo = await UserInfo.findOne({
+    userUserID: new mongoose.Types.ObjectId(req.user.userId),
+  });
+
+  const userCart = await TempCart.find({
+    userID: new mongoose.Types.ObjectId(req.user.userId),
+  });
 
   const checkoutDetails = {
     userInfo: userInfo,
@@ -167,12 +172,120 @@ export const checkingOut = async (req, res) => {
 };
 
 export const checkout = async (req, res) => {
-  // place order 1st, minus the cart item qty to product qty, order status is pending, payment status is pending
-  const { shippingDetails } = req.body;
-  const { userCart } = shippingDetails;
-  console.log(shippingDetails);
-  // const cart = await Cart.create(userCart);
-  // res.status(StatusCodes.CREATED).json({ cart });
+  try {
+    const { shippingDetails } = req.body;
+    const { userCart, userInfo, defaultAddress } = shippingDetails;
+
+    // Ensure the cart has items
+    if (!userCart || userCart.length === 0) {
+      return res.status(400).json({ error: "Cart is empty." });
+    }
+
+    // Helper to format address, set default postal code
+    const formatAddress = (source) => {
+      if (
+        !source ||
+        (!source.userAddressNoStBrgy &&
+          !source.userAddressCityMunicipality &&
+          !source.userProvince &&
+          !source.userLandmark)
+      ) {
+        return null;
+      }
+      return {
+        userAddressNoStBrgy: source.userAddressNoStBrgy || "",
+        userAddressCityMunicipality: source.userAddressCityMunicipality || "",
+        userProvince: source.userProvince || "",
+        userLandmark: source.userLandmark || "",
+        userPostalCode: source.userPostalCode || "00000",
+      };
+    };
+
+    // Determine which address to use
+    const userDefaultAddress = formatAddress(userInfo);
+    const customAddress = formatAddress(shippingDetails);
+    const selectedAddress = defaultAddress ? userDefaultAddress : customAddress;
+
+    if (!selectedAddress) {
+      return res
+        .status(400)
+        .json({ error: "No valid address found for checkout." });
+    }
+
+    // Create single cart snapshot with embedded items
+    const cartSnapshot = await Cart.create({
+      userID: new mongoose.Types.ObjectId(req.user.userId),
+      items: userCart.map((item) => ({
+        prodID: new mongoose.Types.ObjectId(item.prodID),
+        prodName: item.prodName,
+        prodImgUrl: item.prodImgUrl,
+        prodQty: item.prodQty,
+        prodPrice: item.prodPrice,
+        prodSubTotal: item.prodQty * item.prodPrice,
+      })),
+      totalAmount: userCart.reduce(
+        (sum, item) => sum + item.prodQty * item.prodPrice,
+        0
+      ),
+    });
+
+    // Create a new order referencing the cart snapshot
+    const order = new Orders({
+      userID: new mongoose.Types.ObjectId(req.user.userId),
+      cartID: cartSnapshot._id, // reference the single cart snapshot
+      totalAmount: cartSnapshot.totalAmount,
+      paymentMethod: "PayPal",
+      paymentStatus: "Pending",
+      orderStatus: "Pending",
+      billingDetails: {
+        customerName: `${userInfo.userFirstName} ${userInfo.userLastName}`,
+        addressNoStBrgy: selectedAddress.userAddressNoStBrgy,
+        addressCityMunicipality: selectedAddress.userAddressCityMunicipality,
+        addressProvince: selectedAddress.userProvince,
+        addressLandmark: selectedAddress.userLandmark,
+        postalCode: selectedAddress.userPostalCode || "00000",
+        contact: "", // optional
+      },
+    });
+
+    // Call the method on this instance to generate the ID
+    order.orderID = order.generateOrderID();
+
+    await order.save();
+
+    // Optionally: remove TmpCart items
+    // await TempCart.deleteMany({ userID: req.user.userId });
+
+    res.status(200).json({
+      message: "Order created successfully.",
+      order,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+export const orderPayment = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    if (!orderId) {
+      return res.status(400).json({ error: "orderId is required" });
+    }
+
+    // Fetch the order by _id
+    const order = await Orders.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    res.status(200).json({ order });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
 };
 
 export const getAllBrandCat = async (req, res) => {

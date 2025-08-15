@@ -1,6 +1,17 @@
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
-export default function CheckoutPaypalTest({ totalAmount, shippingDetails }) {
+export default function CheckoutPaypalTest({ order }) {
+  if (!order || !order.billingDetails) return <p>Loading...</p>;
+
+  const {
+    customerName,
+    addressNoStBrgy,
+    addressLandmark,
+    addressCityMunicipality,
+    addressProvince,
+    postalCode,
+  } = order.billingDetails;
+
   return (
     <PayPalScriptProvider
       options={{
@@ -16,18 +27,18 @@ export default function CheckoutPaypalTest({ totalAmount, shippingDetails }) {
             purchase_units: [
               {
                 amount: {
-                  value: totalAmount.toFixed(2), // format to 2 decimal places
+                  value: order.totalAmount.toFixed(2),
                 },
                 shipping: {
                   name: {
-                    full_name: shippingDetails.fullName,
+                    full_name: customerName || "No Name",
                   },
                   address: {
-                    address_line_1: shippingDetails.addressLine1,
-                    address_line_2: shippingDetails.addressLine2,
-                    admin_area_2: shippingDetails.city, // city / municipality
-                    admin_area_1: shippingDetails.province, // province / region
-                    postal_code: shippingDetails.postalCode || "0000", // ✅ REQUIRED
+                    address_line_1: order.billingDetails.addressNoStBrgy,
+                    address_line_2: order.billingDetails.addressLandmark || "",
+                    admin_area_2: order.billingDetails.addressCityMunicipality,
+                    admin_area_1: order.billingDetails.addressProvince,
+                    postal_code: order.billingDetails.postalCode || "00000",
                     country_code: "PH",
                   },
                 },
@@ -37,6 +48,7 @@ export default function CheckoutPaypalTest({ totalAmount, shippingDetails }) {
         }}
         onApprove={async (data, actions) => {
           const details = await actions.order.capture();
+
           console.log(details);
           alert(`Transaction completed by ${details.payer.name.given_name}`);
         }}

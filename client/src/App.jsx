@@ -98,6 +98,7 @@ import { loader as brandsLoader } from "./pages/Brands";
 import { loader as brandContainerLoader } from "./pages/BrandContainer";
 import { loader as cartLoader } from "./pages/Cart";
 import { loader as checkoutLoader } from "./pages/Checkout";
+import { loader as paymentLoader } from "./pages/PaymentDashboard";
 import { loader as contentLoader } from "./pages/adminPages/ManageContent/ManageContent";
 import { loader as setFotmLoader } from "./pages/adminPages/ManageContent/SetFotm";
 import { loader as setBestSellerLoader } from "./pages/adminPages/ManageContent/SetBestSellers";
@@ -241,11 +242,10 @@ const router = createBrowserRouter([
         action: actionCheckout,
       },
       {
-        path: "/dashboard/cart/checkout/place-order",
+        path: "/dashboard/cart/checkout/payment-dashboard/:orderId",
         element: <PaymentDashboard />,
         errorElement: <Error />,
-        // loader: checkoutLoader,
-        // action: actionCheckout,
+        loader: paymentLoader,
       },
     ],
   },

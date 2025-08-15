@@ -1,12 +1,13 @@
-import { Form, useLoaderData } from "react-router-dom";
+import { Form, redirect, useLoaderData } from "react-router-dom";
 import customFetch from "../utils/customFetch";
 import Wrapper from "../assets/wrappers/Checkout";
 import { useState } from "react";
-import { CheckoutPaypalTest } from "../components";
+import { toast } from "react-toastify";
 
 export const loader = async () => {
   try {
     const { data } = await customFetch.get("/dashboard/cart/checkout");
+
     return data;
   } catch (error) {
     console.log(error);
@@ -33,7 +34,11 @@ export const action = async ({ request }) => {
       { shippingDetails }
     );
 
-    return data;
+    toast.success("Order placed successfully!");
+
+    return redirect(
+      `/dashboard/cart/checkout/payment-dashboard/${data.order._id}`
+    );
   } catch (error) {
     console.log(error);
   }
@@ -42,7 +47,7 @@ export const action = async ({ request }) => {
 const Checkout = () => {
   const data = useLoaderData().checkoutDetails;
   const { userInfo, userCart } = data;
-
+  // console.log(userInfo, userCart);
   const [isChecked, setIsChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -288,39 +293,13 @@ const Checkout = () => {
                     </div>
                   </div>
                   <div className="checkout-checkout">
-                    <button type="submit" className="btn btn-checkout">
+                    <button
+                      type="submit"
+                      className="btn btn-checkout"
+                      disabled={isLoading}
+                    >
                       {isLoading ? "Processing..." : "Place Order"}
                     </button>
-                    <CheckoutPaypalTest
-                      cartData={userCart}
-                      isLoading={isLoading}
-                      totalAmount={totalPrice}
-                      shippingDetails={{
-                        fullName: userInfo?.fullName || "Customer", // or from a name input field
-                        addressLine1: isChecked
-                          ? userInfo?.userAddressNoStBrgy
-                          : document.querySelector(
-                              "[name='userAddressNoStBrgy']"
-                            )?.value,
-                        addressLine2: isChecked
-                          ? userInfo?.userLandmark || ""
-                          : document.querySelector("[name='userLandmark']")
-                              ?.value || "",
-                        city: isChecked
-                          ? userInfo?.userAddressCityMunicipality
-                          : document.querySelector(
-                              "[name='userAddressCityMunicipality']"
-                            )?.value,
-                        province: isChecked
-                          ? userInfo?.userProvince
-                          : document.querySelector("[name='userProvince']")
-                              ?.value,
-                        postalCode: isChecked
-                          ? userInfo?.userPostalCode
-                          : document.querySelector("[name='userPostalCode']")
-                              ?.value, // If you don’t have postal code input, you can make this optional
-                      }}
-                    />
                   </div>
                 </div>
               </div>

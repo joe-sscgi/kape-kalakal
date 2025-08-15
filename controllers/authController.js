@@ -12,22 +12,16 @@ export const register = async (req, res) => {
 
   const hashedPassword = await hashPassword(req.body.userPassword);
   req.body.userPassword = hashedPassword;
-  // req.body.userIsDel = 0;
-  // console.log(req.body);
 
   const user = await Users.create(req.body);
   const obj = Object();
   obj.userUserID = user._id;
-  // console.log(obj);
   const userInfo = await UserInfo.create(obj);
-  // res.status(StatusCodes.CREATED).json({ user });
-  // res.status(StatusCodes.CREATED).json(req.body.userType + "Created");
   res.status(StatusCodes.CREATED).json("User Registration Success!");
 };
 
 export const login = async (req, res) => {
   const userData = await Users.findOne({ userUsername: req.body.userUsername });
-  console.log(userData);
   if (!userData) {
     throw new UnauthenticatedError("User Not Found");
   } else {
@@ -44,8 +38,6 @@ export const login = async (req, res) => {
     userType: userData.userUserType,
   });
 
-  console.log(1, token);
-
   const oneDay = 1000 * 60 * 60 * 24;
 
   res.cookie("token", token, {
@@ -55,12 +47,9 @@ export const login = async (req, res) => {
   });
 
   res.status(StatusCodes.OK).json({ msg: "user logged in", userData });
-
-  // res.status(StatusCodes.OK).json({ userData });
 };
 
 export const logout = (req, res) => {
-  // console.log("controler");
   res.cookie("token", "logout", {
     httpOnly: true,
     expires: new Date(Date.now()),

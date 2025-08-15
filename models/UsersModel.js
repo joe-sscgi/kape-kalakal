@@ -6,14 +6,20 @@ const UsersSchema = new mongoose.Schema(
     userEmail: {
       type: String,
       alias: "email",
+      unique: true,
+      required: true,
+      lowercase: true,
     },
     userUsername: {
       type: String,
       alias: "username",
+      unique: true,
+      required: true,
     },
     userPassword: {
       type: String,
       alias: "password",
+      required: true,
     },
     userUserType: {
       type: String,
@@ -24,7 +30,7 @@ const UsersSchema = new mongoose.Schema(
     userIsDel: {
       type: Boolean,
       alias: "isDel",
-      default: 0,
+      default: false,
     },
   },
   { timestamps: true }

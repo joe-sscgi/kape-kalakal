@@ -3,24 +3,31 @@ import mongoose from "mongoose";
 const TmpCartSchema = new mongoose.Schema(
   {
     userID: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Users",
+      required: true,
     },
     prodID: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Products",
+      required: true,
     },
     prodName: {
       type: String,
+      required: true, // good to have since snapshot data is important
     },
     prodImgUrl: {
       type: String,
     },
     prodQty: {
       type: Number,
-      default: 0,
+      default: 1, // typically default quantity is 1
+      min: 1,
     },
     prodPrice: {
       type: Number,
-      default: 0,
+      required: true,
+      min: 0,
     },
   },
   { timestamps: true }

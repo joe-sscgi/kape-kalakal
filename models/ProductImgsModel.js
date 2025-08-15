@@ -3,10 +3,13 @@ import mongoose from "mongoose";
 const ProductsImgsSchema = new mongoose.Schema(
   {
     prodImgProdID: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Products",
+      required: true,
     },
     prodImgUrl: {
       type: String,
+      required: true,
     },
     prodImgPublicID: {
       type: String,
@@ -14,7 +17,7 @@ const ProductsImgsSchema = new mongoose.Schema(
     prodImgIsDel: {
       type: Boolean,
       alias: "isDel",
-      default: 0,
+      default: false,
     },
   },
   { timestamps: true }

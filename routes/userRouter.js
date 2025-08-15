@@ -11,6 +11,7 @@ import {
   addToTmpCart,
   checkingOut,
   checkout,
+  orderPayment,
   getTmpCart,
   updateItemInCart,
   delItemInCart,
@@ -35,6 +36,7 @@ router.route("/cart").get(getTmpCart);
 router.route("/cart/:id").patch(updateItemInCart).delete(delItemInCart);
 router.route("/cart/checkout").get(checkingOut);
 router.route("/cart/checkout/place-order").post(checkout);
+router.get("/cart/checkout/payment-dashboard/:orderId", orderPayment);
 
 router.route("/brands").get(getAllBrands);
 router.route("/brands/categories").get(getAllBrandCat);

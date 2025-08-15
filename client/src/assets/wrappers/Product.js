@@ -90,7 +90,7 @@ const Wrapper = styled.section`
 
       .product-img-gallery img {
         width: 60px;
-        height: 100px;
+        height: 80px;
         border-radius: 10px;
         margin-bottom: 12px;
       }

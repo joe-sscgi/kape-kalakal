@@ -23,17 +23,19 @@ export const getHomepageData = async (req, res) => {
     featBrandsData && featBrandsData.length > 0 ? featBrandsData : [];
 
   // 3. Get FOTM product
-  const fotmProductData = await Products.findOne({ prodIsFotm: "1" });
-  let fotmProdImgsData = [];
+  const fotmProductData = await Products.findOne({ prodIsFotm: true });
+
   let fotmProductsWithFirstImage = null;
+
   if (fotmProductData) {
-    fotmProdImgsData =
-      (await Products_Images.findOne({
-        prodImgProdID: fotmProductData._id,
-      })) || null;
+    const fotmProdImgData = await Products_Images.findOne({
+      prodImgProdID: fotmProductData._id,
+      prodImgIsDel: false,
+    });
+
     fotmProductsWithFirstImage = {
       ...fotmProductData.toObject(),
-      prodImg: fotmProdImgsData,
+      prodImg: fotmProdImgData || null,
     };
   }
 
@@ -76,6 +78,7 @@ export const getHomepageData = async (req, res) => {
 
 export const getProduct = async (req, res) => {
   const id = req.params.id;
+  console.log("Fetching product with ID:", id);
 
   const [productWithImages] = await Products.aggregate([
     {
@@ -84,16 +87,8 @@ export const getProduct = async (req, res) => {
     {
       $lookup: {
         from: "products_images",
-        let: { prodIdStr: { $toString: "$_id" } },
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $eq: ["$prodImgProdID", "$$prodIdStr"],
-              },
-            },
-          },
-        ],
+        localField: "_id",
+        foreignField: "prodImgProdID",
         as: "images",
       },
     },

@@ -17,6 +17,8 @@ const Homepage = () => {
   const bestProductsData = homepageData.bestProductsData;
   const fotmProductData = homepageData.fotmProductData;
 
+  console.log(fotmProductData);
+
   useEffect(() => {
     AOS.init({
       duration: 1000, // Animation duration in milliseconds
